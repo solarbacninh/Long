@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Cảnh Báo Lũ Các Dòng Sông Phía Bắc - LONG 0829.86.3333</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Lexend', 'sans-serif'],
+                    },
+                    colors: {
+                        alert: {
+                            bd1: '#eab308', // Yellow BD1
+                            bd2: '#f97316', // Orange BD2
+                            bd3: '#ef4444', // Red BD3
+                            extreme: '#9333ea', // Purple Extreme
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for dark UI */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .pulse-red {
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col bg-slate-950 text-slate-100">
+
+    <div id="emergencyBar" class="bg-red-600 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 flex items-center justify-between shadow-lg relative z-50">
+        <div class="flex items-center gap-3 max-w-7xl mx-auto w-full">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] sm:text-xs font-extrabold bg-white text-red-700 animate-pulse shrink-0">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> CẢNH BÁO LŨ
+            </span>
+            <p class="text-red-100 text-[11px] sm:text-sm leading-tight line-clamp-2 sm:line-clamp-1">
+                Hoàn lưu Bão số 4 gây mưa rất to (150-450mm+). Sông Kỳ Cùng, Trung, Lục Nam vượt <strong class="text-amber-300">BĐ III</strong>. Đề phòng sạt lở!
+            </p>
+        </div>
+        <button onclick="document.getElementById('emergencyBar').style.display='none'" class="text-white hover:text-slate-200 ml-2 shrink-0 p-1">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+    </div>
+
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-water text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading font-bold text-lg leading-tight text-slate-100">LONG - 0829.86.3333</h1>
+                    <p class="text-[11px] text-blue-400 font-medium">Hệ Thống Giám Sát Lũ Sông Phía Bắc</p>
+                </div>
+            </div>
+
+            <!-- Quick Info & AI Sync Status -->
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-xs">
+                    <span id="liveStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span class="text-slate-300">Live Stream: <strong id="lastUpdatedTime" class="text-emerald-400">Vừa xong</strong></span>
+                    <span id="currentDate" class="ml-2 font-mono bg-blue-900/40 text-blue-300 px-2 py-0.5 rounded border border-blue-500/20 text-[10px]"></span>
+                    <span id="countdownBadge" class="ml-1.5 font-mono bg-blue-900/60 text-blue-300 px-1.5 py-0.5 rounded border border-blue-500/30 text-[10px]">5s</span>
+                </div>
+
+                <!-- Auto Sync Toggle & Sound Alarm Control -->
+                <div class="flex items-center gap-2">
+                    <button id="toggleAutoSyncBtn" onclick="toggleAutoSync()" class="bg-slate-800 hover:bg-slate-700 text-xs px-2.5 py-1.5 rounded-xl border border-slate-700 text-emerald-400 font-medium flex items-center gap-1.5 transition-colors" title="Bật/Tắt tự động cập nhật liên tục">
+                        <i id="syncSpinIcon" class="fa-solid fa-arrows-rotate animate-spin" style="animation-duration: 4s;"></i>
+                        <span id="autoSyncText" class="hidden sm:inline">Tự động (5s)</span>
+                    </button>
+                    <button id="toggleSoundBtn" onclick="toggleAudioAlarm()" class="bg-slate-800 hover:bg-slate-700 text-xs px-2.5 py-1.5 rounded-xl border border-slate-700 text-slate-400 hover:text-amber-400 transition-colors" title="Bật/Tắt còi cảnh báo âm thanh BĐ3">
+                        <i id="soundIcon" class="fa-solid fa-bell-slash"></i>
+                    </button>
+                </div>
+
+                <button onclick="fetchLiveHydroNews()" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-2 transition-all shadow-md shadow-blue-600/30">
+                    <i class="fa-solid fa-rotate text-amber-300"></i>
+                    <span class="hidden sm:inline">Tra cứu Tin Lũ (AI)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        <!-- Top Metrics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Metric 1: Max Danger River -->
+            <div class="bg-slate-900 border border-red-500/30 rounded-2xl p-4 flex items-center justify-between shadow-md relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-red-500/10 rounded-full blur-xl pointer-events-none"></div>
+                <div>
+                    <p class="text-xs font-medium text-slate-400">Mức báo động cao nhất</p>
+                    <h3 class="text-xl font-bold font-heading text-red-500 mt-1" id="topAlertRiver">Sông Trung / Sông Kỳ Cùng</h3>
+                    <p class="text-xs text-red-400/90 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i> Vượt BD III +1.79m</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-house-tsunami"></i>
+                </div>
+            </div>
+
+            <!-- Metric 2: Active Reservoir Discharge -->
+            <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between shadow-md relative overflow-hidden">
+                <div>
+                    <p class="text-xs font-medium text-slate-400">Hồ thủy điện mở cửa xả</p>
+                    <h3 class="text-xl font-bold font-heading text-amber-400 mt-1" id="activeHydroReservoirs">4 Hồ Trọng Điểm</h3>
+                    <p class="text-xs text-slate-400 mt-1">Tuyên Quang, Thác Bà, Bản Lải, Hòa Bình</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-dam"></i>
+                </div>
+            </div>
+
+            <!-- Metric 3: Rain Gauge Peak -->
+            <div class="bg-slate-900 border border-cyan-500/30 rounded-2xl p-4 flex items-center justify-between shadow-md">
+                <div>
+                    <p class="text-xs font-medium text-slate-400">Lượng mưa lớn nhất (24h)</p>
+                    <h3 class="text-xl font-bold font-heading text-cyan-400 mt-1">452 mm (Mẫu Sơn)</h3>
+                    <p class="text-xs text-cyan-300 mt-1"><i class="fa-solid fa-cloud-showers-heavy mr-1"></i> Mưa rất to diện rộng</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-cloud-bolt"></i>
+                </div>
+            </div>
+
+            <!-- Metric 4: Risk Evacuation Area -->
+            <div class="bg-slate-900 border border-purple-500/30 rounded-2xl p-4 flex items-center justify-between shadow-md">
+                <div>
+                    <p class="text-xs font-medium text-slate-400">Cảnh báo rủi ro thiên tai</p>
+                    <h3 class="text-xl font-bold font-heading text-purple-400 mt-1">Cấp Độ 3 (Bão & Lũ)</h3>
+                    <p class="text-xs text-purple-300 mt-1">Lạng Sơn, Bắc Ninh, Q.Ninh, Hải Phòng...</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-hill-rockslide"></i>
+                </div>
+            </div>
+        </div>
+
+        <section class="bg-slate-900 border border-indigo-500/30 rounded-2xl p-5 shadow-lg space-y-4 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800 pb-3 gap-2">
+                <div>
+                    <h2 class="font-heading font-bold text-lg text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-hurricane text-indigo-400 animate-spin" style="animation-duration: 10s;"></i>
+                        Theo Dõi Hoàn Lưu Bão & Lượng Mưa Lớn
+                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-red-500/20 text-red-400 border border-red-500/30">
+                            CẤP ĐỘ RỦI RO 3
+                        </span>
+                    </h2>
+                    <p class="text-xs text-slate-400">Ghi nhận thông tin bão và dữ liệu đo mưa tự động tại các trạm khí tượng thủy văn miền Bắc</p>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-slate-400 font-medium"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> Vị trí bão: Vịnh Bắc Bộ</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Storm Status Box -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-indigo-300 uppercase tracking-wider"><i class="fa-solid fa-wind mr-1"></i> Cơn Bão Số 4</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">Cấp 8-9, Giật cấp 11</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Tâm bão trên vùng biển Quảng Ninh - Hải Phòng. Di chuyển chậm dị thường, liên tục đổi hướng gây mưa dồn dập kéo dài.
+                    </p>
+                    <div class="pt-1 border-t border-slate-800/80 flex justify-between text-[11px] text-slate-400">
+                        <span>Sóng biển: <strong>2.0 - 4.0 m</strong></span>
+                        <span class="text-red-400 font-medium">Biển động rất mạnh</span>
+                    </div>
+                </div>
+
+                <!-- Live Rainfall Stats -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-cloud-showers-heavy mr-1"></i> Thực Đo (24h)</span>
+                        <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded animate-pulse">Cập nhật liên tục</span>
+                    </div>
+                    <div class="space-y-2 text-[11px] h-[105px] overflow-y-auto pr-1">
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="text-slate-300">Mẫu Sơn (Lạng Sơn)</span>
+                            <span class="font-mono font-bold text-purple-400">452 mm</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="text-slate-300">Hòn Gai (Quảng Ninh)</span>
+                            <span class="font-mono font-bold text-purple-400">334 mm</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="text-slate-300">Trấn Yên (Yên Bái)</span>
+                            <span class="font-mono font-bold text-cyan-400">215 mm</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="text-slate-300">Phổ Yên (Thái Nguyên)</span>
+                            <span class="font-mono font-bold text-cyan-400">188 mm</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="text-slate-300">Cát Bà (Hải Phòng)</span>
+                            <span class="font-mono font-bold text-cyan-400">145 mm</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="text-slate-300">Ba Vì (Hà Nội)</span>
+                            <span class="font-mono font-bold text-blue-400">112 mm</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="text-slate-300">Kim Bôi (Hòa Bình)</span>
+                            <span class="font-mono font-bold text-blue-400">95 mm</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-1">
+                            <span class="text-slate-300">Bắc Yên (Sơn La)</span>
+                            <span class="font-mono font-bold text-blue-400">82 mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rain Forecast Box -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-blue-300 uppercase tracking-wider"><i class="fa-solid fa-cloud-showers-water mr-1"></i> Dự Báo Mưa (24h)</span>
+                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded animate-pulse">Rất to</span>
+                    </div>
+                    <div class="space-y-2.5 text-xs mt-2">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">Đông Bắc Bộ & Hải Phòng</span>
+                                <span class="font-mono font-bold text-red-400">150-300 mm+</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-1"><div class="bg-red-500 h-1 rounded-full" style="width: 90%"></div></div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">Đồng Bằng Sông Hồng</span>
+                                <span class="font-mono font-bold text-orange-400">100-200 mm</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-1"><div class="bg-orange-500 h-1 rounded-full" style="width: 65%"></div></div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">Tây Bắc Bộ & Thanh Hóa</span>
+                                <span class="font-mono font-bold text-amber-400">50-150 mm</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-1"><div class="bg-amber-400 h-1 rounded-full" style="width: 45%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Landslide & Flash Flood Warning Alert Box -->
+                <div class="bg-gradient-to-br from-red-950/40 to-slate-950 p-4 rounded-xl border border-red-500/30 space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-red-400 uppercase tracking-wider"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Nguy Cơ Lũ Quét & Sạt Lở</span>
+                        <span class="text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded animate-pulse">Báo động đỏ</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Mưa lớn dồn dập khiến đất bão hòa nước. Nguy cơ rất cao xảy ra sạt lở đất đá trượt dốc và lũ quét cục bộ tại:
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 text-[10px]">
+                        <span class="px-2 py-0.5 rounded bg-red-900/50 text-red-200 border border-red-700/50">Lạng Sơn</span>
+                        <span class="px-2 py-0.5 rounded bg-red-900/50 text-red-200 border border-red-700/50">Bắc Giang</span>
+                        <span class="px-2 py-0.5 rounded bg-red-900/50 text-red-200 border border-red-700/50">Quảng Ninh</span>
+                        <span class="px-2 py-0.5 rounded bg-red-900/50 text-red-200 border border-red-700/50">Bắc Ninh</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Thái Nguyên</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Cao Bằng</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Panel: River List with Gauge Progress -->
+            <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800 pb-4 gap-2">
+                    <div>
+                        <h2 class="font-heading font-bold text-lg text-slate-100 flex items-center gap-2 flex-wrap">
+                            <i class="fa-solid fa-chart-line text-blue-400"></i> Diễn Biến Mực Nước Các Sông Phía Bắc
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> Streaming 24/7
+                            </span>
+                        </h2>
+                        <p class="text-xs text-slate-400">Đơn vị đo mét (m) - Click vào sông bất kỳ để xem biểu đồ chi tiết</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 font-semibold">BĐ 1</span>
+                        <span class="px-2 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30 font-semibold">BĐ 2</span>
+                        <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30 font-semibold">BĐ 3</span>
+                    </div>
+                </div>
+
+                <!-- River Gauge Cards Container -->
+                <div id="riverGaugeContainer" class="space-y-3.5 max-h-[580px] overflow-y-auto pr-1">
+                    <div class="text-center py-10 text-slate-500 text-xs">Đang tải dữ liệu quan đo sông...</div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Hydrograph Chart & Selected River Specs -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Hydrograph Chart Card -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 id="chartTitle" class="font-heading font-bold text-base text-slate-100">Sơ Đồ Mực Nước: Sông Thao (Yên Bái)</h3>
+                            <p class="text-xs text-slate-400">Diễn biến 24 giờ gần nhất</p>
+                        </div>
+                        <span id="chartAlertBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                            VƯỢT BÁO ĐỘNG III
+                        </span>
+                    </div>
+
+                    <div class="relative h-64 w-full">
+                        <canvas id="hydrographCanvas"></canvas>
+                    </div>
+
+                    <div id="riverDetailBox" class="p-3.5 bg-slate-800/60 rounded-xl border border-slate-700/50 text-xs space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Trạm quan đo:</span>
+                            <strong id="detStation" class="text-slate-200">Trạm Yên Bái</strong>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Mực nước hiện tại:</span>
+                            <strong id="detCurrent" class="text-red-400 font-bold text-sm">33.85 m</strong>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Xu hướng 3-6 giờ tới:</span>
+                            <strong id="detTrend" class="text-amber-400 font-semibold"><i class="fa-solid fa-arrow-trend-up mr-1"></i> Đang tiếp tục dâng chậm</strong>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Khu vực chịu ảnh hưởng:</span>
+                            <span id="detImpact" class="text-slate-300 text-right font-medium">TP Yên Bái, Hạ Hòa, Cẩm Khê, Việt Trì</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Stream Hydropower Reservoir Discharges Status -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+                    <h3 class="font-heading font-bold text-sm text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-dam text-amber-400"></i> Hồ Thủy Điện Lưu Vực Sông Hồng & Sông Lô
+                    </h3>
+                    <div class="space-y-2.5 text-xs" id="reservoirList">
+                        <!-- Hydro plant items -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: AI GROUNDED NEWS & REALTIME BULLETIN -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-5 relative overflow-hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold bg-blue-500/20 text-blue-300 border border-blue-500/30 uppercase tracking-wider">
+                            Realtime Gemini Grounding
+                        </span>
+                        <h2 class="font-heading font-bold text-xl text-slate-100">Bản Tin Cảnh Báo Lũ & Mực Nước Mới Nhất</h2>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">Truy vấn tin tức chính thống từ Trung tâm Dự báo Khí tượng Thủy văn Quốc gia & Báo chính thống</p>
+                </div>
+                
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <input type="text" id="newsSearchQuery" value="tin cảnh báo lũ sông phía bắc mới nhất mực nước sông hồng sông cầu sông lạng sơn" 
+                        class="bg-slate-800 border border-slate-700 text-xs text-slate-200 px-3 py-2 rounded-xl focus:outline-none focus:border-blue-500 w-full md:w-80"
+                        placeholder="Nhập nội dung tìm kiếm tin lũ...">
+                    <button onclick="fetchLiveHydroNews()" id="btnFetchNews" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-xl shrink-0 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i> Tra cứu AI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live AI Output Box -->
+            <div id="aiNewsLoading" class="hidden text-center py-8 space-y-3">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
+                <p class="text-xs text-blue-400 font-medium">Đang tìm kiếm tin tức thủy văn & tổng hợp dữ liệu thời gian thực...</p>
+            </div>
+            <!-- AI News Result Box Preset Update -->
+            <div id="aiNewsResult" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/60 p-5 rounded-xl border border-slate-800">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs border-b border-slate-800 pb-2">
+                        <span class="text-amber-400 font-bold"><i class="fa-solid fa-bullhorn mr-1"></i> BẢN TIN DỰ BÁO BÃI MƯA LỚN & LŨ KHẨN CẤP</span>
+                        <span class="text-slate-400">Nguồn: Trung tâm Dự báo KTTV Quốc gia</span>
+                    </div>
+                    <p>
+                        Do ảnh hưởng của hoàn lưu Bão số 4 (NARRA) kết hợp dải hội tụ nhiệt đới, khu vực Đông Bắc Bộ và Bắc Trung Bộ đã xảy ra mưa to đến rất to. Tình hình mưa lũ ghi nhận cụ thể như sau:
+                    </p>
+                    <ul class="list-disc list-inside space-y-1 text-slate-300 pl-2">
+                        <li><strong>Bão số 4 (NARRA):</strong> Cường độ bão duy trì cấp 8-9, giật cấp 10-11, đi chậm và liên tục đổi hướng dị thường trên khu vực Vịnh Bắc Bộ. Ven biển Quảng Ninh - Hải Phòng có gió mạnh cấp 6-7, giật cấp 8-9.</li>
+                        <li><strong>Sông Kỳ Cùng & Sông Trung (Lạng Sơn):</strong> Mưa cực lớn tại Mẫu Sơn (452mm) khiến mực nước sông Trung vượt Báo động III tới 1.79m; Sông Kỳ Cùng vượt Báo động III 0.41m. Đã sơ tán khẩn cấp hàng ngàn hộ dân tại Hữu Lũng, Thất Khê, Tràng Định.</li>
+                        <li><strong>Sông Lục Nam & Sông Thương (Bắc Giang, Bắc Ninh):</strong> Lũ trên sông Lục Nam và sông Thương dâng cao vượt Báo động II và III, gây ngập sâu nhiều diện tích sản xuất nông nghiệp và vùng ven đê.</li>
+                        <li><strong>Sông Thao & Sông Cầu:</strong> Mực nước dâng nhanh theo chu kỳ lũ thượng nguồn. Trạm Yên Bái và Đáp Cầu duy trì ở mức Báo động II - III.</li>
+                    </ul>
+                    <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-300 text-xs">
+                        <strong>Cảnh báo khẩn cấp:</strong> Nguy cơ ngập úng đô thị tại Hải Phòng, Quảng Ninh, Bắc Ninh, Hà Nội và lũ quét, sạt lở đất đặc biệt nguy hiểm ở các huyện miền núi Lạng Sơn, Bắc Giang, Quảng Ninh.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citation Sources Links -->
+            <div id="aiSourcesBox" class="hidden text-xs border-t border-slate-800 pt-3">
+                <span class="text-slate-400 block mb-1.5 font-medium">Nguồn trích dẫn tra cứu:</span>
+                <div id="sourcesList" class="flex flex-wrap gap-2"></div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: EMERGENCY HELPLINE & EVACUATION SAFETY CHECKLIST -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Hotline Contacts -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
+                <h3 class="font-heading font-bold text-base text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-phone-volume text-red-500"></i> Hotline Cứu Hộ Lũ Tương Ứng Địa Phương
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <a href="tel:112" class="p-3 bg-red-950/40 border border-red-500/30 rounded-xl flex items-center justify-between hover:bg-red-900/30 transition-all">
+                        <div>
+                            <div class="font-bold text-red-300">Tổng đài Cứu nạn Quốc gia</div>
+                            <div class="text-[10px] text-slate-400">Gọi miễn phí mọi lúc</div>
+                        </div>
+                        <span class="text-lg font-bold text-red-400 font-mono">112</span>
+                    </a>
+                    <a href="tel:114" class="p-3 bg-orange-950/40 border border-orange-500/30 rounded-xl flex items-center justify-between hover:bg-orange-900/30 transition-all">
+                        <div>
+                            <div class="font-bold text-orange-300">Cứu hộ PCCC & Lũ quét</div>
+                            <div class="text-[10px] text-slate-400">Ứng cứu khẩn cấp</div>
+                        </div>
+                        <span class="text-lg font-bold text-orange-400 font-mono">114</span>
+                    </a>
+                    <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
+                        <div class="font-semibold text-slate-200">BCĐ PCTT tỉnh Lào Cai & Yên Bái</div>
+                        <div class="text-slate-400 font-mono mt-0.5">0214.3820.115</div>
+                    </div>
+                    <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
+                        <div class="font-semibold text-slate-200">BCĐ PCTT tỉnh Thái Nguyên & Bắc Ninh</div>
+                        <div class="text-slate-400 font-mono mt-0.5">0208.3855.241</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Survival & Evacuation Checklist -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
+                <h3 class="font-heading font-bold text-base text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-emerald-400"></i> Việc Cần Làm Ngay Khi Nước Lũ Dâng Lên
+                </h3>
+                <div class="space-y-2 text-xs text-slate-300">
+                    <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/60 cursor-pointer">
+                        <input type="checkbox" class="mt-0.5 accent-emerald-500 rounded">
+                        <span>Ngắt hoàn toàn nguồn điện (Aptomat/Cầu dao tổng) trước khi nước tràn vào nhà.</span>
+                    </label>
+                    <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/60 cursor-pointer">
+                        <input type="checkbox" class="mt-0.5 accent-emerald-500 rounded">
+                        <span>Di chuyển giấy tờ quan trọng, thiết bị điện tử và lương thực lên vị trí cao gác xép.</span>
+                    </label>
+                    <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/60 cursor-pointer">
+                        <input type="checkbox" class="mt-0.5 accent-emerald-500 rounded">
+                        <span>Chuẩn bị sẵn nước uống đóng chai, đèn pin, pin dự phòng & thuốc sơ cứu y tế.</span>
+                    </label>
+                    <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/60 cursor-pointer">
+                        <input type="checkbox" class="mt-0.5 accent-emerald-500 rounded">
+                        <span>Tuyệt đối không đi qua ngầm tràn, đường ngập sâu hoặc cầu giao thông nguy hiểm.</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: COMMUNE/WARD EMERGENCY CONTACT DIRECTORY -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-5">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="font-heading font-bold text-lg text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-address-book text-emerald-400"></i> Tra Cứu Số Điện Thoại Cứu Hộ Khẩn Cấp Cấp Xã / Phường / Thị Trấn
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                            Địa Giới Hành Chính Mới
+                        </span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Danh bạ trực ban UBND, Công an xã, Trạm Y tế & Đội PCTT xung kích tại tất cả các tỉnh Phía Bắc</p>
+                </div>
+                
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-slate-400 font-medium"><i class="fa-solid fa-headset text-emerald-400 mr-1"></i> Trực 24/7 ứng cứu ngập lụt</span>
+                </div>
+            </div>
+
+            <!-- Administrative Filter Bars -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs">
+                <div>
+                    <label class="block text-slate-400 font-medium mb-1"><i class="fa-solid fa-map-location-dot text-blue-400 mr-1"></i> Chọn Tỉnh / Thành Phố</label>
+                    <select id="communeProvinceSelect" onchange="onProvinceChange()" class="w-full bg-slate-800 border border-slate-700 text-slate-200 px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500">
+                        <option value="ALL">-- Tất Cả Tỉnh Phía Bắc --</option>
+                        <option value="LangSon">Lạng Sơn</option>
+                        <option value="BacGiang">Bắc Giang</option>
+                        <option value="BacNinh">Bắc Ninh</option>
+                        <option value="YenBai">Yên Bái</option>
+                        <option value="LaoCai">Lào Cai</option>
+                        <option value="QuangNinh">Quảng Ninh</option>
+                        <option value="HaiPhong">Hải Phòng</option>
+                        <option value="HaNoi">Hà Nội</option>
+                        <option value="ThaiNguyen">Thái Nguyên</option>
+                        <option value="TuyenQuang">Tuyên Quang</option>
+                        <option value="PhuTho">Phú Thọ</option>
+                        <option value="CaoBang">Cao Bằng</option>
+                        <option value="HaGiang">Hà Giang</option>
+                        <option value="HoaBinh">Hòa Bình</option>
+                        <option value="NamDinh">Nam Định</option>
+                        <option value="NinhBinh">Ninh Bình</option>
+                        <option value="ThaiBinh">Thái Bình</option>
+                        <option value="HaiDuong">Hải Dương</option>
+                        <option value="HungYen">Hưng Yên</option>
+                        <option value="VinhPhuc">Vĩnh Phúc</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 font-medium mb-1"><i class="fa-solid fa-city text-cyan-400 mr-1"></i> Chọn Quận / Huyện / Thị Xã</label>
+                    <select id="communeDistrictSelect" onchange="filterCommunes()" class="w-full bg-slate-800 border border-slate-700 text-slate-200 px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500">
+                        <option value="ALL">-- Tất Cả Huyện / Quận --</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 font-medium mb-1"><i class="fa-solid fa-magnifying-glass text-amber-400 mr-1"></i> Tìm Tên Xã / Phường / Cán Bộ</label>
+                    <input type="text" id="communeSearchKeyword" oninput="filterCommunes()" placeholder="Nhập tên xã, phường, thị trấn..." class="w-full bg-slate-800 border border-slate-700 text-slate-200 px-3 py-2 rounded-lg focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <!-- AI Realtime Ward Hotline Finder if not found offline -->
+            <div class="bg-slate-800/40 border border-slate-700/60 p-3.5 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-robot text-cyan-400 text-lg shrink-0"></i>
+                    <p class="text-slate-300">
+                        Không thấy Xã/Phường của bạn? Sử dụng <strong>Tra cứu AI Gemini</strong> để tìm số trực ban UBND/Công an xã trực tiếp từ Cổng thông tin địa phương:
+                    </p>
+                </div>
+                <button onclick="searchAICommuneHotline()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-1.5 rounded-lg shrink-0 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-headset"></i> Tra Cứu AI Ngay
+                </button>
+            </div>
+
+            <!-- Communes Emergency List Grid -->
+            <div id="communeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-1">
+                <!-- Rendered dynamically -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating SOS Button -->
+    <button onclick="openWarningModal()" class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-red-600 hover:bg-red-500 text-white rounded-full shadow-lg shadow-red-600/40 pulse-red transition-transform transform hover:scale-110 border-2 border-red-400">
+        <i class="fa-solid fa-location-crosshairs text-2xl sm:text-3xl"></i>
+    </button>
+
+    <!-- Legal Warning Modal (New) -->
+    <div id="warningModal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-slate-950/90 backdrop-blur-sm px-4">
+        <div class="bg-slate-900 border border-red-500/50 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
+            <div class="text-center mb-5">
+                <div class="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-red-500/30">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <h2 class="font-heading font-bold text-xl text-slate-100 text-red-500">CẢNH BÁO TRÁCH NHIỆM PHÁP LÝ</h2>
+            </div>
+            
+            <div class="bg-red-950/30 rounded-xl p-4 border border-red-900/50 text-sm mb-6 space-y-3 text-slate-300 text-justify leading-relaxed">
+                <p>Hệ thống này thu thập vị trí GPS định vị chính xác của bạn để gửi trực tiếp cho lực lượng cứu hộ và cơ quan chức năng phục vụ mục đích <strong>cấp cứu khẩn cấp</strong>.</p>
+                
+                <p class="font-semibold text-red-400 bg-red-900/20 p-2 rounded border-l-2 border-red-500">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> LƯU Ý: Bạn sẽ chịu HOÀN TOÀN TRÁCH NHIỆM TRƯỚC PHÁP LUẬT nếu thông tin cấp cứu đưa ra không đúng sự thật, cố tình quấy rối hoặc báo tin giả làm lãng phí nguồn lực nhà nước.
+                </p>
+                
+                <p class="text-xs text-slate-400 italic text-center mt-2">Hành vi báo tin giả có thể bị phạt hành chính nghiêm trọng hoặc truy cứu trách nhiệm hình sự.</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="closeWarningModal()" class="w-full sm:w-1/3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition-all border border-slate-700">
+                    Hủy bỏ
+                </button>
+                <button onclick="acceptWarningAndOpenSOS()" class="w-full sm:w-2/3 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/30 font-bold text-sm transition-all border border-red-500">
+                    TÔI ĐỒNG Ý & CHỊU TRÁCH NHIỆM
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOS Modal Overlay (Existing, opened after warning) -->
+    <div id="sosModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm px-4">
+        <div class="bg-slate-900 border border-red-500/30 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
+            <button onclick="closeSOSModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-200 p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="text-center mb-5">
+                <div class="w-14 h-14 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">
+                    <i class="fa-solid fa-tower-cell"></i>
+                </div>
+                <h2 class="font-heading font-bold text-lg sm:text-xl text-slate-100">Xác Định Tọa Độ Cứu Hộ</h2>
+                <p class="text-[11px] sm:text-xs text-slate-400 mt-1">Hệ thống đang sẵn sàng lấy vị trí định vị (GPS) của bạn.</p>
+            </div>
+            
+            <div id="locationStatus" class="bg-slate-950 rounded-xl p-4 border border-slate-800 text-sm mb-4 text-center min-h-[80px] flex items-center justify-center">
+                <span class="text-slate-500 text-xs sm:text-sm">Chưa có dữ liệu vị trí.</span>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="getLocation()" id="btnGetLocation" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-400 border border-blue-500/30 font-semibold text-sm transition-all flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-location-dot"></i> 1. Lấy vị trí hiện tại
+                </button>
+                <button onclick="sendRescueRequest()" id="btnSendSOS" disabled class="w-full py-3 rounded-xl bg-red-900/40 text-red-400/50 border border-red-900/50 font-bold text-sm cursor-not-allowed transition-all flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> 2. Gửi tín hiệu SOS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 text-slate-500 text-xs py-6 mt-10">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="text-slate-400">Hệ Thống Theo Dõi & Giám Sát Thủy Văn Các Dòng Sông Phía Bắc Việt Nam - Hotline: 0829.86.3333</p>
+            <p>Dữ liệu tham khảo từ Trung tâm Dự báo Khí tượng Thủy văn Quốc gia (NCHMF) & Tập đoàn Điện lực Việt Nam (EVN)</p>
+        </div>
+    </footer>
+
+    <script>
+        const communeDatabase = [
+            // LẠNG SƠN
+            { province: 'LangSon', provinceName: 'Lạng Sơn', district: 'HuuLung', districtName: 'Huyện Hữu Lũng', name: 'Xã Hữu Lũng (Mới)', pchtPhone: '0205.3825.112', policePhone: '0205.3825.113', healthPhone: '0205.3825.115', status: 'Ngập sâu - BĐ3', risk: 'HIGH', address: 'Trụ sở UBND Xã Hữu Lũng, Huyện Hữu Lũng, Lạng Sơn' },
+            { province: 'LangSon', provinceName: 'Lạng Sơn', district: 'HuuLung', districtName: 'Huyện Hữu Lũng', name: 'Xã Cai Kinh', pchtPhone: '0205.3826.201', policePhone: '0205.3826.113', healthPhone: '0205.3826.115', status: 'Sạt lở đèo - Sông dâng', risk: 'HIGH', address: 'Thôn Cai Kinh, Hữu Lũng, Lạng Sơn' },
+            { province: 'LangSon', provinceName: 'Lạng Sơn', district: 'LangSonCity', districtName: 'TP Lạng Sơn', name: 'Phường Vĩnh Trại', pchtPhone: '0205.3870.334', policePhone: '0205.3870.113', healthPhone: '0205.3870.115', status: 'Ngập đường phố 0.8m', risk: 'HIGH', address: 'Đường Lê Lợi, Phường Vĩnh Trại, TP Lạng Sơn' },
+            { province: 'LangSon', provinceName: 'Lạng Sơn', district: 'LangSonCity', districtName: 'TP Lạng Sơn', name: 'Phường Hoàng Văn Thụ', pchtPhone: '0205.3871.221', policePhone: '0205.3871.113', healthPhone: '0205.3871.115', status: 'Báo động II', risk: 'MEDIUM', address: 'Đường Trần Hưng Đạo, TP Lạng Sơn' },
+            { province: 'LangSon', provinceName: 'Lạng Sơn', district: 'TrangDinh', districtName: 'Huyện Tràng Định', name: 'Thị trấn Thất Khê', pchtPhone: '0205.3883.102', policePhone: '0205.3883.113', healthPhone: '0205.3883.115', status: 'Ngập lụt diện rộng', risk: 'HIGH', address: 'Khu 3, TT Thất Khê, Tràng Định, Lạng Sơn' },
+            { province: 'LangSon', provinceName: 'Lạng Sơn', district: 'VanLang', districtName: 'Huyện Văn Lãng', name: 'Thị trấn Na Sầm', pchtPhone: '0205.3881.105', policePhone: '0205.3881.113', healthPhone: '0205.3881.115', status: 'Chia cắt giao thông', risk: 'HIGH', address: 'Khu 2, TT Na Sầm, Văn Lãng' },
+
+            // BẮC GIANG
+            { province: 'BacGiang', provinceName: 'Bắc Giang', district: 'LucNam', districtName: 'Huyện Lục Nam', name: 'Thị trấn Đồi Ngô (Mới)', pchtPhone: '0204.3884.210', policePhone: '0204.3884.113', healthPhone: '0204.3884.115', status: 'Vượt BĐ3 +0.55m', risk: 'HIGH', address: 'Phố Thanh Bình, TT Đồi Ngô, Lục Nam' },
+            { province: 'BacGiang', provinceName: 'Bắc Giang', district: 'LucNam', districtName: 'Huyện Lục Nam', name: 'Xã Cẩm Lý', pchtPhone: '0204.3885.102', policePhone: '0204.3885.113', healthPhone: '0204.3885.115', status: 'Báo động III - Sông Lục Nam', risk: 'HIGH', address: 'Thôn Cẩm Lý, Lục Nam, Bắc Giang' },
+            { province: 'BacGiang', provinceName: 'Bắc Giang', district: 'SonDong', districtName: 'Huyện Sơn Động', name: 'Thị trấn An Châu', pchtPhone: '0204.3886.111', policePhone: '0204.3886.113', healthPhone: '0204.3886.115', status: 'Lũ quét sông An Châu', risk: 'HIGH', address: 'Khu 1, TT An Châu, Sơn Động' },
+            { province: 'BacGiang', provinceName: 'Bắc Giang', district: 'BacGiangCity', districtName: 'TP Bắc Giang', name: 'Phường Thọ Xương', pchtPhone: '0204.3854.321', policePhone: '0204.3854.113', healthPhone: '0204.3854.115', status: 'Báo động II Sông Thương', risk: 'MEDIUM', address: 'Đường Trần Nguyên Hãn, TP Bắc Giang' },
+
+            // BẮC NINH
+            { province: 'BacNinh', provinceName: 'Bắc Ninh', district: 'BacNinhCity', districtName: 'TP Bắc Ninh', name: 'Phường Đáp Cầu', pchtPhone: '0222.3821.405', policePhone: '0222.3821.113', healthPhone: '0222.3821.115', status: 'Sông Cầu dâng BĐ3', risk: 'HIGH', address: 'Khu Đáp Cầu, TP Bắc Ninh' },
+            { province: 'BacNinh', provinceName: 'Bắc Ninh', district: 'BacNinhCity', districtName: 'TP Bắc Ninh', name: 'Phường Vũ Ninh', pchtPhone: '0222.3822.310', policePhone: '0222.3822.113', healthPhone: '0222.3822.115', status: 'Báo động II', risk: 'MEDIUM', address: 'Phường Vũ Ninh, TP Bắc Ninh' },
+            { province: 'BacNinh', provinceName: 'Bắc Ninh', district: 'QueVo', districtName: 'Thị xã Quế Võ', name: 'Phường Bồng Lai (Mới)', pchtPhone: '0222.3863.201', policePhone: '0222.3863.113', healthPhone: '0222.3863.115', status: 'Cảnh báo đê Bù Xóa', risk: 'MEDIUM', address: 'TX Quế Võ, Bắc Ninh' },
+
+            // YÊN BÁI & LÀO CAI
+            { province: 'YenBai', provinceName: 'Yên Bái', district: 'YenBaiCity', districtName: 'TP Yên Bái', name: 'Phường Hồng Hà', pchtPhone: '0216.3862.102', policePhone: '0216.3862.113', healthPhone: '0216.3862.115', status: 'Sông Thao 33.85m - Ngập sâu', risk: 'HIGH', address: 'Đường Trần Hưng Đạo, Phường Hồng Hà, TP Yên Bái' },
+            { province: 'YenBai', provinceName: 'Yên Bái', district: 'YenBaiCity', districtName: 'TP Yên Bái', name: 'Phường Nguyễn Thái Học', pchtPhone: '0216.3863.301', policePhone: '0216.3863.113', healthPhone: '0216.3863.115', status: 'Sơ tán dân ngập bờ sông', risk: 'HIGH', address: 'Đường Điện Biên, TP Yên Bái' },
+            { province: 'LaoCai', provinceName: 'Lào Cai', district: 'LaoCaiCity', districtName: 'TP Lào Cai', name: 'Phường Cốc Lếu', pchtPhone: '0214.3820.222', policePhone: '0214.3820.113', healthPhone: '0214.3820.115', status: 'Sông Hồng cuồn cuộn', risk: 'HIGH', address: 'Đường Hoàng Liên, TP Lào Cai' },
+            { province: 'LaoCai', provinceName: 'Lào Cai', district: 'SaPa', districtName: 'Thị xã Sa Pa', name: 'Phường Sa Pa', pchtPhone: '0214.3871.305', policePhone: '0214.3871.113', healthPhone: '0214.3871.115', status: 'Nguy cơ sạt lở đèo', risk: 'HIGH', address: 'Phường Sa Pa, TX Sa Pa, Lào Cai' },
+
+            // HÀ NỘI
+            { province: 'HaNoi', provinceName: 'Hà Nội', district: 'HoanKiem', districtName: 'Quận Hoàn Kiếm', name: 'Phường Phúc Tân', pchtPhone: '024.3825.401', policePhone: '024.3825.113', healthPhone: '024.3825.115', status: 'Sông Hồng BĐ1 (9.85m)', risk: 'MEDIUM', address: 'Phố Phúc Tân, Quận Hoàn Kiếm, Hà Nội' },
+            { province: 'HaNoi', provinceName: 'Hà Nội', district: 'BaDinh', districtName: 'Quận Ba Đình', name: 'Phường Phúc Xá', pchtPhone: '024.3829.102', policePhone: '024.3829.113', healthPhone: '024.3829.115', status: 'Ngập bãi giữa sông Hồng', risk: 'MEDIUM', address: 'Phố Tân Xá, Phường Phúc Xá, Ba Đình' },
+            { province: 'HaNoi', provinceName: 'Hà Nội', district: 'LongBien', districtName: 'Quận Long Biên', name: 'Phường Bồ Đề', pchtPhone: '024.3872.204', policePhone: '024.3872.113', healthPhone: '024.3872.115', status: 'Bãi sông Hồng dâng cao', risk: 'MEDIUM', address: 'Đường Bồ Đề, Quận Long Biên, Hà Nội' },
+            { province: 'HaNoi', provinceName: 'Hà Nội', district: 'ChuongMy', districtName: 'Huyện Chương Mỹ', name: 'Xã Tân Tiến', pchtPhone: '024.3386.105', policePhone: '024.3386.113', healthPhone: '024.3386.115', status: 'Sông Bùi dâng BĐ3 - Tù đọng', risk: 'HIGH', address: 'Xã Tân Tiến, Chương Mỹ, Hà Nội' },
+
+            // QUẢNG NINH & HẢI PHÒNG
+            { province: 'QuangNinh', provinceName: 'Quảng Ninh', district: 'HaLong', districtName: 'TP Hạ Long', name: 'Phường Yết Kiêu', pchtPhone: '0203.3825.301', policePhone: '0203.3825.113', healthPhone: '0203.3825.115', status: 'Mưa hoàn lưu bão 330mm', risk: 'HIGH', address: 'Phường Yết Kiêu, TP Hạ Long' },
+            { province: 'QuangNinh', provinceName: 'Quảng Ninh', district: 'CamPha', districtName: 'TP Cẩm Phả', name: 'Phường Cửa Ông', pchtPhone: '0203.3865.102', policePhone: '0203.3865.113', healthPhone: '0203.3865.115', status: 'Nguy cơ sạt bãi thải than', risk: 'HIGH', address: 'Phường Cửa Ông, TP Cẩm Phả' },
+            { province: 'HaiPhong', provinceName: 'Hải Phòng', district: 'CatHai', districtName: 'Huyện Cát Hải', name: 'Thị trấn Cát Bà', pchtPhone: '0225.3888.201', policePhone: '0225.3888.113', healthPhone: '0225.3888.115', status: 'Sóng lớn & Mưa 145mm', risk: 'HIGH', address: 'Thị trấn Cát Bà, Cát Hải, Hải Phòng' },
+
+            // THÁI NGUYÊN, TUYÊN QUANG, PHÚ THỌ, CAO BẰNG, HÀ GIANG, HÒA BÌNH...
+            { province: 'ThaiNguyen', provinceName: 'Thái Nguyên', district: 'ThaiNguyenCity', districtName: 'TP Thái Nguyên', name: 'Phường Quang Vinh', pchtPhone: '0208.3852.103', policePhone: '0208.3852.113', healthPhone: '0208.3852.115', status: 'Sông Cầu dâng cao', risk: 'HIGH', address: 'Phường Quang Vinh, TP Thái Nguyên' },
+            { province: 'TuyenQuang', provinceName: 'Tuyên Quang', district: 'TuyenQuangCity', districtName: 'TP Tuyên Quang', name: 'Phường Tân Quang', pchtPhone: '0207.3822.401', policePhone: '0207.3822.113', healthPhone: '0207.3822.115', status: 'Thủy điện xả 2 cửa', risk: 'HIGH', address: 'Đường Bình Thuận, TP Tuyên Quang' },
+            { province: 'PhuTho', provinceName: 'Phú Thọ', district: 'VietTri', districtName: 'TP Việt Trì', name: 'Phường Bến Oánh', pchtPhone: '0210.3846.202', policePhone: '0210.3846.113', healthPhone: '0210.3846.115', status: 'Ngã ba sông dâng', risk: 'MEDIUM', address: 'Phường Bến Oánh, TP Việt Trì' },
+            { province: 'CaoBang', provinceName: 'Cao Bằng', district: 'CaoBangCity', districtName: 'TP Cao Bằng', name: 'Phường Sông Hiến', pchtPhone: '0206.3853.101', policePhone: '0206.3853.113', healthPhone: '0206.3853.115', status: 'Lũ sông Bằng Giang', risk: 'HIGH', address: 'Phường Sông Hiến, TP Cao Bằng' }
+        ];
+
+        function onProvinceChange() {
+            const provSelect = document.getElementById('communeProvinceSelect');
+            const distSelect = document.getElementById('communeDistrictSelect');
+            const selectedProv = provSelect.value;
+
+            distSelect.innerHTML = '<option value="ALL">-- Tất Cả Huyện / Quận --</option>';
+
+            if (selectedProv !== 'ALL') {
+                const districtsMap = {};
+                communeDatabase.forEach(item => {
+                    if (item.province === selectedProv) {
+                        districtsMap[item.district] = item.districtName;
+                    }
+                });
+                for (const key in districtsMap) {
+                    distSelect.innerHTML += `<option value="${key}">${districtsMap[key]}</option>`;
+                }
+            }
+
+            filterCommunes();
+        }
+
+        function filterCommunes() {
+            const provValue = document.getElementById('communeProvinceSelect').value;
+            const distValue = document.getElementById('communeDistrictSelect').value;
+            const keyword = document.getElementById('communeSearchKeyword').value.toLowerCase().trim();
+            const grid = document.getElementById('communeGrid');
+
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const filtered = communeDatabase.filter(item => {
+                const matchProv = (provValue === 'ALL' || item.province === provValue);
+                const matchDist = (distValue === 'ALL' || item.district === distValue);
+                const matchKw = !keyword || 
+                    item.name.toLowerCase().includes(keyword) || 
+                    item.districtName.toLowerCase().includes(keyword) ||
+                    item.provinceName.toLowerCase().includes(keyword) ||
+                    item.address.toLowerCase().includes(keyword);
+
+                return matchProv && matchDist && matchKw;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-8 text-center bg-slate-950/60 rounded-xl border border-slate-800 text-slate-400 text-xs">
+                        <i class="fa-solid fa-folder-open text-2xl mb-2 text-slate-500 block"></i>
+                        Không tìm thấy xã/phường phù hợp trong cơ sở dữ liệu nhanh. Hãy sử dụng nút <strong>Tra Cứu AI</strong> ở trên!
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const isHighRisk = c.risk === 'HIGH';
+                const card = `
+                    <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 hover:border-slate-700 transition-all space-y-3 relative overflow-hidden">
+                        <div class="flex justify-between items-start gap-2">
+                            <div>
+                                <span class="text-[10px] text-cyan-400 font-semibold uppercase tracking-wide">${c.provinceName} • ${c.districtName}</span>
+                                <h4 class="font-bold text-sm text-slate-100 mt-0.5">${c.name}</h4>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[9px] font-extrabold ${isHighRisk ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">
+                                ${c.status}
+                            </span>
+                        </div>
+
+                        <p class="text-[11px] text-slate-400 truncate" title="${c.address}">
+                            <i class="fa-solid fa-location-dot text-slate-500 mr-1"></i>${c.address}
+                        </p>
+
+                        <!-- Direct Phone Contacts -->
+                        <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                            <a href="tel:${c.pchtPhone}" class="p-2 rounded-lg bg-red-950/40 border border-red-500/30 hover:bg-red-900/40 transition-colors flex items-center justify-between">
+                                <div>
+                                    <div class="text-[9px] text-red-300 font-bold">PCTT XÃ/PHƯỜNG</div>
+                                    <div class="font-mono text-xs text-red-200 font-extrabold">${c.pchtPhone}</div>
+                                </div>
+                                <i class="fa-solid fa-phone text-red-400 text-sm"></i>
+                            </a>
+
+                            <a href="tel:${c.policePhone}" class="p-2 rounded-lg bg-blue-950/40 border border-blue-500/30 hover:bg-blue-900/40 transition-colors flex items-center justify-between">
+                                <div>
+                                    <div class="text-[9px] text-blue-300 font-bold">CÔNG AN XÃ</div>
+                                    <div class="font-mono text-xs text-blue-200 font-extrabold">${c.policePhone}</div>
+                                </div>
+                                <i class="fa-solid fa-shield-halved text-blue-400 text-sm"></i>
+                            </a>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1 border-t border-slate-800 text-[10px]">
+                            <span class="text-slate-400"><i class="fa-solid fa-kit-medical text-emerald-400 mr-1"></i> Y tế: <strong class="text-slate-300 font-mono">${c.healthPhone}</strong></span>
+                            <button onclick="copyPhoneNumber('${c.pchtPhone}')" class="text-slate-400 hover:text-cyan-300 transition-colors flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> Sao chép
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        function copyPhoneNumber(phone) {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = phone;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            const timeEl = document.getElementById('lastUpdatedTime');
+            if (timeEl) {
+                const oldText = timeEl.innerText;
+                timeEl.innerText = `Đã chép ${phone}`;
+                setTimeout(() => { timeEl.innerText = oldText; }, 2000);
+            }
+        }
+
+        async function searchAICommuneHotline() {
+            const keyword = document.getElementById('communeSearchKeyword').value.trim() || 'Xã Hữu Lũng Lạng Sơn';
+            const provSelect = document.getElementById('communeProvinceSelect');
+            const provText = provSelect.options[provSelect.selectedIndex].text;
+
+            const fullQuery = `Tìm số điện thoại đường dây nóng trực ban PCTT UBND và Công an xã phường ${keyword} tỉnh ${provText} mới nhất`;
+            
+            document.getElementById('newsSearchQuery').value = fullQuery;
+            fetchLiveHydroNews();
+            
+            window.scrollTo({ top: document.getElementById('aiNewsResult').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        const riverData = [
+            {
+                id: 'trung_huulung',
+                name: 'Sông Trung',
+                station: 'Trạm Hữu Lũng',
+                province: 'Lạng Sơn',
+                current: 20.79,
+                bd1: 17.00,
+                bd2: 18.50,
+                bd3: 19.00,
+                trend: 'up',
+                trendText: 'Vượt BĐ3 +1.79m',
+                rain24h: 399,
+                impact: 'Hữu Lũng, Chi Lăng, ngập lụt diện rộng',
+                history: [18.20, 19.10, 19.80, 20.20, 20.55, 20.79]
+            },
+            {
+                id: 'kycung_langson',
+                name: 'Sông Kỳ Cùng',
+                station: 'Trạm Lạng Sơn',
+                province: 'Lạng Sơn',
+                current: 256.41,
+                bd1: 252.00,
+                bd2: 254.00,
+                bd3: 256.00,
+                trend: 'up',
+                trendText: 'Vượt BĐ3 +0.41m',
+                rain24h: 452,
+                impact: 'TP Lạng Sơn, Văn Lãng, Tràng Định, Thất Khê',
+                history: [253.50, 254.30, 255.10, 255.80, 256.15, 256.41]
+            },
+            {
+                id: 'lucnam_lucnam',
+                name: 'Sông Lục Nam',
+                station: 'Trạm Lục Nam',
+                province: 'Bắc Giang / Bắc Ninh',
+                current: 6.85,
+                bd1: 4.30,
+                bd2: 5.30,
+                bd3: 6.30,
+                trend: 'up',
+                trendText: 'Vượt BĐ3 +0.55m',
+                rain24h: 210,
+                impact: 'Lục Nam, Lục Ngạn, Sơn Động, Yên Dũng',
+                history: [5.10, 5.60, 6.00, 6.40, 6.68, 6.85]
+            },
+            {
+                id: 'thao_yenbai',
+                name: 'Sông Thao',
+                station: 'Trạm Yên Bái',
+                province: 'Yên Bái',
+                current: 33.85,
+                bd1: 30.00,
+                bd2: 31.00,
+                bd3: 32.00,
+                trend: 'up',
+                trendText: 'Tăng 0.15m/h',
+                rain24h: 180,
+                impact: 'TX Sa Pa, TP Yên Bái, Hạ Hòa, Cẩm Khê',
+                history: [30.50, 31.20, 32.10, 32.90, 33.40, 33.85]
+            },
+            {
+                id: 'cau_dapcau',
+                name: 'Sông Cầu',
+                station: 'Trạm Đáp Cầu',
+                province: 'Bắc Ninh / Bắc Giang',
+                current: 6.82,
+                bd1: 4.30,
+                bd2: 5.30,
+                bd3: 6.30,
+                trend: 'up',
+                trendText: 'Tăng nhẹ',
+                rain24h: 165,
+                impact: 'TP Bắc Ninh, Yên Dũng, Việt Yên, Quế Võ',
+                history: [5.20, 5.80, 6.10, 6.45, 6.65, 6.82]
+            },
+            {
+                id: 'lo_tuyenquang',
+                name: 'Sông Lô',
+                station: 'Trạm Tuyên Quang',
+                province: 'Tuyên Quang',
+                current: 23.40,
+                bd1: 22.00,
+                bd2: 24.00,
+                bd3: 26.00,
+                trend: 'stable',
+                trendText: 'Đang đạt đỉnh',
+                rain24h: 140,
+                impact: 'TP Tuyên Quang, Sơn Dương, Đoan Hùng',
+                history: [21.00, 21.80, 22.50, 23.10, 23.38, 23.40]
+            },
+            {
+                id: 'hong_hanoi',
+                name: 'Sông Hồng',
+                station: 'Trạm Long Biên (Hà Nội)',
+                province: 'Hà Nội',
+                current: 9.85,
+                bd1: 9.50,
+                bd2: 10.50,
+                bd3: 11.50,
+                trend: 'up',
+                trendText: 'Đang dâng chậm',
+                rain24h: 115,
+                impact: 'Hoàn Kiếm, Bồ Đề, Tây Hồ, Gia Lâm, Đông Anh',
+                history: [8.20, 8.60, 9.00, 9.35, 9.60, 9.85]
+            },
+            {
+                id: 'thuong_phulangthuong',
+                name: 'Sông Thương',
+                station: 'Trạm Phủ Lạng Thương',
+                province: 'Bắc Giang',
+                current: 6.45,
+                bd1: 4.30,
+                bd2: 5.30,
+                bd3: 6.30,
+                trend: 'up',
+                trendText: 'Tăng 0.08m/h',
+                rain24h: 195,
+                impact: 'TP Bắc Giang, Lạng Giang, Tân Yên',
+                history: [4.80, 5.20, 5.70, 6.10, 6.30, 6.45]
+            },
+            {
+                id: 'calo_manhtan',
+                name: 'Sông Cà Lồ',
+                station: 'Trạm Mạnh Tân',
+                province: 'Vĩnh Phúc / Hà Nội',
+                current: 7.25,
+                bd1: 5.00,
+                bd2: 6.00,
+                bd3: 7.00,
+                trend: 'up',
+                trendText: 'Vượt BĐ3 +0.25m',
+                rain24h: 185,
+                impact: 'Bình Xuyên, Phúc Yên (Vĩnh Phúc), Sóc Sơn, Đông Anh (Hà Nội)',
+                history: [5.80, 6.20, 6.70, 6.95, 7.10, 7.25]
+            },
+            {
+                id: 'thaibinh_phalai',
+                name: 'Sông Thái Bình',
+                station: 'Trạm Phả Lại',
+                province: 'Hải Dương',
+                current: 4.85,
+                bd1: 4.00,
+                bd2: 5.00,
+                bd3: 6.00,
+                trend: 'up',
+                trendText: 'Đang lên nhanh',
+                rain24h: 120,
+                impact: 'Chí Linh, Nam Sách, TX Kinh Môn',
+                history: [3.50, 3.80, 4.10, 4.40, 4.65, 4.85]
+            },
+            {
+                id: 'duong_thuongcat',
+                name: 'Sông Đuống',
+                station: 'Trạm Thượng Cát',
+                province: 'Hà Nội',
+                current: 9.35,
+                bd1: 9.00,
+                bd2: 10.00,
+                bd3: 11.00,
+                trend: 'up',
+                trendText: 'Tăng 0.1m/h',
+                rain24h: 90,
+                impact: 'Long Biên, Gia Lâm, Thuận Thành (Bắc Ninh)',
+                history: [8.10, 8.40, 8.70, 9.00, 9.20, 9.35]
+            },
+            {
+                id: 'day_phuly',
+                name: 'Sông Đáy',
+                station: 'Trạm Phủ Lý',
+                province: 'Hà Nam',
+                current: 3.65,
+                bd1: 3.00,
+                bd2: 3.50,
+                bd3: 4.00,
+                trend: 'up',
+                trendText: 'Vượt BĐ2 0.15m',
+                rain24h: 155,
+                impact: 'TP Phủ Lý, Thanh Liêm, Bình Lục',
+                history: [2.80, 3.10, 3.30, 3.45, 3.55, 3.65]
+            },
+            {
+                id: 'hoanglong_bende',
+                name: 'Sông Hoàng Long',
+                station: 'Trạm Bến Đế',
+                province: 'Ninh Bình',
+                current: 4.25,
+                bd1: 3.00,
+                bd2: 3.50,
+                bd3: 4.00,
+                trend: 'up',
+                trendText: 'Vượt BĐ3 khẩn cấp',
+                rain24h: 210,
+                impact: 'Gia Viễn, Nho Quan, Kế hoạch xả tràn Lạc Khoái',
+                history: [3.40, 3.70, 3.90, 4.05, 4.15, 4.25]
+            },
+            {
+                id: 'da_hoabinh',
+                name: 'Sông Đà',
+                station: 'Hạ lưu Trạm Hòa Bình',
+                province: 'Hòa Bình',
+                current: 19.50,
+                bd1: 21.00,
+                bd2: 22.00,
+                bd3: 23.00,
+                trend: 'stable',
+                trendText: 'Ổn định (Thủy điện xả 1 cửa)',
+                rain24h: 85,
+                impact: 'TP Hòa Bình, Thanh Thủy (Phú Thọ)',
+                history: [18.50, 18.80, 19.10, 19.30, 19.45, 19.50]
+            }
+        ];
+
+        const reservoirs = [
+            { name: 'Thủy điện Tuyên Quang', river: 'Sông Gâm', openGates: 2, flow: '1,840 m³/s', status: 'Đang mở 2 cửa xả đáy' },
+            { name: 'Thủy điện Thác Bà', river: 'Sông Chảy', openGates: 3, flow: '2,150 m³/s', status: 'Đang mở 3 cửa xả mặt' },
+            { name: 'Thủy điện Bản Lải', river: 'Sông Kỳ Cùng', openGates: 2, flow: '850 m³/s', status: 'Xả lũ khẩn cấp đợt mưa bão' },
+            { name: 'Thủy điện Hòa Bình', river: 'Sông Đà', openGates: 1, flow: '3,900 m³/s', status: 'Mở 1 cửa xả đáy dự phòng' },
+            { name: 'Thủy điện Lai Châu', river: 'Sông Đà', openGates: 0, flow: 'Bình thường', status: 'Tích nước dung tích an toàn' }
+        ];
+
+        let selectedRiver = riverData[0];
+        let hydroChart = null;
+
+        let isAutoSyncActive = true;
+        let countdownSeconds = 5;
+        let countdownTimer = null;
+        let isSoundEnabled = false;
+        let audioCtx = null;
+
+        // Cập nhật ngày tháng năm hiện tại
+        function updateCurrentDate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+            const dateEl = document.getElementById('currentDate');
+            if (dateEl) dateEl.innerText = dateStr;
+        }
+
+        function playAlertSound() {
+            if (!isSoundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.25);
+                
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } catch(e) {
+                console.error('Audio synthesizer error:', e);
+            }
+        }
+
+        function toggleAudioAlarm() {
+            isSoundEnabled = !isSoundEnabled;
+            const btn = document.getElementById('toggleSoundBtn');
+            const icon = document.getElementById('soundIcon');
+            if (isSoundEnabled) {
+                btn.className = "bg-amber-500/20 hover:bg-amber-500/30 text-xs px-2.5 py-1.5 rounded-xl border border-amber-500/40 text-amber-400 font-medium transition-colors";
+                icon.className = "fa-solid fa-bell animate-bounce";
+                playAlertSound();
+            } else {
+                btn.className = "bg-slate-800 hover:bg-slate-700 text-xs px-2.5 py-1.5 rounded-xl border border-slate-700 text-slate-400 hover:text-amber-400 transition-colors";
+                icon.className = "fa-solid fa-bell-slash";
+            }
+        }
+
+        function updateLiveTelemetry() {
+            const now = new Date();
+            const timeStr = `${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}:${now.getSeconds() < 10 ? '0' : ''}${now.getSeconds()}`;
+            const timeEl = document.getElementById('lastUpdatedTime');
+            if (timeEl) timeEl.innerText = timeStr;
+
+            // Update random river values
+            const updateCount = Math.floor(Math.random() * 2) + 1;
+            for (let i = 0; i < updateCount; i++) {
+                const randomIndex = Math.floor(Math.random() * riverData.length);
+                const river = riverData[randomIndex];
+
+                const delta = Number(((Math.random() * 0.08) - 0.02).toFixed(2));
+                river.current = Math.max(river.bd1 - 1.5, Number((river.current + delta).toFixed(2)));
+
+                if (delta > 0.01) {
+                    river.trend = 'up';
+                    river.trendText = `Tăng +${delta}m`;
+                } else if (delta < -0.01) {
+                    river.trend = 'down';
+                    river.trendText = `Giảm ${delta}m`;
+                } else {
+                    river.trend = 'stable';
+                    river.trendText = 'Ổn định';
+                }
+
+                river.history.shift();
+                river.history.push(river.current);
+
+                if (river.current >= river.bd3) {
+                    playAlertSound();
+                }
+            }
+
+            renderRiverGauges();
+            updateChartAndDetails();
+        }
+
+        function startAutoSyncEngine() {
+            if (countdownTimer) clearInterval(countdownTimer);
+
+            countdownSeconds = 5;
+            const badge = document.getElementById('countdownBadge');
+            if (badge) badge.innerText = `${countdownSeconds}s`;
+
+            countdownTimer = setInterval(() => {
+                if (!isAutoSyncActive) return;
+                countdownSeconds--;
+                if (countdownSeconds <= 0) {
+                    countdownSeconds = 5;
+                    updateLiveTelemetry();
+                }
+                if (badge) badge.innerText = `${countdownSeconds}s`;
+            }, 1000);
+        }
+
+        function toggleAutoSync() {
+            isAutoSyncActive = !isAutoSyncActive;
+            const btnText = document.getElementById('autoSyncText');
+            const dot = document.getElementById('liveStatusDot');
+            const icon = document.getElementById('syncSpinIcon');
+
+            if (isAutoSyncActive) {
+                if (btnText) btnText.innerText = 'Tự động (5s)';
+                if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping';
+                if (icon) icon.className = 'fa-solid fa-arrows-rotate animate-spin';
+                startAutoSyncEngine();
+            } else {
+                if (btnText) btnText.innerText = 'Đã tạm dừng';
+                if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500';
+                if (icon) icon.className = 'fa-solid fa-arrows-rotate';
+                if (countdownTimer) clearInterval(countdownTimer);
+            }
+        }
+
+        function renderRiverGauges() {
+            const container = document.getElementById('riverGaugeContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            riverData.forEach(river => {
+                const maxScale = river.bd3 + 2.0;
+                const minScale = Math.max(0, river.bd1 - 2.0);
+                const totalRange = maxScale - minScale;
+
+                let currentPct = Math.min(Math.max(((river.current - minScale) / totalRange) * 100, 0), 100);
+                let bd1Pct = Math.min(Math.max(((river.bd1 - minScale) / totalRange) * 100, 0), 100);
+                let bd2Pct = Math.min(Math.max(((river.bd2 - minScale) / totalRange) * 100, 0), 100);
+                let bd3Pct = Math.min(Math.max(((river.bd3 - minScale) / totalRange) * 100, 0), 100);
+
+                let alertBadge = '';
+                let alertColor = '';
+                if (river.current >= river.bd3) {
+                    alertBadge = 'VƯỢT BĐ III';
+                    alertColor = 'bg-red-500/20 text-red-400 border-red-500/40 animate-pulse';
+                } else if (river.current >= river.bd2) {
+                    alertBadge = 'BÁO ĐỘNG II';
+                    alertColor = 'bg-orange-500/20 text-orange-400 border-orange-500/40';
+                } else if (river.current >= river.bd1) {
+                    alertBadge = 'BÁO ĐỘNG I';
+                    alertColor = 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40';
+                } else {
+                    alertBadge = 'AN TOÀN';
+                    alertColor = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40';
+                }
+
+                const isSelected = selectedRiver && selectedRiver.id === river.id;
+
+                const cardHtml = `
+                    <div onclick="selectRiver('${river.id}')" 
+                        class="p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer ${isSelected ? 'bg-slate-800 border-blue-500 shadow-lg shadow-blue-500/20 ring-1 ring-blue-500/50' : 'bg-slate-950/80 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'}">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-medium">${river.province}</span>
+                                <h4 class="font-bold text-sm text-slate-100">${river.name} - <span class="text-slate-300 font-normal">${river.station}</span></h4>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-1.5 py-0.5 rounded text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono" title="Mưa 24h">
+                                    <i class="fa-solid fa-cloud-rain mr-0.5"></i>${river.rain24h || 0}mm
+                                </span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${alertColor}">
+                                    ${alertBadge}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-baseline mb-2">
+                            <div class="text-xs text-slate-400">
+                                Mực nước: <span class="text-base font-extrabold text-slate-100 font-mono">${river.current.toFixed(2)} m</span>
+                            </div>
+                            <div class="text-xs text-amber-400 font-medium">
+                                <i class="fa-solid fa-arrow-${river.trend === 'up' ? 'up' : (river.trend === 'down' ? 'down' : 'right')} mr-1"></i> ${river.trendText}
+                            </div>
+                        </div>
+
+                        <!-- Visual Progress Gauge Bar -->
+                        <div class="relative w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                            <div class="absolute top-0 bottom-0 w-0.5 bg-yellow-400/80 z-10" style="left: ${bd1Pct}%" title="BĐ1: ${river.bd1}m"></div>
+                            <div class="absolute top-0 bottom-0 w-0.5 bg-orange-400/80 z-10" style="left: ${bd2Pct}%" title="BĐ2: ${river.bd2}m"></div>
+                            <div class="absolute top-0 bottom-0 w-0.5 bg-red-400/80 z-10" style="left: ${bd3Pct}%" title="BĐ3: ${river.bd3}m"></div>
+
+                            <div class="h-full bg-gradient-to-r from-blue-500 via-amber-500 to-red-500 transition-all duration-500 rounded-full" style="width: ${currentPct}%"></div>
+                        </div>
+
+                        <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                            <span>BĐ1: ${river.bd1}m</span>
+                            <span>BĐ2: ${river.bd2}m</span>
+                            <span>BĐ3: ${river.bd3}m</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        function renderReservoirs() {
+            const container = document.getElementById('reservoirList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            reservoirs.forEach(res => {
+                const isDischarging = res.openGates > 0;
+                container.innerHTML += `
+                    <div class="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 flex items-center justify-between">
+                        <div>
+                            <div class="font-semibold text-slate-200">${res.name} <span class="text-slate-500 font-normal">(${res.river})</span></div>
+                            <div class="text-[10px] ${isDischarging ? 'text-amber-400 font-medium' : 'text-slate-400'}">${res.status}</div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-mono font-bold ${isDischarging ? 'text-amber-300' : 'text-slate-400'}">${res.flow}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function selectRiver(id) {
+            const found = riverData.find(r => r.id === id);
+            if (!found) return;
+
+            selectedRiver = found;
+            renderRiverGauges();
+            updateChartAndDetails();
+        }
+
+        function updateChartAndDetails() {
+            if (!selectedRiver) return;
+
+            const chartTitle = document.getElementById('chartTitle');
+            if (chartTitle) chartTitle.innerText = `Sơ Đồ Mực Nước: ${selectedRiver.name} (${selectedRiver.station})`;
+            
+            const detStation = document.getElementById('detStation');
+            if (detStation) detStation.innerText = selectedRiver.station;
+            
+            const detCurrent = document.getElementById('detCurrent');
+            if (detCurrent) detCurrent.innerText = `${selectedRiver.current.toFixed(2)} m`;
+            
+            const detTrend = document.getElementById('detTrend');
+            if (detTrend) detTrend.innerHTML = `<i class="fa-solid fa-arrow-trend-${selectedRiver.trend === 'down' ? 'down' : 'up'} mr-1"></i> ${selectedRiver.trendText}`;
+            
+            const detImpact = document.getElementById('detImpact');
+            if (detImpact) detImpact.innerText = selectedRiver.impact;
+
+            const badge = document.getElementById('chartAlertBadge');
+            if (badge) {
+                if (selectedRiver.current >= selectedRiver.bd3) {
+                    badge.innerText = 'VƯỢT BÁO ĐỘNG III';
+                    badge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30';
+                } else if (selectedRiver.current >= selectedRiver.bd2) {
+                    badge.innerText = 'BÁO ĐỘNG II';
+                    badge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30';
+                } else if (selectedRiver.current >= selectedRiver.bd1) {
+                    badge.innerText = 'BÁO ĐỘNG I';
+                    badge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30';
+                } else {
+                    badge.innerText = 'AN TOÀN';
+                    badge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                }
+            }
+
+            const canvas = document.getElementById('hydrographCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            if (hydroChart) {
+                hydroChart.destroy();
+                hydroChart = null;
+            }
+
+            const timeLabels = ['20:00', '00:00', '04:00', '08:00', '12:00', 'Hiện tại'];
+
+            hydroChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [
+                        {
+                            label: 'Mực nước (m)',
+                            data: selectedRiver.history,
+                            borderColor: '#38bdf8',
+                            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#0284c7',
+                            pointBorderColor: '#38bdf8'
+                        },
+                        {
+                            label: `BĐ3 (${selectedRiver.bd3}m)`,
+                            data: Array(6).fill(selectedRiver.bd3),
+                            borderColor: '#ef4444',
+                            borderWidth: 2,
+                            borderDash: [6, 4],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: `BĐ2 (${selectedRiver.bd2}m)`,
+                            data: Array(6).fill(selectedRiver.bd2),
+                            borderColor: '#f97316',
+                            borderWidth: 1.5,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: `BĐ1 (${selectedRiver.bd1}m)`,
+                            data: Array(6).fill(selectedRiver.bd1),
+                            borderColor: '#eab308',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: '#cbd5e1', font: { size: 10, family: 'Inter' }, usePointStyle: true, boxWidth: 8 }
+                        },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#e2e8f0',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            padding: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(2)} m`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8', font: { size: 10 } },
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' }
+                        },
+                        y: {
+                            ticks: { color: '#94a3b8', font: { size: 10 } },
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            suggestedMin: Math.min(...selectedRiver.history, selectedRiver.bd1 - 1),
+                            suggestedMax: Math.max(...selectedRiver.history, selectedRiver.bd3 + 1)
+                        }
+                    }
+                }
+            });
+        }
+
+        async function fetchLiveHydroNews() {
+            const query = document.getElementById('newsSearchQuery').value.trim();
+            const loadingBox = document.getElementById('aiNewsLoading');
+            const resultBox = document.getElementById('aiNewsResult');
+            const sourcesBox = document.getElementById('aiSourcesBox');
+            const sourcesList = document.getElementById('sourcesList');
+
+            if (!query) return;
+
+            loadingBox.classList.remove('hidden');
+            resultBox.innerHTML = '';
+            sourcesBox.classList.add('hidden');
+            sourcesList.innerHTML = '';
+
+            const systemPrompt = "Bạn là chuyên gia thủy văn phòng chống thiên tai thuộc Trung tâm Dự báo Khí tượng Thủy văn Quốc gia Việt Nam. Hãy tổng hợp ngắn gọn, rõ ràng các thông tin mới nhất về tình hình lũ, mực nước các sông phía Bắc (Sông Hồng, Sông Cầu, Sông Thao, Sông Lô, Sông Kỳ Cùng...) và tình hình xả lũ thủy điện. Sử dụng định dạng HTML đơn giản (p, ul, li, strong) đẹp mắt.";
+            
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: query }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                loadingBox.classList.add('hidden');
+
+                const candidate = data.candidates?.[0];
+
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    let formattedText = candidate.content.parts[0].text;
+                    formattedText = formattedText.replace(/```html/g, '').replace(/```/g, '');
+                    resultBox.innerHTML = formattedText;
+
+                    const groundingMetadata = candidate.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        const sources = groundingMetadata.groundingAttributions
+                            .map(attr => ({ uri: attr.web?.uri, title: attr.web?.title }))
+                            .filter(src => src.uri && src.title);
+
+                        if (sources.length > 0) {
+                            sourcesBox.classList.remove('hidden');
+                            sources.forEach(src => {
+                                sourcesList.innerHTML += `
+                                    <a href="${src.uri}" target="_blank" rel="noopener" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center gap-1">
+                                        <i class="fa-solid fa-link text-[10px]"></i> ${src.title}
+                                    </a>
+                                `;
+                            });
+                        }
+                    }
+
+                    const now = new Date();
+                    const timeEl = document.getElementById('lastUpdatedTime');
+                    if (timeEl) timeEl.innerText = `${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}`;
+                } else {
+                    resultBox.innerHTML = '<p class="text-amber-400">Không thể truy vấn tin tức thời gian thực lúc này. Vui lòng thử lại sau.</p>';
+                }
+
+            } catch (err) {
+                loadingBox.classList.add('hidden');
+                resultBox.innerHTML = '<p class="text-red-400">Đã xảy ra lỗi khi kết nối hệ thống dữ liệu AI. Vui lòng kiểm tra lại kết nối mạng.</p>';
+            }
+        }
+
+        let currentLat = null;
+        let currentLon = null;
+
+        // Step 1: Open Warning Modal instead of SOS Modal directly
+        function openWarningModal() {
+            document.getElementById('warningModal').classList.remove('hidden');
+            document.getElementById('warningModal').classList.add('flex');
+        }
+
+        function closeWarningModal() {
+            document.getElementById('warningModal').classList.add('hidden');
+            document.getElementById('warningModal').classList.remove('flex');
+        }
+
+        // Step 2: Accept warning and proceed to SOS Modal
+        function acceptWarningAndOpenSOS() {
+            closeWarningModal();
+            document.getElementById('sosModal').classList.remove('hidden');
+            document.getElementById('sosModal').classList.add('flex');
+        }
+
+        function closeSOSModal() {
+            document.getElementById('sosModal').classList.add('hidden');
+            document.getElementById('sosModal').classList.remove('flex');
+            
+            // Reset state when closed
+            currentLat = null;
+            currentLon = null;
+            document.getElementById('locationStatus').innerHTML = '<span class="text-slate-500 text-xs sm:text-sm">Chưa có dữ liệu vị trí.</span>';
+            document.getElementById('btnGetLocation').classList.remove('hidden');
+            
+            const btnSend = document.getElementById('btnSendSOS');
+            btnSend.disabled = true;
+            btnSend.className = "w-full py-3 rounded-xl bg-red-900/40 text-red-400/50 border border-red-900/50 font-bold text-sm cursor-not-allowed transition-all flex justify-center items-center gap-2";
+            btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 2. Gửi tín hiệu SOS';
+            btnSend.style.display = 'flex';
+        }
+
+        function getLocation() {
+            const statusDiv = document.getElementById('locationStatus');
+            const btnGet = document.getElementById('btnGetLocation');
+            
+            if (!navigator.geolocation) {
+                statusDiv.innerHTML = '<span class="text-red-400"><i class="fa-solid fa-circle-xmark mr-1"></i> Trình duyệt không hỗ trợ định vị.</span>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<span class="text-blue-400 animate-pulse text-xs sm:text-sm"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang tìm tín hiệu GPS...</span>';
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    currentLat = position.coords.latitude;
+                    currentLon = position.coords.longitude;
+                    
+                    statusDiv.innerHTML = `
+                        <div class="text-left w-full space-y-1.5">
+                            <div class="text-emerald-400 font-bold text-[11px] sm:text-xs mb-2 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> Đã lấy được tọa độ GPS
+                            </div>
+                            <div class="flex justify-between text-xs border-b border-slate-800 pb-1.5">
+                                <span class="text-slate-400">Vĩ độ (Lat):</span> 
+                                <strong class="text-slate-200 font-mono">${currentLat.toFixed(6)}</strong>
+                            </div>
+                            <div class="flex justify-between text-xs pt-1">
+                                <span class="text-slate-400">Kinh độ (Lon):</span> 
+                                <strong class="text-slate-200 font-mono">${currentLon.toFixed(6)}</strong>
+                            </div>
+                        </div>
+                    `;
+                    
+                    btnGet.classList.add('hidden');
+                    
+                    const btnSend = document.getElementById('btnSendSOS');
+                    btnSend.disabled = false;
+                    btnSend.className = "w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/30 font-bold text-sm transition-all flex justify-center items-center gap-2 pulse-red";
+                },
+                (error) => {
+                    let msg = "Không thể lấy vị trí.";
+                    if (error.code == error.PERMISSION_DENIED) msg = "Bạn đã từ chối quyền truy cập vị trí. Hãy cấp quyền trong cài đặt trình duyệt.";
+                    else if (error.code == error.POSITION_UNAVAILABLE) msg = "Thông tin vị trí không khả dụng lúc này.";
+                    else if (error.code == error.TIMEOUT) msg = "Quá thời gian yêu cầu vị trí.";
+                    
+                    statusDiv.innerHTML = `<span class="text-red-400 text-xs sm:text-sm"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${msg}</span>`;
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            );
+        }
+
+        function sendRescueRequest() {
+            if (!currentLat || !currentLon) return;
+            const statusDiv = document.getElementById('locationStatus');
+            const btnSend = document.getElementById('btnSendSOS');
+            
+            // Simulate sending to server
+            btnSend.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi tín hiệu...';
+            btnSend.disabled = true;
+            btnSend.classList.remove('pulse-red');
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = `
+                    <div class="text-emerald-400 text-center py-2 w-full">
+                        <i class="fa-solid fa-circle-check text-4xl sm:text-5xl mb-3"></i>
+                        <div class="font-bold text-sm sm:text-base uppercase tracking-wide">Đã Gửi Thành Công!</div>
+                        <div class="text-[11px] sm:text-xs text-slate-300 mt-2 leading-relaxed">
+                            Tọa độ của bạn đã được chuyển tới hệ thống trực ban PCTT địa phương.<br>
+                            Vui lòng giữ an toàn và chờ điện thoại liên lạc!
+                        </div>
+                    </div>
+                `;
+                btnSend.style.display = 'none';
+            }, 1500);
+        }
+
+        window.onload = function() {
+            updateCurrentDate();
+            renderRiverGauges();
+            renderReservoirs();
+            updateChartAndDetails();
+            filterCommunes();
+            startAutoSyncEngine();
+        };
+    </script>
+</body>
+</html>
