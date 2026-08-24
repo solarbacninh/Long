@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Cảnh Báo Lũ Bố Hạ - Yên Thế, Bắc Giang | LONG 0829.86.3333</title>
+    <title>Hệ Thống Cảnh Báo Lũ Bố Hạ & Radar Thời Tiết - Yên Thế, Bắc Giang</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -46,10 +46,17 @@
             70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
+        .radar-container iframe {
+            border-radius: 0.75rem;
+            width: 100%;
+            height: 100%;
+            min-height: 480px;
+        }
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col bg-slate-950 text-slate-100">
 
+    <!-- Emergency Warning Top Bar -->
     <div id="emergencyBar" class="bg-red-600 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 flex items-center justify-between shadow-lg relative z-50">
         <div class="flex items-center gap-3 max-w-7xl mx-auto w-full">
             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] sm:text-xs font-extrabold bg-white text-red-700 animate-pulse shrink-0">
@@ -64,6 +71,7 @@
         </button>
     </div>
 
+    <!-- Main Navigation Header -->
     <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -76,8 +84,13 @@
                 </div>
             </div>
 
-            <!-- Quick Info & AI Sync Status -->
-            <div class="flex items-center gap-4">
+            <!-- Quick Controls & Navigation -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <a href="#radarSection" class="hidden sm:flex items-center gap-1.5 bg-cyan-950/80 hover:bg-cyan-900/80 text-cyan-400 border border-cyan-500/30 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">
+                    <i class="fa-solid fa-satellite-dish animate-pulse"></i>
+                    <span>Radar Windy</span>
+                </a>
+
                 <div class="hidden md:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-xs">
                     <span id="liveStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
                     <span class="text-slate-300">Live Trạm Bố Hạ: <strong id="lastUpdatedTime" class="text-emerald-400">Vừa xong</strong></span>
@@ -93,7 +106,7 @@
                     </button>
                 </div>
 
-                <button onclick="fetchLiveHydroNews()" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-2 transition-all shadow-md shadow-blue-600/30">
+                <button onclick="fetchLiveHydroNews()" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-xl text-xs flex items-center gap-2 transition-all shadow-md shadow-blue-600/30">
                     <i class="fa-solid fa-rotate text-amber-300"></i>
                     <span class="hidden sm:inline">Tin Lũ AI</span>
                 </button>
@@ -230,6 +243,112 @@
                 </div>
             </div>
         </div>
+
+        <!-- NEW SECTION: WINDY WEATHER RADAR & RAIN MAP -->
+        <section id="radarSection" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-5 relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                        </span>
+                        <h2 class="font-heading font-bold text-xl text-slate-100 flex items-center gap-2">
+                            Radar Thời Tiết & Lượng Mưa Trực Tiếp (Windy Live)
+                        </h2>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Dữ liệu vệ tinh & Radar thời tiết thời gian thực khu vực Yên Thế - Bố Hạ, Bắc Giang và lưu vực sông Thương
+                    </p>
+                </div>
+
+                <!-- Map Preset Area Switches -->
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <span class="text-slate-400 font-medium mr-1 hidden sm:inline"><i class="fa-solid fa-location-crosshairs text-cyan-400 mr-1"></i>Khu vực:</span>
+                    <button onclick="setRadarLocation(21.493, 106.166, 10, 'Bố Hạ - Yên Thế')" class="radar-loc-btn active bg-cyan-600 text-white font-semibold px-3 py-1.5 rounded-lg border border-cyan-500/50 hover:bg-cyan-500 transition-colors">
+                        📍 Bố Hạ (Yên Thế)
+                    </button>
+                    <button onclick="setRadarLocation(21.85, 106.75, 9, 'Thượng nguồn Lạng Sơn')" class="radar-loc-btn bg-slate-800 text-slate-300 font-medium px-3 py-1.5 rounded-lg border border-slate-700 hover:bg-slate-700 hover:text-white transition-colors">
+                        ⛰️ Thượng nguồn Sông Thương
+                    </button>
+                    <button onclick="setRadarLocation(21.27, 106.19, 9, 'Tỉnh Bắc Giang')" class="radar-loc-btn bg-slate-800 text-slate-300 font-medium px-3 py-1.5 rounded-lg border border-slate-700 hover:bg-slate-700 hover:text-white transition-colors">
+                        🏞️ Toàn tỉnh Bắc Giang
+                    </button>
+                    <button onclick="setRadarLocation(21.02, 105.83, 8, 'Miền Bắc Việt Nam')" class="radar-loc-btn bg-slate-800 text-slate-300 font-medium px-3 py-1.5 rounded-lg border border-slate-700 hover:bg-slate-700 hover:text-white transition-colors">
+                        🌐 Miền Bắc
+                    </button>
+                </div>
+            </div>
+
+            <!-- Layer Switch Toolbar -->
+            <div class="flex flex-wrap justify-between items-center bg-slate-950/80 p-3 rounded-xl border border-slate-800 gap-3">
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <span class="text-slate-400 font-semibold mr-1"><i class="fa-solid fa-layer-group text-blue-400 mr-1"></i> Lớp dữ liệu:</span>
+                    <button onclick="setRadarLayer('radar')" id="layerBtn-radar" class="layer-btn bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-satellite-dish text-cyan-300"></i> Radar Thời Tiết
+                    </button>
+                    <button onclick="setRadarLayer('rain')" id="layerBtn-rain" class="layer-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-cloud-showers-heavy text-blue-400"></i> Mưa & Sấm Sét
+                    </button>
+                    <button onclick="setRadarLayer('wind')" id="layerBtn-wind" class="layer-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-wind text-teal-400"></i> Sức Gió & Dòng Khí
+                    </button>
+                    <button onclick="setRadarLayer('clouds')" id="layerBtn-clouds" class="layer-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-cloud text-amber-300"></i> Mây Phủ
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-3 text-xs text-slate-400">
+                    <span class="hidden md:inline"><i class="fa-solid fa-circle-info text-blue-400 mr-1"></i> Tọa độ trung tâm: <strong id="currentLocationLabel" class="text-slate-200">21.493°N, 106.166°E (Thị trấn Bố Hạ)</strong></span>
+                    <button onclick="reloadRadarFrame()" title="Tải lại Radar" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg border border-slate-700">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Windy Frame Container -->
+            <div class="relative w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800 radar-container shadow-inner">
+                <div id="radarLoadingOverlay" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center gap-3 z-10 transition-opacity duration-300">
+                    <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-500 border-t-transparent"></div>
+                    <p class="text-xs text-cyan-400 font-semibold animate-pulse">Đang kết nối tín hiệu Radar thời tiết Windy...</p>
+                </div>
+
+                <iframe 
+                    id="windyIframe"
+                    src="https://embed.windy.com/embed2.html?lat=21.493&lon=106.166&detailLat=21.493&detailLon=106.166&width=650&height=500&zoom=10&level=surface&overlay=radar&product=radar&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1"
+                    frameborder="0"
+                    onload="onRadarLoaded()"
+                    class="w-full h-[520px] rounded-xl">
+                </iframe>
+            </div>
+
+            <!-- Radar Explanation Note -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 flex items-start gap-2.5">
+                    <div class="text-cyan-400 text-lg mt-0.5"><i class="fa-solid fa-circle-play"></i></div>
+                    <div>
+                        <strong class="text-slate-200 block mb-0.5">Dự Báo & Phát Lại</strong>
+                        <span class="text-slate-400">Sử dụng thanh phát (Play/Pause) góc dưới bản đồ để xem mô phỏng di chuyển mây mưa trong 12h tiếp theo.</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 flex items-start gap-2.5">
+                    <div class="text-amber-400 text-lg mt-0.5"><i class="fa-solid fa-droplet"></i></div>
+                    <div>
+                        <strong class="text-slate-200 block mb-0.5">Thang Cường Độ Mưa</strong>
+                        <span class="text-slate-400">Màu Xanh lơ (mưa nhỏ), Vàng/Cam (mưa vừa đến to), Đỏ/Tím (mưa rất to & dông mạnh kèm sấm sét).</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 flex items-start gap-2.5">
+                    <div class="text-emerald-400 text-lg mt-0.5"><i class="fa-solid fa-mountain-city"></i></div>
+                    <div>
+                        <strong class="text-slate-200 block mb-0.5">Lưu Vực Thượng Nguồn</strong>
+                        <span class="text-slate-400">Đặc biệt lưu ý mây mưa khu vực Hữu Lũng, Chi Lăng (Lạng Sơn) vì nước sẽ đổ về Sông Thương tại Bố Hạ sau 3-6 giờ.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- SECTION 2: AI GROUNDED NEWS -->
         <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-5 relative overflow-hidden">
@@ -495,7 +614,12 @@
         let isAutoSyncActive = true;
         let countdownSeconds = 5;
         let countdownTimer = null;
-        let isSoundEnabled = false;
+
+        // --- WINDY RADAR STATE ---
+        let currentRadarLat = 21.493;
+        let currentRadarLon = 106.166;
+        let currentRadarZoom = 10;
+        let currentRadarLayer = 'radar'; // 'radar', 'rain', 'wind', 'clouds'
 
         function updateLiveTelemetry() {
             const now = new Date();
@@ -624,6 +748,62 @@
                     scales: { x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } } }
                 }
             });
+        }
+
+        // --- WINDY RADAR FUNCTIONS ---
+        function buildWindyUrl(lat, lon, zoom, layer) {
+            return `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=500&zoom=${zoom}&level=surface&overlay=${layer}&product=radar&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1`;
+        }
+
+        function reloadRadarFrame() {
+            const overlay = document.getElementById('radarLoadingOverlay');
+            if (overlay) overlay.classList.remove('opacity-0', 'pointer-events-none');
+            const iframe = document.getElementById('windyIframe');
+            iframe.src = buildWindyUrl(currentRadarLat, currentRadarLon, currentRadarZoom, currentRadarLayer);
+        }
+
+        function onRadarLoaded() {
+            const overlay = document.getElementById('radarLoadingOverlay');
+            if (overlay) {
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function setRadarLocation(lat, lon, zoom, label) {
+            currentRadarLat = lat;
+            currentRadarLon = lon;
+            currentRadarZoom = zoom;
+
+            document.getElementById('currentLocationLabel').innerText = `${lat}°N, ${lon}°E (${label})`;
+
+            // Update UI buttons styling
+            const buttons = document.querySelectorAll('.radar-loc-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText.includes(label.split(' ')[0])) {
+                    btn.className = 'radar-loc-btn active bg-cyan-600 text-white font-semibold px-3 py-1.5 rounded-lg border border-cyan-500/50 hover:bg-cyan-500 transition-colors';
+                } else {
+                    btn.className = 'radar-loc-btn bg-slate-800 text-slate-300 font-medium px-3 py-1.5 rounded-lg border border-slate-700 hover:bg-slate-700 hover:text-white transition-colors';
+                }
+            });
+
+            reloadRadarFrame();
+        }
+
+        function setRadarLayer(layerName) {
+            currentRadarLayer = layerName;
+
+            // Highlight layer button
+            ['radar', 'rain', 'wind', 'clouds'].forEach(l => {
+                const btn = document.getElementById(`layerBtn-${l}`);
+                if (!btn) return;
+                if (l === layerName) {
+                    btn.className = 'layer-btn bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 shadow-sm';
+                } else {
+                    btn.className = 'layer-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-colors';
+                }
+            });
+
+            reloadRadarFrame();
         }
 
         function onProvinceChange() {
