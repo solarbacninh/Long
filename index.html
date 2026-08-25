@@ -75,8 +75,8 @@
                         <div class="flex items-center gap-1.5 flex-wrap">
                             <h1 class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight">MedHealth</h1>
                             <span class="bg-blue-600 text-white text-[9px] sm:text-[10px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider">AI Mobile</span>
-                            <!-- Version Badge -->
-                            <span id="appVersionBadge" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] sm:text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded-md shadow-sm" title="Tự động tăng phiên bản sau mỗi lần chỉnh sửa (VN.1.01, VN.1.02...)">VN.1.01</span>
+                            <!-- Version Badge Linked to Codebase Release -->
+                            <span id="appVersionBadge" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] sm:text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded-md shadow-sm" title="Phiên bản phát hành mã nguồn (Cập nhật theo mỗi lần sửa code)">VN.1.02</span>
                         </div>
                         <p class="text-[10px] sm:text-xs text-medical-700 font-medium truncate max-w-[170px] sm:max-w-none">Sổ Sức Khỏe & Tra Cứu Thuốc Long Châu</p>
                     </div>
@@ -798,28 +798,29 @@
                 </div>
 
                 <div id="ocrUploadModeContainer" class="space-y-3">
-                    <div id="ocrUploadPrompt" onclick="triggerFileInput()" class="border-2 border-dashed border-indigo-200 hover:border-indigo-400 bg-indigo-50/40 rounded-2xl p-5 text-center cursor-pointer transition">
+                    <!-- Native label wrapper for 100% mobile browser compatibility -->
+                    <label for="ocrFileInput" id="ocrUploadPrompt" class="block border-2 border-dashed border-indigo-200 hover:border-indigo-400 bg-indigo-50/40 rounded-2xl p-5 text-center cursor-pointer transition">
                         <input type="file" id="ocrFileInput" accept="image/*" onchange="handleOcrImageSelect(event)" class="hidden">
                         <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-500 mb-1.5"></i>
-                        <p class="text-xs font-bold text-indigo-900">Bấm vào đây chọn ảnh phiếu xét nghiệm</p>
-                        <p class="text-[10px] text-slate-400 mt-0.5">PNG, JPG, JPEG, WEBP</p>
+                        <p class="text-xs font-bold text-indigo-900">Bấm vào đây chọn ảnh từ điện thoại / máy tính</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Hỗ trợ chọn ảnh từ Thư viện hoặc Chụp camera trực tiếp (PNG, JPG, WEBP)</p>
                         <div class="flex flex-wrap justify-center gap-2 mt-2.5">
-                            <button type="button" onclick="event.stopPropagation(); loadSampleOcrSheet(20)" class="bg-white text-indigo-700 hover:bg-indigo-50 border border-indigo-300 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
+                            <button type="button" onclick="event.preventDefault(); event.stopPropagation(); loadSampleOcrSheet(20)" class="bg-white text-indigo-700 hover:bg-indigo-50 border border-indigo-300 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
                                 <i class="fa-solid fa-flask text-amber-500 mr-1"></i> Thử phiếu mẫu (20 chỉ số)
                             </button>
-                            <button type="button" onclick="event.stopPropagation(); loadSampleOcrSheet(150)" class="bg-indigo-600 text-white hover:bg-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
+                            <button type="button" onclick="event.preventDefault(); event.stopPropagation(); loadSampleOcrSheet(150)" class="bg-indigo-600 text-white hover:bg-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
                                 <i class="fa-solid fa-bolt text-amber-300 mr-1"></i> ⚡ Quét AI & Nạp Trọn Bộ 150+ Chỉ Số
                             </button>
                         </div>
-                    </div>
+                    </label>
 
                     <div id="ocrPreviewContainer" class="hidden flex items-center gap-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
                         <img id="ocrImagePreview" src="" alt="Preview" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border border-slate-200">
                         <div class="flex-1 min-w-0">
                             <p class="text-xs font-bold text-slate-800 truncate" id="ocrFileName">Phieu_xet_nghiem.jpg</p>
-                            <p class="text-[11px] text-emerald-600 font-semibold mt-0.5"><i class="fa-solid fa-circle-check"></i> Sẵn sàng bóc tách 150+ chỉ số</p>
+                            <p class="text-[11px] text-emerald-600 font-semibold mt-0.5"><i class="fa-solid fa-circle-check"></i> Đã tải ảnh lên, sẵn sàng bóc tách</p>
                         </div>
-                        <button onclick="triggerFileInput()" class="text-xs bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-xl">Đổi ảnh</button>
+                        <label for="ocrFileInput" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold px-2.5 py-1.5 rounded-xl cursor-pointer">Đổi ảnh</label>
                     </div>
                 </div>
 
@@ -1316,10 +1317,24 @@
     </div>
 
     <script>
-        // Automatic Version Tracker Logic (Starts at VN.1.01 and increments on every edit)
+        // Codebase Release Version (Increments with each developer code iteration: VN.1.01 -> VN.1.02 -> VN.1.03)
+        const APP_CODE_VERSION = "VN.1.02";
+
         function getAppVersion() {
-            let vNum = parseInt(localStorage.getItem('medhealth_version_counter') || '1');
-            return 'VN.1.' + (vNum < 10 ? '0' + vNum : vNum);
+            return APP_CODE_VERSION;
+        }
+
+        function updateVersionUI() {
+            const badge = document.getElementById('appVersionBadge');
+            if (badge) badge.textContent = APP_CODE_VERSION;
+            const pdfVer = document.getElementById('pdfReportCode');
+            if (pdfVer) pdfVer.textContent = "MH-" + APP_CODE_VERSION;
+        }
+
+        function saveAppData() {
+            localStorage.setItem('medhealth_app_data', JSON.stringify(appData));
+            console.log("Hồ sơ đã được lưu thành công. Phiên bản ứng dụng:", APP_CODE_VERSION);
+            return APP_CODE_VERSION;
         }
 
         function incrementAppVersion() {
@@ -1841,9 +1856,59 @@
 
         function openOcrScanModal() { openModal('ocrLabModal'); }
         function closeOcrModal() { closeModal('ocrLabModal'); }
-        function switchOcrInputMode(m) {}
-        function triggerFileInput() { document.getElementById('ocrFileInput')?.click(); }
-        function handleOcrImageSelect(e) {}
+        
+        function switchOcrInputMode(m) {
+            const uploadBtn = document.getElementById('tabModeUpload');
+            const cameraBtn = document.getElementById('tabModeCamera');
+            const uploadContainer = document.getElementById('ocrUploadModeContainer');
+            const cameraContainer = document.getElementById('ocrCameraModeContainer');
+
+            if (m === 'upload') {
+                if (uploadBtn) uploadBtn.className = "flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 text-center flex items-center justify-center gap-1.5";
+                if (cameraBtn) cameraBtn.className = "flex-1 py-1.5 rounded-xl text-slate-600 hover:bg-white/50 text-center flex items-center justify-center gap-1.5";
+                if (uploadContainer) uploadContainer.classList.remove('hidden');
+                if (cameraContainer) cameraContainer.classList.add('hidden');
+                stopCameraStream();
+            } else {
+                if (cameraBtn) cameraBtn.className = "flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 text-center flex items-center justify-center gap-1.5";
+                if (uploadBtn) uploadBtn.className = "flex-1 py-1.5 rounded-xl text-slate-600 hover:bg-white/50 text-center flex items-center justify-center gap-1.5";
+                if (cameraContainer) cameraContainer.classList.remove('hidden');
+                if (uploadContainer) uploadContainer.classList.add('hidden');
+            }
+        }
+
+        function triggerFileInput() { 
+            document.getElementById('ocrFileInput')?.click(); 
+        }
+
+        function handleOcrImageSelect(e) {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    currentOcrImageSource = evt.target.result;
+                    displayOcrImagePreview(currentOcrImageSource, file.name);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function displayOcrImagePreview(src, name) {
+            const promptBox = document.getElementById('ocrUploadPrompt');
+            const previewBox = document.getElementById('ocrPreviewContainer');
+            if (promptBox) promptBox.classList.add('hidden');
+            if (previewBox) previewBox.classList.remove('hidden');
+
+            const img = document.getElementById('ocrImagePreview');
+            if (img) img.src = src;
+
+            const fn = document.getElementById('ocrFileName');
+            if (fn) fn.textContent = name || "Phieu_xet_nghiem.jpg";
+
+            const btnStart = document.getElementById('btnStartOcr');
+            if (btnStart) btnStart.disabled = false;
+        }
+
         function loadSampleOcrSheet(count) {
             const member = getActiveMember();
             if (!member.labTests) member.labTests = [];
