@@ -51,7 +51,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
 
-    <!-- Top Bar Navigation -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
@@ -103,7 +102,6 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col md:flex-row gap-6">
 
-        <!-- Sidebar Navigation -->
         <aside class="w-full md:w-64 shrink-0 no-print">
             <nav class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm space-y-1">
                 <button onclick="switchTab('dashboardTab')" id="nav-dashboardTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-medical-700 bg-medical-50">
@@ -164,7 +162,6 @@
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="flex-1 min-w-0">
 
             <!-- TAB 1: DASHBOARD OVERVIEW -->
@@ -175,11 +172,11 @@
                         <div>
                             <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-md">Xin chào 👋</span>
                             <h2 class="text-2xl font-bold mt-2" id="dashWelcomeName">Nguyễn Văn An</h2>
-                            <p class="text-medical-100 text-sm mt-1">Hệ thống đang hoạt động bình thường. Tải ảnh phiếu xét nghiệm để tự động quét chỉ số!</p>
+                            <p class="text-medical-100 text-sm mt-1">Hệ thống đang hoạt động bình thường. Tải hoặc chụp ảnh phiếu xét nghiệm để phân tích nguy cơ sức khỏe!</p>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <button onclick="openOcrScanModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 rounded-xl text-xs shadow transition flex items-center gap-2 border border-indigo-400">
-                                <i class="fa-solid fa-camera"></i> Quét Phiếu XN từ Ảnh
+                                <i class="fa-solid fa-camera"></i> Quét Phiếu XN từ Ảnh / Camera
                             </button>
                             <button onclick="openModal('addVitalsModal')" class="bg-white text-medical-800 hover:bg-medical-50 font-semibold px-4 py-2 rounded-xl text-xs shadow transition flex items-center gap-2">
                                 <i class="fa-solid fa-plus"></i> Nhập Sinh Hiệu
@@ -289,7 +286,7 @@
                     <div>
                         <h4 class="text-sm font-bold text-amber-900">Lời khuyên sức khỏe hôm nay</h4>
                         <p class="text-xs text-amber-800 mt-1" id="dashHealthTip">
-                            Duy trì uống đủ 2 lít nước mỗi ngày và hạn chế thức khuya để ổn định chỉ số huyết áp và nhịp tim.
+                            Duy trì uống đủ 2 lít nước mỗi ngày, kiểm soát lượng muối/đường và tập thể dục nhẹ nhàng 30 phút.
                         </p>
                     </div>
                 </div>
@@ -315,7 +312,7 @@
                             <button onclick="changeChartMetric('bs')" id="btnMetric-bs" class="metric-tab px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Đường huyết</button>
                             <button onclick="changeChartMetric('weight')" id="btnMetric-weight" class="metric-tab px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Cân nặng & BMI</button>
                         </div>
-                        <span class="text-xs text-slate-400">Dữ liệu 7 lượt gần nhất</span>
+                        <span class="text-xs text-slate-400">Dữ liệu các lượt gần nhất</span>
                     </div>
 
                     <div class="h-64 sm:h-80 w-full">
@@ -439,16 +436,15 @@
                 </div>
             </section>
 
-            <!-- TAB 6: LAB TEST INDICATORS WITH OCR AI SCANNER -->
             <section id="labTab" class="tab-content space-y-6 hidden">
                 <div class="flex justify-between items-center flex-wrap gap-3">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900">Chỉ Số & Kết Quả Xét Nghiệm</h2>
-                        <p class="text-xs text-slate-500">Lưu trữ và theo dõi các chỉ số sinh hóa, công thức máu, nước tiểu... (Quét ảnh AI thông minh)</p>
+                        <p class="text-xs text-slate-500">Quản lý tất cả chỉ số xét nghiệm, phân tích nguy cơ cơ thể & tư vấn hướng điều trị</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <button onclick="openOcrScanModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
-                            <i class="fa-solid fa-camera"></i> Quét ảnh phiếu XN (AI)
+                            <i class="fa-solid fa-camera"></i> Quét ảnh / Camera (AI)
                         </button>
                         <button onclick="openModal('addLabModal')" class="bg-medical-600 hover:bg-medical-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
                             <i class="fa-solid fa-plus"></i> Nhập thủ công
@@ -487,18 +483,50 @@
                     </div>
                 </div>
 
-                <!-- Category Filters & Search -->
+                <!-- AI Organ Risk Consultation & Advisory Banner for High Indicators -->
+                <div id="labAiAdvisoryCard" class="hidden bg-gradient-to-br from-rose-50 via-amber-50 to-orange-50 border border-rose-200 rounded-3xl p-5 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-rose-200/60 pb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-rose-600/20">
+                                <i class="fa-solid fa-user-doctor"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                    Cảnh Báo Nguy Cơ Sức Khỏe Cơ Thể & Khuyên Dùng Điều Trị Chỉ Số Tăng Cao
+                                    <span class="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Tư vấn AI</span>
+                                </h3>
+                                <p class="text-xs text-slate-600">Phát hiện <span id="highIndicatorsCount" class="font-bold text-rose-700">0</span> chỉ số vượt ngưỡng tham chiếu an toàn</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consultation Content Details Dynamic Injection -->
+                    <div id="labAiConsultationDetails" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <!-- Dynamic consultation cards injected here -->
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl border border-rose-200 text-[11px] text-slate-600 flex items-start gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm mt-0.5 shrink-0"></i>
+                        <p><strong>Khuyến cáo y tế:</strong> Các thông tin hướng dẫn điều trị và cảnh báo nguy cơ trên đây mang tính chất tư vấn tham khảo y khoa. Người bệnh cần thăm khám bác sĩ chuyên khoa để nhận đơn thuốc chính thức.</p>
+                    </div>
+                </div>
+
+                <!-- Category Filters & Search Bar -->
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div class="flex flex-wrap gap-2" id="labCategoryFilter">
-                        <button onclick="filterLabCategory('all')" id="labFilter-all" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-medical-600 text-white">Tất cả</button>
+                        <button onclick="filterLabCategory('all')" id="labFilter-all" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-medical-600 text-white">Tất cả chỉ số</button>
                         <button onclick="filterLabCategory('Sinh hóa máu')" id="labFilter-Sinh hóa máu" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Sinh hóa máu</button>
                         <button onclick="filterLabCategory('Huyết học')" id="labFilter-Huyết học" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Huyết học</button>
                         <button onclick="filterLabCategory('Nước tiểu')" id="labFilter-Nước tiểu" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Nước tiểu</button>
                         <button onclick="filterLabCategory('Khác')" id="labFilter-Khác" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Khác</button>
                     </div>
+                    <div class="relative w-full sm:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchLabInput" oninput="renderLabTests()" placeholder="Tìm tên chỉ số..." class="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-medical-500">
+                    </div>
                 </div>
 
-                <!-- Lab Results Table -->
+                <!-- Lab Results Full List Table -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-slate-600">
@@ -511,7 +539,7 @@
                                     <th class="px-5 py-3">Tham chiếu</th>
                                     <th class="px-5 py-3">Đánh giá</th>
                                     <th class="px-5 py-3">Nơi XN / Ghi chú</th>
-                                    <th class="px-5 py-3 text-right">Thao tác</th>
+                                    <th class="px-5 py-3 text-right">Tư vấn & Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="labTableBody" class="divide-y divide-slate-100">
@@ -592,7 +620,6 @@
         </main>
     </div>
 
-    <!-- MODALS SECTION -->
 
     <!-- Modal 1: Add/Edit Member -->
     <div id="addMemberModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -820,7 +847,7 @@
             <div class="flex justify-between items-center mb-1">
                 <h3 class="text-lg font-bold text-slate-900">Nhập Kết Quả Xét Nghiệm</h3>
                 <button type="button" onclick="switchToOcrFromManual()" class="text-xs bg-indigo-50 text-indigo-700 font-semibold px-3 py-1 rounded-xl border border-indigo-200 hover:bg-indigo-100">
-                    <i class="fa-solid fa-camera mr-1"></i> Quét từ ảnh thay thế
+                    <i class="fa-solid fa-camera mr-1"></i> Quét từ ảnh / Camera
                 </button>
             </div>
             <p class="text-xs text-slate-400 mb-4">Chọn từ mẫu chỉ số có sẵn hoặc tự điền chỉ số riêng</p>
@@ -906,111 +933,213 @@
         </div>
     </div>
 
-    <!-- Modal 7: OCR Image Upload & Extraction Modal -->
+    <!-- Modal 7: OCR Image & Camera Upload Extraction Modal -->
     <div id="ocrLabModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar space-y-4">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> Tự Động Nhập Chỉ Số Xét Nghiệm Từ Ảnh
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> Quét & Nhập Liệu Chỉ Số Từ Ảnh / Camera
                     </h3>
-                    <p class="text-xs text-slate-500">Trí tuệ nhân tạo (OCR) đọc thông số trực tiếp từ phiếu kết quả xét nghiệm</p>
+                    <p class="text-xs text-slate-500">Trí tuệ nhân tạo (OCR) trích xuất tự động thông số từ phiếu xét nghiệm</p>
                 </div>
-                <button onclick="closeModal('ocrLabModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeOcrModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Upload Area -->
-            <div class="mt-4 space-y-4">
-                <div id="dropZone" class="border-2 border-dashed border-indigo-200 hover:border-indigo-500 bg-indigo-50/40 hover:bg-indigo-50 rounded-2xl p-6 text-center transition cursor-pointer relative" onclick="triggerFileInput()">
-                    <input type="file" id="ocrFileInput" accept="image/*" class="hidden" onchange="handleOcrImageSelect(event)">
+            <!-- Mode Switcher Tabs -->
+            <div class="flex bg-slate-100 p-1 rounded-2xl text-xs font-semibold">
+                <button id="tabModeUpload" onclick="switchOcrInputMode('upload')" class="flex-1 py-2 rounded-xl bg-white shadow-sm text-indigo-600 text-center flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-image"></i> Tải ảnh từ máy
+                </button>
+                <button id="tabModeCamera" onclick="switchOcrInputMode('camera')" class="flex-1 py-2 rounded-xl text-slate-600 hover:bg-white/50 text-center flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-camera"></i> Chụp ảnh trực tiếp từ Camera
+                </button>
+            </div>
+
+            <!-- Area 1: File Upload Mode -->
+            <div id="ocrUploadModeContainer" class="space-y-3">
+                <div id="ocrUploadPrompt" onclick="triggerFileInput()" class="border-2 border-dashed border-indigo-200 hover:border-indigo-400 bg-indigo-50/40 rounded-2xl p-6 text-center cursor-pointer transition">
+                    <input type="file" id="ocrFileInput" accept="image/*" onchange="handleOcrImageSelect(event)" class="hidden">
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-500 mb-2"></i>
+                    <p class="text-xs font-bold text-indigo-900">Nhấp vào đây để chọn ảnh hoặc kéo thả phiếu xét nghiệm</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Hỗ trợ các định dạng PNG, JPG, JPEG, WEBP</p>
+                    <button type="button" onclick="event.stopPropagation(); loadSampleOcrSheet()" class="mt-3 bg-white text-indigo-700 hover:bg-indigo-50 border border-indigo-300 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
+                        <i class="fa-solid fa-flask text-amber-500 mr-1"></i> Thử ngay với Phiếu mẫu chuẩn
+                    </button>
+                </div>
+
+                <!-- Preview Area -->
+                <div id="ocrPreviewContainer" class="hidden flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <img id="ocrImagePreview" src="" alt="Preview" class="w-24 h-24 object-cover rounded-xl border border-slate-200">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-bold text-slate-800 truncate" id="ocrFileName">Phieu_xet_nghiem.jpg</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Sẵn sàng để AI phân tích chữ</p>
+                    </div>
+                    <button onclick="triggerFileInput()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-3 py-1.5 rounded-xl">Đổi ảnh</button>
+                </div>
+            </div>
+
+            <!-- Area 2: Live Camera Mode -->
+            <div id="ocrCameraModeContainer" class="hidden space-y-3">
+                <div class="relative bg-black rounded-2xl overflow-hidden flex flex-col items-center justify-center min-h-[260px]">
+                    <video id="webcamVideo" autoplay playsinline class="w-full h-64 object-cover hidden"></video>
+                    <canvas id="webcamCanvas" class="hidden"></canvas>
                     
-                    <div id="ocrUploadPrompt" class="space-y-2">
-                        <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-sm">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                        </div>
-                        <p class="text-xs font-bold text-slate-700">Nhấp để tải lên hoặc kéo thả ảnh phiếu xét nghiệm</p>
-                        <p class="text-[11px] text-slate-400">Hỗ trợ các định dạng PNG, JPG, JPEG, WEBP</p>
-                        <div class="pt-2">
-                            <button type="button" onclick="event.stopPropagation(); loadSampleOcrSheet()" class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-1.5 rounded-xl text-xs shadow-sm">
-                                <i class="fa-solid fa-vial-circle-check"></i> Thử ngay với Ảnh mẫu
-                            </button>
-                        </div>
+                    <div id="cameraLoadingState" class="text-white text-center p-6 space-y-2">
+                        <i class="fa-solid fa-camera text-3xl text-indigo-400"></i>
+                        <p class="text-xs font-semibold">Nhấn nút bên dưới để khởi động Camera ống kính</p>
+                        <button onclick="startCameraStream()" class="mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-xl text-xs shadow">
+                            <i class="fa-solid fa-power-off mr-1"></i> Bật Camera
+                        </button>
                     </div>
 
-                    <!-- Image Preview Area -->
-                    <div id="ocrPreviewContainer" class="hidden flex flex-col items-center gap-3">
-                        <img id="ocrImagePreview" src="" alt="Phiếu xét nghiệm" class="max-h-56 rounded-xl border border-slate-200 shadow-sm object-contain">
-                        <span id="ocrFileName" class="text-xs font-medium text-slate-600"></span>
-                        <button type="button" onclick="event.stopPropagation(); triggerFileInput()" class="text-xs text-indigo-600 hover:underline"><i class="fa-solid fa-arrow-rotate-right"></i> Chọn ảnh khác</button>
+                    <div id="cameraFrameGuide" class="hidden absolute inset-4 border-2 border-dashed border-emerald-400/80 rounded-xl pointer-events-none flex items-center justify-center">
+                        <span class="bg-black/60 text-emerald-300 text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md">Căn phiếu xét nghiệm vào khung hình</span>
                     </div>
                 </div>
 
-                <!-- Processing State Bar -->
-                <div id="ocrProgressArea" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-                    <div class="flex justify-between items-center text-xs">
-                        <span id="ocrStatusText" class="font-semibold text-indigo-700 flex items-center gap-2">
-                            <i class="fa-solid fa-spinner fa-spin"></i> Đang trích xuất văn bản từ ảnh...
-                        </span>
-                        <span id="ocrPercentText" class="font-bold text-slate-600">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                        <div id="ocrProgressBar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
-                    </div>
-                </div>
-
-                <!-- General Test Details (Facility & Date) -->
-                <div id="ocrMetadataFields" class="hidden grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs">
-                    <div>
-                        <label class="font-semibold text-slate-700 block mb-1">Ngày xét nghiệm</label>
-                        <input type="date" id="ocrBatchDate" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs">
-                    </div>
-                    <div>
-                        <label class="font-semibold text-slate-700 block mb-1">Nơi xét nghiệm / Bệnh viện</label>
-                        <input type="text" id="ocrBatchFacility" placeholder="VD: Bệnh viện Medlatec" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs">
-                    </div>
-                </div>
-
-                <!-- Extracted Items Review Table -->
-                <div id="ocrResultsContainer" class="hidden space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h4 class="text-xs font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-emerald-600"></i> Danh sách chỉ số đã nhận diện được (<span id="ocrExtractedCount">0</span>)
-                        </h4>
-                        <button type="button" onclick="addBlankOcrRow()" class="text-xs text-indigo-600 hover:underline font-semibold">+ Thêm dòng thủ công</button>
-                    </div>
-
-                    <div class="max-h-64 overflow-y-auto custom-scrollbar border border-slate-200 rounded-2xl">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 text-slate-500 font-semibold sticky top-0 z-10 border-b border-slate-200">
-                                <tr>
-                                    <th class="p-2.5">Tên Chỉ Số</th>
-                                    <th class="p-2.5">Loại XN</th>
-                                    <th class="p-2.5">Kết Quả</th>
-                                    <th class="p-2.5">Đơn Vị</th>
-                                    <th class="p-2.5">Tham Chiếu</th>
-                                    <th class="p-2.5">Đánh Giá</th>
-                                    <th class="p-2.5 text-center">Xóa</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ocrResultsTableBody" class="divide-y divide-slate-100 bg-white">
-                                <!-- Dynamic extracted rows -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="flex justify-center gap-3">
+                    <button id="btnCaptureCamera" disabled onclick="captureCameraSnapshot()" class="bg-emerald-600 disabled:opacity-50 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl text-xs shadow flex items-center gap-2">
+                        <i class="fa-solid fa-circle-dot text-rose-300 text-sm"></i> Chụp ảnh phiếu ngay
+                    </button>
                 </div>
             </div>
 
-            <!-- Modal Action Buttons -->
-            <div class="flex justify-between items-center pt-4 border-t border-slate-100 mt-4">
-                <button type="button" onclick="closeModal('ocrLabModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs">Hủy</button>
-                <div class="flex gap-2">
-                    <button type="button" id="btnStartOcr" onclick="startOcrProcess()" disabled class="px-4 py-2 bg-indigo-600 disabled:opacity-50 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 shadow">
-                        <i class="fa-solid fa-bolt"></i> Bắt đầu quét AI
-                    </button>
-                    <button type="button" id="btnSaveOcrResults" onclick="saveOcrBatchResults()" class="hidden px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 shadow">
-                        <i class="fa-solid fa-file-import"></i> Lưu vào hồ sơ thành viên
-                    </button>
+            <!-- OCR Progress Bar -->
+            <div id="ocrProgressArea" class="hidden space-y-1.5 pt-2">
+                <div class="flex justify-between text-xs font-semibold">
+                    <span id="ocrStatusText" class="text-indigo-700 flex items-center gap-2"><i class="fa-solid fa-spinner fa-spin"></i> Đang phân tích ảnh...</span>
+                    <span id="ocrPercentText" class="text-indigo-900">0%</span>
                 </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="ocrProgressBar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- OCR Action Start Button -->
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeOcrModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs">Hủy</button>
+                <button type="button" id="btnStartOcr" disabled onclick="startOcrProcess()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs shadow flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Bắt đầu quét AI
+                </button>
+            </div>
+
+            <!-- Metadata Entry & Extracted Items Table -->
+            <div id="ocrMetadataFields" class="hidden pt-3 border-t border-slate-200 grid grid-cols-2 gap-3 text-xs">
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">Ngày xét nghiệm trên phiếu</label>
+                    <input type="date" id="ocrBatchDate" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">Tên Bệnh viện / Phòng khám</label>
+                    <input type="text" id="ocrBatchFacility" placeholder="VD: Bệnh viện Medlatec" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+            </div>
+
+            <div id="ocrResultsContainer" class="hidden space-y-2 pt-2">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-bold text-slate-800 text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i> Các chỉ số bóc tách được (<span id="ocrExtractedCount">0</span>)
+                    </h4>
+                    <button type="button" onclick="addBlankOcrRow()" class="text-[11px] text-indigo-600 hover:underline font-semibold">+ Thêm dòng thủ công</button>
+                </div>
+
+                <div class="max-h-56 overflow-y-auto custom-scrollbar border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead class="bg-slate-100 font-semibold text-slate-500 uppercase sticky top-0">
+                            <tr>
+                                <th class="p-2">Tên Chỉ Số</th>
+                                <th class="p-2">Loại XN</th>
+                                <th class="p-2">Kết quả</th>
+                                <th class="p-2">Đơn vị</th>
+                                <th class="p-2">Tham chiếu</th>
+                                <th class="p-2">Đánh giá</th>
+                                <th class="p-2 text-center">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ocrResultsTableBody">
+                            <!-- Dynamic rows from OCR parsing -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="btnSaveOcrResults" class="hidden pt-2 flex justify-end gap-2">
+                <button type="button" onclick="saveOcrBatchResults()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu Tất Cả Chỉ Số Vào Hồ Sơ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 8: Detailed AI Medical Advisory Modal for Individual Lab Test -->
+    <div id="labConsultationModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-start pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div id="consultModalBadgeIcon" class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-lg shrink-0">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900" id="consultModalTitle">Tư Vấn & Nguy Cơ Sức Khỏe</h3>
+                        <p class="text-xs text-slate-500" id="consultModalSubtitle">Phân tích chi tiết chỉ số xét nghiệm</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('labConsultationModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="mt-4 space-y-4 text-xs">
+                <!-- Result Snapshot Header Card -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <span class="text-slate-400 block text-[11px]">Kết quả đo gần nhất</span>
+                        <span class="text-lg font-bold text-slate-900" id="consultModalValue">--</span>
+                        <span class="text-xs text-slate-500 ml-1" id="consultModalUnit">--</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-slate-400 block text-[11px]">Khoảng tham chiếu an toàn</span>
+                        <span class="font-semibold text-slate-700" id="consultModalRef">--</span>
+                    </div>
+                    <div>
+                        <span id="consultModalStatusBadge" class="px-3 py-1 rounded-full font-bold text-xs">--</span>
+                    </div>
+                </div>
+
+                <!-- Bodily Health Impact & Warnings -->
+                <div class="bg-rose-50/80 border border-rose-200 p-4 rounded-2xl space-y-2">
+                    <h4 class="font-bold text-rose-900 flex items-center gap-2 text-xs uppercase tracking-wide">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-600 text-sm"></i> Nguy Cơ & Tác Động Đến Cơ Thể
+                    </h4>
+                    <div id="consultModalRisks" class="text-slate-800 text-xs leading-relaxed space-y-1">
+                        <!-- Dynamic risk details -->
+                    </div>
+                </div>
+
+                <!-- Lifestyle, Diet & Treatment Advisory -->
+                <div class="bg-emerald-50/80 border border-emerald-200 p-4 rounded-2xl space-y-2">
+                    <h4 class="font-bold text-emerald-900 flex items-center gap-2 text-xs uppercase tracking-wide">
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i> Khuyên Dùng & Hướng Điều Trị
+                    </h4>
+                    <div id="consultModalTreatment" class="text-slate-800 text-xs leading-relaxed space-y-1">
+                        <!-- Dynamic treatment advice -->
+                    </div>
+                </div>
+
+                <!-- Reference Medication Category -->
+                <div class="bg-indigo-50/80 border border-indigo-200 p-4 rounded-2xl space-y-2">
+                    <h4 class="font-bold text-indigo-900 flex items-center gap-2 text-xs uppercase tracking-wide">
+                        <i class="fa-solid fa-pills text-indigo-600 text-sm"></i> Nhóm Thuốc Tham Khảo (Cần Bác Sĩ Kê Đơn)
+                    </h4>
+                    <p id="consultModalMeds" class="text-slate-800 text-xs leading-relaxed">
+                        --
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal('labConsultationModal')" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-xl text-xs shadow">
+                    Đã Hiểu
+                </button>
             </div>
         </div>
     </div>
@@ -1074,12 +1203,15 @@
                         { id: "v2", name: "Vắc-xin Viêm Gan B", disease: "Viêm gan B", dose: 3, date: "2024-05-12", status: "Đã tiêm" }
                     ],
                     labTests: [
-                        { id: "l1", name: "Glucose máu", category: "Sinh hóa máu", value: "5.4", unit: "mmol/L", refRange: "3.9 - 6.4", status: "Bình thường", date: "2026-06-15", facility: "Bệnh viện Bạch Mai" },
-                        { id: "l2", name: "Cholesterol toàn phần", category: "Sinh hóa máu", value: "5.8", unit: "mmol/L", refRange: "< 5.2", status: "Cao", date: "2026-06-15", facility: "Bệnh viện Bạch Mai" },
-                        { id: "l3", name: "Triglyceride", category: "Sinh hóa máu", value: "1.8", unit: "mmol/L", refRange: "< 1.7", status: "Cao", date: "2026-06-15", facility: "Bệnh viện Bạch Mai" },
-                        { id: "l4", name: "AST (GOT)", category: "Sinh hóa máu", value: "28", unit: "U/L", refRange: "< 40", status: "Bình thường", date: "2026-06-15", facility: "Bệnh viện Bạch Mai" },
-                        { id: "l5", name: "ALT (GPT)", category: "Sinh hóa máu", value: "32", unit: "U/L", refRange: "< 40", status: "Bình thường", date: "2026-06-15", facility: "Bệnh viện Bạch Mai" },
-                        { id: "l6", name: "Bạch cầu (WBC)", category: "Huyết học", value: "6.5", unit: "G/L", refRange: "4.0 - 10.0", status: "Bình thường", date: "2026-06-15", facility: "Bệnh viện Bạch Mai" }
+                        { id: "l1", name: "Glucose máu", category: "Sinh hóa máu", value: "6.8", unit: "mmol/L", refRange: "3.9 - 6.4", status: "Cao", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
+                        { id: "l2", name: "Cholesterol toàn phần", category: "Sinh hóa máu", value: "5.8", unit: "mmol/L", refRange: "< 5.2", status: "Cao", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
+                        { id: "l3", name: "Triglyceride", category: "Sinh hóa máu", value: "2.1", unit: "mmol/L", refRange: "< 1.7", status: "Cao", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
+                        { id: "l4", name: "AST (GOT)", category: "Sinh hóa máu", value: "28", unit: "U/L", refRange: "< 40", status: "Bình thường", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
+                        { id: "l5", name: "ALT (GPT)", category: "Sinh hóa máu", value: "32", unit: "U/L", refRange: "< 40", status: "Bình thường", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
+                        { id: "l6", name: "Acid Uric", category: "Sinh hóa máu", value: "430", unit: "μmol/L", refRange: "210 - 420", status: "Cao", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
+                        { id: "l7", name: "Bạch cầu (WBC)", category: "Huyết học", value: "6.5", unit: "G/L", refRange: "4.0 - 10.0", status: "Bình thường", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
+                        { id: "l8", name: "HbA1c", category: "Sinh hóa máu", value: "6.2", unit: "%", refRange: "< 5.7", status: "Cao", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
+                        { id: "l9", name: "Creatinine", category: "Sinh hóa máu", value: "88", unit: "μmol/L", refRange: "62 - 115", status: "Bình thường", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" }
                     ]
                 },
                 {
@@ -1105,12 +1237,6 @@
             ]
         };
 
-        let vitalsChartInstance = null;
-        let activeChartMetric = 'bp';
-        let activeLabCategoryFilter = 'all';
-        let currentOcrImageSource = null;
-        let extractedOcrItems = [];
-
         // Presets Dictionary for Common Lab Tests
         const labPresets = {
             glucose: { name: "Glucose (Đường máu lúc đói)", category: "Sinh hóa máu", unit: "mmol/L", refRange: "3.9 - 6.4", min: 3.9, max: 6.4 },
@@ -1128,6 +1254,175 @@
             rbc: { name: "Hồng cầu (RBC)", category: "Huyết học", unit: "T/L", refRange: "4.0 - 5.8", min: 4.0, max: 5.8 },
             plt: { name: "Tiểu cầu (PLT)", category: "Huyết học", unit: "G/L", refRange: "150 - 400", min: 150, max: 400 }
         };
+
+        // Comprehensive Consultation Knowledge Base for Medical Indicators
+        const labConsultationMap = {
+            "Glucose": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> Chỉ số đường máu vượt ngưỡng cảnh báo giai đoạn Tiền đái tháo đường hoặc Đái tháo đường. Tăng nguy cơ biến chứng tổn thương vi mạch tim, bệnh võng mạc làm giảm thị lực, suy giảm chức năng lọc của thận, tê bì đầu chi do viêm dây thần kinh ngoại biên và nguy cơ tai biến mạch máu não.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• <i>Dinh dưỡng:</i> Hạn chế tinh bột chuyển hóa nhanh, đường tinh luyện, đồ uống có gas. Bổ sung rau xanh, hạt nguyên cám.<br>• <i>Lối sống:</i> Đi bộ nhanh/tập thể dục 30 phút mỗi ngày. Kiểm tra đường huyết mao mạch định kỳ.<br>• <i>Y tế:</i> Khám chuyên khoa Nội tiết để theo dõi.",
+                meds: "Nhóm Metformin, Gliclazide, Inhibitor DPP-4 (sử dụng bắt buộc theo đơn kê của Bác sĩ)."
+            },
+            "HbA1c": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> HbA1c phản ánh lượng đường trung bình trong máu 2-3 tháng qua. HbA1c tăng cao chứng tỏ đường huyết liên tục mất kiểm soát, thúc đẩy xơ vữa động mạch, suy thận đái tháo đường và hoại tử chi do tắc mạch.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• Tuân thủ nghiêm ngặt chế độ ăn giảm đạm/đường béo.<br>• Giảm cân nếu chỉ số BMI > 23.<br>• Xét nghiệm kiểm tra lại HbA1c mỗi 3 - 6 tháng.",
+                meds: "Phác đồ phối hợp thuốc hạ đường huyết theo chỉ định bác sĩ."
+            },
+            "Cholesterol": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> Tăng Cholesterol gây lắng đọng mảng xơ vữa trong thành mạch máu. Dẫn đến hẹp động mạch vành (gây thiếu máu cơ tim, đau thắt ngực), tăng nguy cơ nhồi máu cơ tim cấp tính và đột quỵ não.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• <i>Dinh dưỡng:</i> Kiêng mỡ động vật, nội tạng, đồ chiên xào rán. Bổ sung dầu thực vật (ô liu, đậu nành) và Omega-3 từ cá béo.<br>• <i>Vận động:</i> Tăng cường bài tập Cardio giúp nâng cao Cholesterol tốt (HDL).",
+                meds: "Nhóm Statin (Atorvastatin, Rosuvastatin) giúp giảm tổng hợp Cholesterol tại gan."
+            },
+            "Triglyceride": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> Triglyceride tăng cao nghiêm trọng làm tăng nguy cơ Viêm tụy cấp tính (cấp cứu ngoại khoa nguy hiểm). Ngoài ra gây tình trạng Gan nhiễm mỡ và rối loạn chuyển hóa lipid toàn thân.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• <i>Kiêng tuyệt đối rượu bia</i> và nước ngọt đường cao.<br>• Tăng cường bổ sung chất xơ hòa tan (yến mạch, táo, đậu).<br>• Giảm cân lành mạnh.",
+                meds: "Nhóm Fibrate (Fenofibrate) hoặc Omega-3 liều cao theo tư vấn y khoa."
+            },
+            "Acid Uric": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> Tinh thể Urat lắng đọng tại ổ khớp gây Viêm khớp Gút cấp tính (sưng nóng đỏ đau dữ dội ở khớp ngón chân, cổ chân). Lâu ngày tạo hạt Tophi gây biến dạng khớp và hình thành sỏi thận Acid Uric dẫn tới suy thận.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• <i>Dinh dưỡng:</i> Hạn chế thực phẩm giàu Purin (thịt đỏ, hải sản, nội tạng, nấm, măng). Kiêng tuyệt đối bia rượu.<br>• <i>Nước uống:</i> Uống đủ 2.5 - 3 lít nước mỗi ngày giúp thận đào thải Acid Uric.",
+                meds: "Nhóm Allopurinol, Febuxostat (kiểm soát tổng hợp) hoặc Colchicine (khi có cơn Gút) dưới sự giám sát y tế."
+            },
+            "AST": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> Men gan AST tăng phản ánh tế bào gan hoặc tế bào cơ tim/cơ xương bị tổn thương, viêm hoặc phá hủy. Nguy cơ tiến triển thành viêm gan mạn tính, xơ gan nếu không được can thiệp sớm.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• Ngừng ngay các loại thuốc/thực phẩm chức năng không rõ nguồn gốc.<br>• Tuyệt đối không dùng đồ uống có cồn.<br>• Làm xét nghiệm tầm soát Viêm gan B, C.",
+                meds: "Thuốc bổ gan, hạ men gan (Silymarin, L-Ornithine L-Aspartate) theo chỉ định."
+            },
+            "ALT": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> ALT là chỉ số đặc hiệu cho tổn thương tế bào gan. Mức tăng cao cảnh báo viêm gan cấp, gan nhiễm mỡ tiến triển, tổn thương gan do thuốc hoặc độc chất.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• Nghỉ ngơi hợp lý, tránh thức khuya.<br>• Chế độ ăn thanh mát, giàu chất chống oxy hóa.<br>• Tái khám siêu âm tổng quát ổ bụng và kiểm tra men gan sau 2-4 tuần.",
+                meds: "Nhóm hỗ trợ bảo vệ tế bào gan theo hướng dẫn bác sĩ."
+            },
+            "Ure": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> Ure máu tăng cao cho thấy chức năng lọc của thận bị suy giảm hoặc do mất nước nặng. Có thể gây hội chứng ure huyết cao ảnh hưởng tới hệ thần kinh và tim mạch.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• Uống đủ nước hàng ngày.<br>• Điều chỉnh giảm lượng đạm động vật quá mức trong khẩu phần.<br>• Kiểm tra đánh giá lại chức năng thận tổng thể.",
+                meds: "Theo dõi điều trị nguyên nhân nền (huyết áp, tiểu đường)."
+            },
+            "Creatinine": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> Creatinine giúp đánh giá độ lọc cầu thận (eGFR). Tăng Creatinine cảnh báo suy thận cấp hoặc suy thận mạn tính, nguy cơ tích tụ độc tố, giữ nước, tăng huyết áp ác tính và rối loạn điện giải.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• Kiểm soát chặt chẽ huyết áp (< 130/80 mmHg) và đường huyết.<br>• Tránh dùng các thuốc có hại cho thận (như thuốc giảm đau chống viêm NSAID Ibuprofen, Naproxen...).<br>• Khám chuyên khoa Thận - Tiết niệu ngay.",
+                meds: "Thuốc kiểm soát huyết áp nhóm ARB/ACEi giúp bảo vệ cầu thận (cần bác sĩ chuyên khoa kê đơn)."
+            },
+            "WBC": {
+                risks: "<strong>Ảnh hưởng cơ thể:</strong> Bạch cầu tăng cao phản ứng với tình trạng nhiễm trùng vi khuẩn cấp tính (viêm phế quản, viêm phổi, viêm ruột...) hoặc phản ứng viêm cấp tính trong cơ thể.",
+                treatment: "<strong>Khuyên dùng & Điều trị:</strong><br>• Đi khám lâm sàng để xác định ổ nhiễm trùng.<br>• Theo dõi nhiệt độ cơ thể và các triệu chứng đi kèm (sốt, ho, đau bụng).",
+                meds: "Sử dụng Kháng sinh thích hợp NẾU xác định do nhiễm vi khuẩn (bắt buộc bác sĩ kê đơn)."
+            }
+        };
+
+        let vitalsChartInstance = null;
+        let activeChartMetric = 'bp';
+        let activeLabCategoryFilter = 'all';
+        let currentOcrImageSource = null;
+        let extractedOcrItems = [];
+        let cameraMediaStream = null;
+
+        function getConsultationInfo(labName, status, value) {
+            let matchedKey = null;
+            for (let k in labConsultationMap) {
+                if (labName.toLowerCase().includes(k.toLowerCase())) {
+                    matchedKey = k;
+                    break;
+                }
+            }
+
+            if (matchedKey) {
+                return labConsultationMap[matchedKey];
+            }
+
+            return {
+                risks: `<strong>Ảnh hưởng cơ thể:</strong> Chỉ số ${labName} đang ở mức [${status}]. Sự biến động bất thường của chỉ số này có thể phản ánh sự rối loạn chức năng cơ quan tương ứng, ảnh hưởng đến quá trình chuyển hóa và cân bằng sinh học của cơ thể.`,
+                treatment: `<strong>Khuyên dùng & Điều trị:</strong><br>• Duy trì lối sống lành mạnh, uống đủ 2L nước mỗi ngày.<br>• Hạn chế các chất kích thích, thức ăn chiên xào nhiều mỡ.<br>• Lập kế hoạch tái khám và tham vấn ý kiến bác sĩ chuyên khoa để được chẩn đoán chi tiết.`,
+                meds: "Dùng thuốc theo đúng đơn kê chỉ định của Bác sĩ chuyên khoa."
+            };
+        }
+
+        // Camera Management Functions
+        function switchOcrInputMode(mode) {
+            const uploadBtn = document.getElementById('tabModeUpload');
+            const cameraBtn = document.getElementById('tabModeCamera');
+            const uploadContainer = document.getElementById('ocrUploadModeContainer');
+            const cameraContainer = document.getElementById('ocrCameraModeContainer');
+
+            if (mode === 'upload') {
+                uploadBtn.className = "flex-1 py-2 rounded-xl bg-white shadow-sm text-indigo-600 text-center flex items-center justify-center gap-2";
+                cameraBtn.className = "flex-1 py-2 rounded-xl text-slate-600 hover:bg-white/50 text-center flex items-center justify-center gap-2";
+                uploadContainer.classList.remove('hidden');
+                cameraContainer.classList.add('hidden');
+                stopCameraStream();
+            } else {
+                cameraBtn.className = "flex-1 py-2 rounded-xl bg-white shadow-sm text-indigo-600 text-center flex items-center justify-center gap-2";
+                uploadBtn.className = "flex-1 py-2 rounded-xl text-slate-600 hover:bg-white/50 text-center flex items-center justify-center gap-2";
+                cameraContainer.classList.remove('hidden');
+                uploadContainer.classList.add('hidden');
+            }
+        }
+
+        async function startCameraStream() {
+            const videoEl = document.getElementById('webcamVideo');
+            const loadingState = document.getElementById('cameraLoadingState');
+            const frameGuide = document.getElementById('cameraFrameGuide');
+            const btnCapture = document.getElementById('btnCaptureCamera');
+
+            try {
+                cameraMediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+                    audio: false
+                });
+
+                videoEl.srcObject = cameraMediaStream;
+                videoEl.classList.remove('hidden');
+                loadingState.classList.add('hidden');
+                frameGuide.classList.remove('hidden');
+                btnCapture.disabled = false;
+                showToast("Đã kết nối Camera thành công!");
+            } catch (err) {
+                console.error("Camera access error:", err);
+                showToast("Không thể truy cập Camera. Vui lòng cấp quyền sử dụng ống kính!");
+            }
+        }
+
+        function captureCameraSnapshot() {
+            const videoEl = document.getElementById('webcamVideo');
+            const canvasEl = document.getElementById('webcamCanvas');
+
+            if (!videoEl.srcObject) return;
+
+            canvasEl.width = videoEl.videoWidth || 640;
+            canvasEl.height = videoEl.videoHeight || 480;
+
+            const ctx = canvasEl.getContext('2d');
+            ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+
+            currentOcrImageSource = canvasEl.toDataURL('image/png');
+            stopCameraStream();
+
+            switchOcrInputMode('upload');
+            displayOcrImagePreview(currentOcrImageSource, "Ảnh chụp từ Camera.png");
+            showToast("Đã chụp ảnh phiếu thành công! Nhấn 'Bắt đầu quét AI' để xử lý.");
+        }
+
+        function stopCameraStream() {
+            if (cameraMediaStream) {
+                cameraMediaStream.getTracks().forEach(track => track.stop());
+                cameraMediaStream = null;
+            }
+            const videoEl = document.getElementById('webcamVideo');
+            if (videoEl) {
+                videoEl.srcObject = null;
+                videoEl.classList.add('hidden');
+            }
+            const loadingState = document.getElementById('cameraLoadingState');
+            if (loadingState) loadingState.classList.remove('hidden');
+            const frameGuide = document.getElementById('cameraFrameGuide');
+            if (frameGuide) frameGuide.classList.add('hidden');
+            const btnCapture = document.getElementById('btnCaptureCamera');
+            if (btnCapture) btnCapture.disabled = true;
+        }
+
+        function closeOcrModal() {
+            stopCameraStream();
+            closeModal('ocrLabModal');
+        }
 
         // OCR / Image Scanning Functions
         function triggerFileInput() {
@@ -1150,12 +1445,11 @@
             document.getElementById('ocrUploadPrompt').classList.add('hidden');
             document.getElementById('ocrPreviewContainer').classList.remove('hidden');
             document.getElementById('ocrImagePreview').src = src;
-            document.getElementById('ocrFileName').textContent = name || "Phiếu xét nghiệm mẫu";
+            document.getElementById('ocrFileName').textContent = name || "Phiếu xét nghiệm";
             document.getElementById('btnStartOcr').disabled = false;
         }
 
         function loadSampleOcrSheet() {
-            // Generates a mock canvas lab sheet image for seamless testing
             const canvas = document.createElement('canvas');
             canvas.width = 650;
             canvas.height = 420;
@@ -1185,8 +1479,7 @@
             ctx.font = "bold 12px Inter, sans-serif";
             ctx.fillText("Tên chỉ số xét nghiệm", 35, 95);
             ctx.fillText("Kết quả", 260, 95);
-            ctx.fillText("Đơn vị", 370, 95);
-            ctx.fillText("Tham chiếu", 480, 95);
+            ctx.fillText("Tham chiếu", 370, 95);
 
             const testData = [
                 ["Glucose (Đường máu)", "6.8", "mmol/L", "3.9 - 6.4"],
@@ -1213,7 +1506,6 @@
                 ctx.fillText(row[1], 260, y);
                 ctx.font = "12px Inter, sans-serif";
                 ctx.fillText(row[2], 370, y);
-                ctx.fillText(row[3], 480, y);
                 y += 26;
             });
 
@@ -1236,7 +1528,6 @@
             try {
                 let textResult = "";
 
-                // Check if Tesseract is available for real OCR
                 if (typeof Tesseract !== 'undefined') {
                     const worker = await Tesseract.createWorker('vie+eng');
                     statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang phân tích nội dung chữ trong phiếu...`;
@@ -1254,7 +1545,6 @@
 
             } catch (err) {
                 console.warn("OCR engine fallback activated:", err);
-                // Fallback smart parser for demo sheet
                 parseOcrTextToLabResults("");
             }
         }
@@ -1266,7 +1556,6 @@
             document.getElementById('ocrBatchDate').value = todayStr;
             document.getElementById('ocrBatchFacility').value = "Bệnh viện / Phòng khám";
 
-            // Rules dictionary for standard medical test keywords
             const searchRules = [
                 { key: 'glucose', name: 'Glucose (Đường máu)', cat: 'Sinh hóa máu', pattern: /(glucose|đường máu|duong mau)/i, defaultVal: "6.8", unit: "mmol/L", ref: "3.9 - 6.4", min: 3.9, max: 6.4 },
                 { key: 'hba1c', name: 'HbA1c', cat: 'Sinh hóa máu', pattern: /hba1c/i, defaultVal: "6.2", unit: "%", ref: "< 5.7", max: 5.7 },
@@ -1288,7 +1577,6 @@
                 if (lines.length > 0) {
                     for (let line of lines) {
                         if (rule.pattern.test(line)) {
-                            // Extract numeric float value from line
                             const matches = line.match(/(\d+[\.,]\d+|\d+)/g);
                             if (matches && matches.length > 0) {
                                 foundValue = matches[0].replace(',', '.');
@@ -1397,7 +1685,7 @@
 
             const member = getActiveMember();
             const date = document.getElementById('ocrBatchDate').value || new Date().toISOString().split('T')[0];
-            const facility = document.getElementById('ocrBatchFacility').value.trim() || "Nhập từ ảnh OCR";
+            const facility = document.getElementById('ocrBatchFacility').value.trim() || "Nhập từ ảnh OCR / Camera";
 
             if (!member.labTests) member.labTests = [];
 
@@ -1417,11 +1705,12 @@
 
             saveAppData();
             renderAll();
-            closeModal('ocrLabModal');
+            closeOcrModal();
             showToast(`Đã tự động thêm ${extractedOcrItems.length} chỉ số xét nghiệm vào hồ sơ!`);
         }
 
         function openOcrScanModal() {
+            switchOcrInputMode('upload');
             openModal('ocrLabModal');
         }
 
@@ -1443,7 +1732,6 @@
                 saveAppData();
             }
 
-            // Set today date as default in forms
             const todayStr = new Date().toISOString().split('T')[0];
             document.getElementById('inputVitalDate').value = todayStr;
             document.getElementById('inputRecordDate').value = todayStr;
@@ -1466,13 +1754,11 @@
             const member = getActiveMember();
             if (!member) return;
 
-            // Render Header & Sidebar
             document.getElementById('activeMemberName').textContent = member.name;
             document.getElementById('dropdownActiveName').textContent = member.name;
             document.getElementById('activeAvatar').textContent = getInitials(member.name);
             document.getElementById('dashWelcomeName').textContent = member.name;
 
-            // Sidebar details
             document.getElementById('sidebarAge').textContent = calculateAge(member.dob) + " tuổi";
             document.getElementById('sidebarBlood').textContent = member.blood || "N/A";
             document.getElementById('sidebarHeight').textContent = (member.height || "--") + " cm";
@@ -1524,7 +1810,6 @@
                 document.getElementById('dashBMI').textContent = "--";
             }
 
-            // Dashboard Medications List
             const dashMedsContainer = document.getElementById('dashMedsList');
             const meds = member.medications || [];
             if (meds.length === 0) {
@@ -1546,7 +1831,6 @@
                 `).join('');
             }
 
-            // Dashboard Activity Timeline
             const dashActContainer = document.getElementById('dashActivityList');
             const records = member.records || [];
             if (records.length === 0) {
@@ -1596,7 +1880,6 @@
 
         function renderChart(vitals) {
             const ctx = document.getElementById('vitalsChart').getContext('2d');
-            
             const labels = vitals.map(v => v.date);
             
             if (vitalsChartInstance) {
@@ -1796,23 +2079,34 @@
         function renderLabTests(member) {
             if (!member) member = getActiveMember();
             const labs = member.labTests || [];
+            const searchVal = (document.getElementById('searchLabInput')?.value || '').toLowerCase();
 
-            // Update stats
+            // Stats update
             document.getElementById('labTotalCount').textContent = labs.length;
             const normalCount = labs.filter(l => l.status === 'Bình thường').length;
             const abnormalCount = labs.length - normalCount;
             document.getElementById('labNormalCount').textContent = normalCount;
             document.getElementById('labAbnormalCount').textContent = abnormalCount;
 
-            // Filtered labs
+            // Render Overall AI Risk & Treatment Banner
+            renderAiOverallAdvisory(labs);
+
             let filteredLabs = labs;
             if (activeLabCategoryFilter !== 'all') {
                 filteredLabs = labs.filter(l => l.category === activeLabCategoryFilter);
             }
 
+            if (searchVal) {
+                filteredLabs = filteredLabs.filter(l => 
+                    l.name.toLowerCase().includes(searchVal) ||
+                    l.category.toLowerCase().includes(searchVal) ||
+                    (l.facility && l.facility.toLowerCase().includes(searchVal))
+                );
+            }
+
             const tbody = document.getElementById('labTableBody');
             if (filteredLabs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="px-5 py-6 text-center text-slate-400">Chưa có chỉ số xét nghiệm nào được lưu trong mục này.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="px-5 py-6 text-center text-slate-400">Không tìm thấy chỉ số xét nghiệm nào trong danh sách.</td></tr>`;
                 return;
             }
 
@@ -1831,6 +2125,8 @@
                     iconClass = "fa-triangle-exclamation";
                 }
 
+                const isAbnormal = l.status === 'Cao' || l.status === 'Thấp' || l.status === 'Bất thường';
+
                 return `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="px-5 py-3 font-medium text-slate-800">${l.date}</td>
@@ -1844,12 +2140,95 @@
                             </span>
                         </td>
                         <td class="px-5 py-3 text-slate-500 line-clamp-1">${l.facility || "Chưa ghi nhận"}</td>
-                        <td class="px-5 py-3 text-right">
-                            <button onclick="deleteLabTest('${l.id}')" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-trash-can"></i></button>
+                        <td class="px-5 py-3 text-right flex items-center justify-end gap-2">
+                            ${isAbnormal ? `
+                                <button onclick="openLabConsultationModal('${l.id}')" class="bg-rose-50 text-rose-700 hover:bg-rose-100 px-2.5 py-1 rounded-lg text-[11px] font-bold border border-rose-200 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-user-doctor"></i> Tư vấn & Nguy cơ
+                                </button>
+                            ` : `
+                                <button onclick="openLabConsultationModal('${l.id}')" class="bg-slate-100 text-slate-600 hover:bg-slate-200 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-info"></i> Xem thông tin
+                                </button>
+                            `}
+                            <button onclick="deleteLabTest('${l.id}')" class="text-red-400 hover:text-red-600 p-1"><i class="fa-solid fa-trash-can"></i></button>
                         </td>
                     </tr>
                 `;
             }).join('');
+        }
+
+        function renderAiOverallAdvisory(labs) {
+            const card = document.getElementById('labAiAdvisoryCard');
+            const detailsContainer = document.getElementById('labAiConsultationDetails');
+            const highCountEl = document.getElementById('highIndicatorsCount');
+
+            const highLabs = labs.filter(l => l.status === 'Cao' || l.status === 'Bất thường');
+
+            if (highLabs.length === 0) {
+                card.classList.add('hidden');
+                return;
+            }
+
+            card.classList.remove('hidden');
+            highCountEl.textContent = highLabs.length;
+
+            detailsContainer.innerHTML = highLabs.map(l => {
+                const info = getConsultationInfo(l.name, l.status, l.value);
+                return `
+                    <div class="bg-white p-4 rounded-2xl border border-rose-200/80 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                            <h4 class="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                ${l.name}
+                            </h4>
+                            <span class="bg-rose-100 text-rose-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                                ${l.value} ${l.unit} (Chuẩn: ${l.refRange})
+                            </span>
+                        </div>
+                        <div class="text-[11px] text-slate-700 space-y-1.5">
+                            <div>${info.risks}</div>
+                            <div class="pt-1 border-t border-slate-100">${info.treatment}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openLabConsultationModal(labId) {
+            const member = getActiveMember();
+            const lab = (member.labTests || []).find(l => l.id === labId);
+            if (!lab) return;
+
+            const info = getConsultationInfo(lab.name, lab.status, lab.value);
+
+            document.getElementById('consultModalTitle').textContent = `Tư Vấn Chỉ Số: ${lab.name}`;
+            document.getElementById('consultModalSubtitle').textContent = `Phân tích y khoa cho ngày ${lab.date} - ${lab.facility || 'Cơ sở Y tế'}`;
+            document.getElementById('consultModalValue').textContent = lab.value;
+            document.getElementById('consultModalUnit').textContent = lab.unit;
+            document.getElementById('consultModalRef').textContent = lab.refRange || 'Không rõ';
+
+            const badge = document.getElementById('consultModalStatusBadge');
+            const iconBadge = document.getElementById('consultModalBadgeIcon');
+
+            if (lab.status === 'Cao') {
+                badge.className = "px-3 py-1 rounded-full font-bold text-xs bg-rose-100 text-rose-700";
+                badge.textContent = "Chỉ số CAO (Vượt ngưỡng)";
+                iconBadge.className = "w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-lg shrink-0";
+            } else if (lab.status === 'Thấp') {
+                badge.className = "px-3 py-1 rounded-full font-bold text-xs bg-amber-100 text-amber-800";
+                badge.textContent = "Chỉ số THẤP (Dưới ngưỡng)";
+                iconBadge.className = "w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-lg shrink-0";
+            } else {
+                badge.className = "px-3 py-1 rounded-full font-bold text-xs bg-emerald-100 text-emerald-800";
+                badge.textContent = "Chỉ số BÌNH THƯỜNG";
+                iconBadge.className = "w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg shrink-0";
+            }
+
+            document.getElementById('consultModalRisks').innerHTML = info.risks;
+            document.getElementById('consultModalTreatment').innerHTML = info.treatment;
+            document.getElementById('consultModalMeds').innerHTML = info.meds;
+
+            openModal('labConsultationModal');
         }
 
         function filterLabCategory(category) {
@@ -1998,7 +2377,7 @@
                 const newMember = {
                     id: memberId,
                     name, dob, gender, blood, height, weight, conditions, allergies, iceName, icePhone,
-                    vitals: [], records: [], medications: [], vaccines: []
+                    vitals: [], records: [], medications: [], vaccines: [], labTests: []
                 };
                 appData.members.push(newMember);
                 appData.activeMemberId = memberId;
@@ -2042,7 +2421,7 @@
 
             if (!member.vitals) member.vitals = [];
             member.vitals.push({ date, bpMax, bpMin, hr, bs, weight });
-            member.weight = weight; // sync current weight
+            member.weight = weight;
 
             saveAppData();
             renderAll();
@@ -2112,7 +2491,6 @@
             showToast("Đã ghi nhận mũi tiêm vắc-xin!");
         }
 
-        // Toggle / Delete Functions
         function toggleMedState(medId) {
             const member = getActiveMember();
             const med = member.medications.find(m => m.id === medId);
@@ -2172,7 +2550,6 @@
             }, 3000);
         }
 
-        // Global Click listener for dropdown
         window.addEventListener('click', function(e) {
             const btn = document.getElementById('profileDropdownBtn');
             const dropdown = document.getElementById('profileDropdown');
@@ -2181,7 +2558,6 @@
             }
         });
 
-        // Initialize App on Window Load
         window.onload = function() {
             initApp();
         };
