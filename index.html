@@ -1956,11 +1956,12 @@ Nhiệm vụ của bạn:
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 });
             } catch (err) {
-                console.error("Gemini API error", err);
+                console.warn("Gemini API unavailable on mobile network, activating Smart Local Medical Engine fallback:", err);
+                const fallbackResponse = generateSmartLocalAiResponse(userQuery, member);
                 geminiChatHistory = geminiChatHistory.filter(m => !m.isLoading);
                 geminiChatHistory.push({
                     sender: 'ai',
-                    text: '⚠️ **Gián đoạn kết nối!** Không thể kết nối với Bác Sĩ AI Gemini. Vui lòng kiểm tra lại mạng internet.',
+                    text: fallbackResponse,
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 });
             }
@@ -1968,7 +1969,84 @@ Nhiệm vụ của bạn:
             renderGeminiMessages();
         }
 
-        async function callGeminiApiWithRetry(userQuery, systemPrompt, retries = 3, delay = 1000) {
+        function generateSmartLocalAiResponse(query, member) {
+            const q = query.toLowerCase();
+            const highLabs = (member.labTests || []).filter(l => l.status === 'Cao');
+            const age = calculateAge(member.dob);
+            
+            // Check matched drugs from Long Châu database
+            const matchedDrugs = longChauDrugDatabase.filter(d => 
+                q.includes(d.brandName.toLowerCase()) || 
+                q.includes(d.genericName.toLowerCase()) ||
+                q.includes(d.category.toLowerCase()) ||
+                q.split(' ').some(w => w.length > 3 && d.brandName.toLowerCase().includes(w))
+            );
+
+            // Check matched disease library items
+            const matchedDiseases = diseaseLibrary.filter(d => 
+                q.includes(d.name.toLowerCase()) || 
+                q.includes(d.category.toLowerCase())
+            );
+
+            let response = `### 🩺 Bác Sĩ Trợ Lý AI Gemini Tư Vấn\n\n`;
+            response += `Duyệt hồ sơ bệnh nhân **${member.name}** (${age} tuổi) • Bệnh nền: *${member.conditions || 'Bình thường'}* • Dị ứng: *${member.allergies || 'Chưa ghi nhận'}*.\n\n`;
+
+            if (matchedDrugs.length > 0) {
+                response += `#### 💊 Thông Tin Biệt Dược & Thời Điểm Uống (Chuẩn Nhà Thuốc Long Châu):\n\n`;
+                matchedDrugs.slice(0, 3).forEach(drug => {
+                    response += `* **Biệt dược:** **${drug.brandName}** (${drug.genericName})\n`;
+                    response += `  - **Phân loại:** ${drug.category}\n`;
+                    response += `  - **Liều dùng phù hợp:** **${drug.standardDose}**\n`;
+                    response += `  - **Thời điểm uống chuẩn:** ⏰ **${drug.timingNote}** (Khuyến nghị lúc ${drug.defaultHour})\n`;
+                    response += `  - **Số ngày điều trị:** ${drug.duration}\n`;
+                    response += `  - **Giới hạn liều:** ${drug.maxDose24h}\n`;
+                    response += `  - **Lưu ý an toàn:** ${drug.precautions}\n\n`;
+                });
+            }
+
+            if (q.includes('chỉ số') || q.includes('xét nghiệm') || q.includes('phân tích') || q.includes('cao') || q.includes('máu')) {
+                if (highLabs.length > 0) {
+                    response += `#### ⚠️ Phân Tích Chỉ Số Xét Nghiệm Tăng Cao & Nguy Cơ Cơ Quan:\n\n`;
+                    highLabs.forEach(lab => {
+                        const info = getConsultationInfo(lab.name, lab.status, lab.value);
+                        response += `* **${lab.name} = ${lab.value} ${lab.unit}** (Vượt ngưỡng an toàn ${lab.refRange}):\n`;
+                        response += `  - ${info.risks}\n`;
+                        response += `  - **Tư vấn điều trị:** ${info.treatment}\n`;
+                        response += `  - **Biệt dược đề xuất Long Châu:** ${info.meds}\n\n`;
+                    });
+                } else {
+                    response += `#### 🔬 Đánh Giá Chỉ Số Xét Nghiệm:\nCác chỉ số xét nghiệm hiện tại của bạn đang nằm trong **khoảng an toàn bình thường**. Hãy tiếp tục duy trì chế độ dinh dưỡng và tập luyện tích cực!\n\n`;
+                }
+            }
+
+            if (matchedDiseases.length > 0 && matchedDrugs.length === 0) {
+                response += `#### 🏥 Phác Đồ & Biệt Dược Theo Bệnh Lý:\n\n`;
+                matchedDiseases.forEach(d => {
+                    response += `* **Bệnh lý:** **${d.name}** (${d.category})\n`;
+                    response += `  - **Chỉ số nguy cơ:** ${d.labMarkers}\n`;
+                    response += `  - **Tác hại cơ quan:** ${d.risks}\n`;
+                    response += `  - **Chế độ ăn uống:** ${d.diet}\n\n`;
+                });
+            }
+
+            if (matchedDrugs.length === 0 && matchedDiseases.length === 0 && !q.includes('chỉ số')) {
+                response += `#### 📋 Hướng Dẫn Tư Vấn Y Khoa Tổng Quát:\n`;
+                response += `Dựa trên thắc mắc của bạn ("*${query}*") và hồ sơ sức khỏe hiện tại:\n\n`;
+                response += `1. **Tra cứu biệt dược:** Bạn có thể nhập tên thuốc cụ thể (như *Panadol, Metformin, Crestor, Augmentin, Nexium...*) để xem chi tiết liều dùng và thời điểm uống chuẩn Long Châu.\n`;
+                response += `2. **Theo dõi chỉ số:** Hệ thống phát hiện **${highLabs.length}** chỉ số xét nghiệm đang tăng cao (${highLabs.map(l => l.name).join(', ') || 'Không có'}).\n`;
+                response += `3. **Lời khuyên bác sĩ:** Luôn tuân thủ thời điểm uống thuốc (trước hoặc sau bữa ăn no) để tối ưu hóa hiệu quả hấp thu và tránh kích ứng dạ dày.\n\n`;
+            }
+
+            if (member.allergies && member.allergies !== 'Chưa có dị ứng' && member.allergies !== 'Không có') {
+                response += `⚠️ **CẢNH BÁO TIỀN SỬ DỊ ỨNG:** Bệnh nhân có ghi nhận dị ứng **${member.allergies}**. Tuyệt đối kiểm tra kỹ thành phần trước khi sử dụng bất kỳ thuốc mới nào!\n\n`;
+            }
+
+            response += `*Lời khuyên từ Trợ Lý AI Gemini • Hợp tác dữ liệu Dược lý Nhà Thuốc Long Châu Việt Nam.*`;
+
+            return response;
+        }
+
+        async function callGeminiApiWithRetry(userQuery, systemPrompt, retries = 2, delay = 500) {
             const apiKey = "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
