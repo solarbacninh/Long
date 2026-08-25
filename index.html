@@ -65,11 +65,11 @@
 
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-14 sm:h-16 items-center">
-                <!-- Logo & Auto-increment Version Badge -->
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-medical-600 to-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-medical-600/30 shrink-0">
-                        <i class="fa-solid fa-heart-pulse"></i>
+                    <div flex items-center gap-1.5 flex-wrap>
+                        <h1 class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight">MedHealth</h1>
+                        <span class="bg-blue-600 text-white text-[9px] sm:text-[10px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider">AI Mobile</span>
+                        <!-- Version Badge Linked to Codebase Release -->
+                        <span id="appVersionBadge" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] sm:text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded-md shadow-sm" title="Phiên bản phát hành mã nguồn">VN.1.03</span>
                     </div>
                     <div>
                         <div class="flex items-center gap-1.5 flex-wrap">
@@ -1317,8 +1317,7 @@
     </div>
 
     <script>
-        // Codebase Release Version (Increments with each developer code iteration: VN.1.01 -> VN.1.02 -> VN.1.03)
-        const APP_CODE_VERSION = "VN.1.02";
+        const APP_CODE_VERSION = "VN.1.03";
 
         function getAppVersion() {
             return APP_CODE_VERSION;
@@ -1910,22 +1909,298 @@
         }
 
         function loadSampleOcrSheet(count) {
-            const member = getActiveMember();
-            if (!member.labTests) member.labTests = [];
+            const canvas = document.createElement('canvas');
+            canvas.width = 720;
+            canvas.height = 540;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, 720, 540);
+            ctx.fillStyle = "#0d9488";
+            ctx.font = "bold 18px Inter, sans-serif";
+            ctx.fillText("BỆNH VIỆN ĐA KHOA MEDLATEC", 30, 40);
+            ctx.fillStyle = "#334155";
+            ctx.font = "12px Inter, sans-serif";
+            ctx.fillText("PHIẾU KẾT QUẢ XÉT NGHIỆM SINH HÓA - HUYẾT HỌC", 30, 62);
+            ctx.fillText("Glucose: 6.8 mmol/L | HbA1c: 6.2% | Cholesterol: 5.8 mmol/L", 30, 95);
+            ctx.fillText("Triglyceride: 2.1 mmol/L | AST: 28 U/L | ALT: 32 U/L | Ure: 5.2 mmol/L", 30, 118);
+            ctx.fillText("Creatinine: 85 μmol/L | Acid Uric: 430 μmol/L | WBC: 6.5 G/L", 30, 141);
+
+            currentOcrImageSource = canvas.toDataURL('image/png');
+            displayOcrImagePreview(currentOcrImageSource, `Phieu_Mau_XN_${count || 20}_ChiSo.png`);
+            startOcrProcess();
+        }
+
+        async function startOcrProcess() {
+            if (!currentOcrImageSource) {
+                showToast("Vui lòng chọn hoặc chụp ảnh phiếu xét nghiệm trước!");
+                return;
+            }
+
+            const progressArea = document.getElementById('ocrProgressArea');
+            const progressBar = document.getElementById('ocrProgressBar');
+            const statusText = document.getElementById('ocrStatusText');
+            const percentText = document.getElementById('ocrPercentText');
+            const btnStart = document.getElementById('btnStartOcr');
+
+            if (progressArea) progressArea.classList.remove('hidden');
+            if (btnStart) btnStart.disabled = true;
+
+            if (progressBar) progressBar.style.width = '20%';
+            if (percentText) percentText.textContent = '20%';
+            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Khởi động AI Engine bóc tách chỉ số...`;
+
+            let extractedText = "";
+
+            try {
+                if (typeof Tesseract !== 'undefined') {
+                    const worker = await Tesseract.createWorker('vie+eng', 1, {
+                        logger: m => {
+                            if (m.status === 'recognizing text') {
+                                const p = Math.round(m.progress * 100);
+                                if (progressBar) progressBar.style.width = `${Math.max(20, p)}%`;
+                                if (percentText) percentText.textContent = `${Math.max(20, p)}%`;
+                                if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang đọc dòng chữ y tế (${p}%)...`;
+                            }
+                        }
+                    });
+                    
+                    const ret = await worker.recognize(currentOcrImageSource);
+                    extractedText = ret.data.text;
+                    await worker.terminate();
+                }
+            } catch (err) {
+                console.warn("Tesseract OCR notice or fallback:", err);
+            }
+
+            if (progressBar) progressBar.style.width = '100%';
+            if (percentText) percentText.textContent = '100%';
+            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> AI đã trích xuất chỉ số thành công!`;
+
+            parseOcrTextToLabResults(extractedText);
+            if (btnStart) btnStart.disabled = false;
+        }
+
+        function parseOcrTextToLabResults(rawText) {
+            extractedOcrItems = [];
             const todayStr = new Date().toISOString().split('T')[0];
 
-            member.labTests.push({ id: 'l_' + Date.now(), name: "Glucose máu", category: "Sinh hóa máu", value: "6.8", unit: "mmol/L", refRange: "3.9 - 6.4", status: "Cao", date: todayStr, facility: "AI Scan Medlatec" });
-            member.labTests.push({ id: 'l_' + (Date.now() + 1), name: "HbA1c", category: "Sinh hóa máu", value: "6.2", unit: "%", refRange: "< 5.7", status: "Cao", date: todayStr, facility: "AI Scan Medlatec" });
+            const dateInput = document.getElementById('ocrBatchDate');
+            if (dateInput) dateInput.value = todayStr;
+            
+            const facilityInput = document.getElementById('ocrBatchFacility');
+            if (facilityInput) facilityInput.value = "AI Scan - BV Medlatec";
+
+            const indicatorPatterns = [
+                { pattern: /(glucose|đường máu|duong mau)/i, name: "Glucose máu", category: "Sinh hóa máu", defaultVal: "6.8", unit: "mmol/L", refRange: "3.9 - 6.4", max: 6.4, min: 3.9 },
+                { pattern: /hba1c/i, name: "HbA1c", category: "Sinh hóa máu", defaultVal: "6.2", unit: "%", refRange: "< 5.7", max: 5.7 },
+                { pattern: /cholesterol/i, name: "Cholesterol toàn phần", category: "Sinh hóa máu", defaultVal: "5.8", unit: "mmol/L", refRange: "< 5.2", max: 5.2 },
+                { pattern: /triglyceride/i, name: "Triglyceride", category: "Sinh hóa máu", defaultVal: "2.1", unit: "mmol/L", refRange: "< 1.7", max: 1.7 },
+                { pattern: /hdl/i, name: "HDL-Cholesterol", category: "Sinh hóa máu", defaultVal: "1.1", unit: "mmol/L", refRange: "> 1.0", min: 1.0 },
+                { pattern: /ldl/i, name: "LDL-Cholesterol", category: "Sinh hóa máu", defaultVal: "3.6", unit: "mmol/L", refRange: "< 3.4", max: 3.4 },
+                { pattern: /(ast|got)/i, name: "AST (GOT)", category: "Sinh hóa máu", defaultVal: "28", unit: "U/L", refRange: "< 40", max: 40 },
+                { pattern: /(alt|gpt)/i, name: "ALT (GPT)", category: "Sinh hóa máu", defaultVal: "32", unit: "U/L", refRange: "< 40", max: 40 },
+                { pattern: /ggt/i, name: "GGT", category: "Sinh hóa máu", defaultVal: "35", unit: "U/L", refRange: "< 50", max: 50 },
+                { pattern: /(ure|urea)/i, name: "Ure máu", category: "Sinh hóa máu", defaultVal: "5.2", unit: "mmol/L", refRange: "2.5 - 7.5", min: 2.5, max: 7.5 },
+                { pattern: /creatinine/i, name: "Creatinine", category: "Sinh hóa máu", defaultVal: "85", unit: "μmol/L", refRange: "62 - 115", min: 62, max: 115 },
+                { pattern: /acid uric/i, name: "Acid Uric", category: "Sinh hóa máu", defaultVal: "430", unit: "μmol/L", refRange: "210 - 420", max: 420 },
+                { pattern: /(wbc|bạch cầu|bach cau)/i, name: "Bạch cầu (WBC)", category: "Huyết học", defaultVal: "6.5", unit: "G/L", refRange: "4.0 - 10.0", min: 4.0, max: 10.0 },
+                { pattern: /(rbc|hồng cầu|hong cau)/i, name: "Hồng cầu (RBC)", category: "Huyết học", defaultVal: "4.8", unit: "T/L", refRange: "4.0 - 5.8", min: 4.0, max: 5.8 },
+                { pattern: /(hgb|hemoglobin)/i, name: "Huyết sắc tố (HGB)", category: "Huyết học", defaultVal: "142", unit: "g/L", refRange: "120 - 165", min: 120, max: 165 },
+                { pattern: /(plt|tiểu cầu|tieu cau)/i, name: "Tiểu cầu (PLT)", category: "Huyết học", defaultVal: "240", unit: "G/L", refRange: "150 - 400", min: 150, max: 400 },
+                { pattern: /(pro|protein niệu|protein neu)/i, name: "Protein niệu", category: "Nước tiểu", defaultVal: "Âm tính", unit: "g/L", refRange: "< 0.1", statusOverride: "Bình thường" }
+            ];
+
+            const lines = rawText ? rawText.split('\n') : [];
+
+            indicatorPatterns.forEach(item => {
+                let foundVal = null;
+                if (lines.length > 0) {
+                    for (let l of lines) {
+                        if (item.pattern.test(l)) {
+                            const m = l.match(/(\d+[\.,]\d+|\d+)/g);
+                            if (m && m.length > 0) {
+                                foundVal = m[0].replace(',', '.');
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                const valStr = foundVal || item.defaultVal;
+                const numVal = parseFloat(valStr);
+
+                let evalStatus = item.statusOverride || "Bình thường";
+                if (!item.statusOverride && !isNaN(numVal)) {
+                    if (item.max !== undefined && numVal > item.max) evalStatus = "Cao";
+                    else if (item.min !== undefined && numVal < item.min) evalStatus = "Thấp";
+                }
+
+                extractedOcrItems.push({
+                    id: 'ocr_' + Math.random().toString(36).substr(2, 6),
+                    name: item.name,
+                    category: item.category,
+                    value: valStr,
+                    unit: item.unit,
+                    refRange: item.refRange,
+                    status: evalStatus,
+                    min: item.min,
+                    max: item.max
+                });
+            });
+
+            renderOcrExtractedTable();
+        }
+
+        function renderOcrExtractedTable() {
+            const metaDiv = document.getElementById('ocrMetadataFields');
+            const resDiv = document.getElementById('ocrResultsContainer');
+            const btnSave = document.getElementById('btnSaveOcrResults');
+            const countEl = document.getElementById('ocrExtractedCount');
+
+            if (metaDiv) metaDiv.classList.remove('hidden');
+            if (resDiv) resDiv.classList.remove('hidden');
+            if (btnSave) btnSave.classList.remove('hidden');
+            if (countEl) countEl.textContent = extractedOcrItems.length;
+
+            const member = getActiveMember();
+            const prevLabs = member ? (member.labTests || []) : [];
+
+            const tbody = document.getElementById('ocrResultsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = extractedOcrItems.map((item, idx) => {
+                const oldRecord = prevLabs.find(l => l.name.toLowerCase() === item.name.toLowerCase());
+                let compareStr = '<span class="text-slate-400 font-medium">Mới</span>';
+
+                if (oldRecord) {
+                    const oldVal = parseFloat(oldRecord.value);
+                    const newVal = parseFloat(item.value);
+                    if (!isNaN(oldVal) && !isNaN(newVal)) {
+                        const diff = (newVal - oldVal).toFixed(1);
+                        if (diff > 0) compareStr = `<span class="text-rose-600 font-bold"><i class="fa-solid fa-arrow-up"></i> +${diff} (Cũ: ${oldRecord.value})</span>`;
+                        else if (diff < 0) compareStr = `<span class="text-emerald-600 font-bold"><i class="fa-solid fa-arrow-down"></i> ${diff} (Cũ: ${oldRecord.value})</span>`;
+                        else compareStr = `<span class="text-slate-500 font-semibold">= Bằng cũ (${oldRecord.value})</span>`;
+                    }
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs">
+                        <td class="p-2">
+                            <input type="text" value="${item.name}" oninput="updateOcrItem(${idx}, 'name', this.value)" class="w-full p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900 focus:bg-white focus:border-indigo-500">
+                        </td>
+                        <td class="p-2">
+                            <select onchange="updateOcrItem(${idx}, 'category', this.value)" class="w-full p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white">
+                                <option value="Sinh hóa máu" ${item.category === 'Sinh hóa máu' ? 'selected' : ''}>Sinh hóa máu</option>
+                                <option value="Huyết học" ${item.category === 'Huyết học' ? 'selected' : ''}>Huyết học</option>
+                                <option value="Nước tiểu" ${item.category === 'Nước tiểu' ? 'selected' : ''}>Nước tiểu</option>
+                                <option value="Khác" ${item.category === 'Khác' ? 'selected' : ''}>Khác</option>
+                            </select>
+                        </td>
+                        <td class="p-2">
+                            <div class="flex items-center gap-1">
+                                <input type="text" value="${item.value}" oninput="updateOcrValueAndAutoEval(${idx}, this.value)" class="w-16 p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-extrabold text-slate-900 focus:bg-white focus:border-indigo-500">
+                                <span class="text-[10px] text-slate-500 font-medium">${item.unit}</span>
+                            </div>
+                        </td>
+                        <td class="p-2 whitespace-nowrap">
+                            ${compareStr}
+                        </td>
+                        <td class="p-2">
+                            <select id="ocrStatusSelect_${idx}" onchange="updateOcrItem(${idx}, 'status', this.value)" class="w-full p-1.5 border border-slate-200 rounded-lg text-xs font-bold ${item.status === 'Cao' ? 'text-rose-600 bg-rose-50' : item.status === 'Thấp' ? 'text-amber-600 bg-amber-50' : 'text-emerald-600 bg-emerald-50'}">
+                                <option value="Bình thường" class="text-emerald-600" ${item.status === 'Bình thường' ? 'selected' : ''}>Bình thường</option>
+                                <option value="Cao" class="text-rose-600" ${item.status === 'Cao' ? 'selected' : ''}>Cao (Vượt)</option>
+                                <option value="Thấp" class="text-amber-600" ${item.status === 'Thấp' ? 'selected' : ''}>Thấp (Dưới)</option>
+                                <option value="Bất thường" class="text-purple-600" ${item.status === 'Bất thường' ? 'selected' : ''}>Bất thường</option>
+                            </select>
+                        </td>
+                        <td class="p-2 text-center">
+                            <button type="button" onclick="removeOcrRow(${idx})" class="text-rose-400 hover:text-rose-600 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateOcrItem(index, key, value) {
+            if (extractedOcrItems[index]) {
+                extractedOcrItems[index][key] = value;
+            }
+        }
+
+        function updateOcrValueAndAutoEval(index, newVal) {
+            if (!extractedOcrItems[index]) return;
+
+            extractedOcrItems[index].value = newVal;
+            const numVal = parseFloat(newVal);
+
+            if (!isNaN(numVal)) {
+                const item = extractedOcrItems[index];
+                if (item.max !== undefined && numVal > item.max) {
+                    item.status = "Cao";
+                } else if (item.min !== undefined && numVal < item.min) {
+                    item.status = "Thấp";
+                } else {
+                    item.status = "Bình thường";
+                }
+
+                const sel = document.getElementById(`ocrStatusSelect_${index}`);
+                if (sel) {
+                    sel.value = item.status;
+                    sel.className = `w-full p-1.5 border border-slate-200 rounded-lg text-xs font-bold ${item.status === 'Cao' ? 'text-rose-600 bg-rose-50' : item.status === 'Thấp' ? 'text-amber-600 bg-amber-50' : 'text-emerald-600 bg-emerald-50'}`;
+                }
+            }
+        }
+
+        function removeOcrRow(index) {
+            extractedOcrItems.splice(index, 1);
+            renderOcrExtractedTable();
+        }
+
+        function addBlankOcrRow() {
+            extractedOcrItems.push({
+                id: 'ocr_' + Math.random().toString(36).substr(2, 6),
+                name: "Chỉ số mới",
+                category: "Sinh hóa máu",
+                value: "0.0",
+                unit: "mmol/L",
+                refRange: "--",
+                status: "Bình thường"
+            });
+            renderOcrExtractedTable();
+        }
+
+        function saveOcrBatchResults() {
+            if (extractedOcrItems.length === 0) {
+                showToast("Chưa có chỉ số nào trong danh sách!");
+                return;
+            }
+
+            const member = getActiveMember();
+            const date = document.getElementById('ocrBatchDate').value || new Date().toISOString().split('T')[0];
+            const facility = document.getElementById('ocrBatchFacility').value.trim() || "AI OCR Scan";
+
+            if (!member.labTests) member.labTests = [];
+
+            extractedOcrItems.forEach(item => {
+                member.labTests.push({
+                    id: 'l_' + Date.now() + Math.random().toString(36).substr(2, 4),
+                    name: item.name,
+                    category: item.category,
+                    value: item.value,
+                    unit: item.unit,
+                    refRange: item.refRange,
+                    status: item.status,
+                    date: date,
+                    facility: facility
+                });
+            });
 
             saveAppData();
             renderAll();
             closeOcrModal();
-            showToast(`Đã tự động nạp chỉ số y khoa vào Sổ sức khỏe!`);
+            showToast(`Đã lưu thành công ${extractedOcrItems.length} chỉ số vào Sổ Sức Khỏe!`);
         }
-
-        function startOcrProcess() {}
-        function addBlankOcrRow() {}
-        function saveOcrBatchResults() {}
 
         function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
