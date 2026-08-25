@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f766e">
-    <title>Sổ Sức Khỏe Điện Tử - MedHealth & Tra Thuốc Long Châu (v1.04)</title>
+    <title>Sổ Sức Khỏe Điện Tử - MedHealth & Tra Thuốc Long Châu (v1.06)</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -113,7 +113,7 @@
                     <div>
                         <div class="flex items-center gap-1.5">
                             <h1 class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">MedHealth</h1>
-                            <span id="appVersionBadge" class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-indigo-200 uppercase tracking-wider">v1.04</span>
+                            <span id="appVersionBadge" class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-indigo-200 uppercase tracking-wider">v1.06</span>
                         </div>
                         <p class="text-[10px] sm:text-[11px] text-longchau-600 font-bold truncate flex items-center gap-1">
                             <i class="fa-solid fa-prescription-bottle-medical text-longchau-600"></i> Tra Thuốc Long Châu AI
@@ -406,9 +406,6 @@
                                 <p class="text-[10px] sm:text-[11px] text-slate-600 mt-0.5">Phát hiện <span id="highIndicatorsCount" class="font-extrabold text-rose-700">0</span> chỉ số xét nghiệm vượt ngưỡng an toàn</p>
                             </div>
                         </div>
-                        <button onclick="generateDoctorPdfReport()" class="hidden md:flex bg-white hover:bg-slate-50 text-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs border border-indigo-200 shadow-xs items-center gap-1.5 touch-active">
-                            <i class="fa-solid fa-file-pdf text-indigo-600"></i> Xuất PDF Bác Sĩ
-                        </button>
                     </div>
 
                     <!-- Consultation Cards Grid -->
@@ -617,92 +614,6 @@
             <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-xl group-hover:rotate-12 transition-transform"></i>
             <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-white"></span>
         </button>
-    </div>
-
-    <!-- PRINTABLE PDF REPORT FOR DOCTORS -->
-    <div id="printableDoctorPdfReport" class="print-only p-8 bg-white text-slate-900 max-w-4xl mx-auto">
-        <div class="border-b-2 border-indigo-900 pb-4 mb-6 flex justify-between items-start">
-            <div>
-                <p class="text-xs text-slate-600">Trích xuất từ Hồ sơ Sức Khỏe Điện Tử & Tra thuốc Nhà Thuốc Long Châu AI</p>
-            </div>
-            <div class="text-right text-xs">
-                <p><strong>Ngày xuất:</strong> <span id="pdfReportExportDate">2026-08-25</span></p>
-                <p class="text-slate-500">Mã hồ sơ: <span id="pdfReportCode">MH-88219</span></p>
-            </div>
-        </div>
-
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 text-xs grid grid-cols-3 gap-3">
-            <div><strong>Họ và tên:</strong> <span id="pdfPatientName" class="text-sm font-bold text-indigo-900">--</span></div>
-            <div><strong>Tuổi / Giới tính:</strong> <span id="pdfPatientAgeGender">--</span></div>
-            <div><strong>Nhóm máu:</strong> <span id="pdfPatientBlood" class="text-rose-700 font-bold">--</span></div>
-            <div><strong>Chiều cao / Cân nặng:</strong> <span id="pdfPatientBMI">--</span></div>
-            <div class="col-span-2"><strong>Bệnh nền:</strong> <span id="pdfPatientConditions">--</span></div>
-            <div class="col-span-3 text-rose-700"><strong>Dị ứng:</strong> <span id="pdfPatientAllergies" class="font-bold">--</span></div>
-        </div>
-
-        <div class="mb-6 space-y-2">
-            <h2 class="text-sm font-bold text-slate-900 uppercase border-b border-slate-300 pb-1 flex justify-between">
-                <span>1. Danh Sách Chỉ Số Xét Nghiệm Đã Ghi Nhận</span>
-                <span class="text-xs font-normal text-slate-500">Tổng: <span id="pdfLabCount">0</span> chỉ số</span>
-            </h2>
-            <table class="w-full text-left text-xs border-collapse">
-                <thead>
-                    <tr class="bg-slate-100 text-slate-700 border-b border-slate-300 font-bold">
-                        <th class="p-2 border border-slate-200">Ngày XN</th>
-                        <th class="p-2 border border-slate-200">Tên Chỉ Số</th>
-                        <th class="p-2 border border-slate-200">Loại XN</th>
-                        <th class="p-2 border border-slate-200">Kết quả</th>
-                        <th class="p-2 border border-slate-200">Tham chiếu</th>
-                        <th class="p-2 border border-slate-200">Đánh giá</th>
-                    </tr>
-                </thead>
-                <tbody id="pdfLabTableBody">
-                    <!-- Dynamic Rows for PDF -->
-                </tbody>
-            </table>
-        </div>
-
-        <div class="mb-6 space-y-2">
-            <h2 class="text-sm font-bold text-slate-900 uppercase border-b border-slate-300 pb-1">
-                2. Phác Đồ Thuốc Tham Khảo Long Châu & Thời Gian Sử Dụng Phù Hợp
-            </h2>
-            <table class="w-full text-left text-xs border-collapse">
-                <thead>
-                    <tr class="bg-slate-100 text-slate-700 border-b border-slate-300 font-bold">
-                        <th class="p-2 border border-slate-200">Chỉ số tăng cao</th>
-                        <th class="p-2 border border-slate-200">Biệt dược đề xuất</th>
-                        <th class="p-2 border border-slate-200">Liều dùng / lần</th>
-                        <th class="p-2 border border-slate-200">Thời điểm uống</th>
-                        <th class="p-2 border border-slate-200">Số ngày dùng</th>
-                        <th class="p-2 border border-slate-200">Hướng dẫn chi tiết</th>
-                    </tr>
-                </thead>
-                <tbody id="pdfMedTableBody">
-                    <!-- Dynamic Rows for Meds PDF -->
-                </tbody>
-            </table>
-        </div>
-
-        <div class="mb-6 space-y-1">
-            <h2 class="text-sm font-bold text-slate-900 uppercase border-b border-slate-300 pb-1">
-                3. Đánh Giá Nguy Cơ Cơ Quan & Lời Khuyên Bác Sĩ
-            </h2>
-            <div id="pdfRiskAdvisoryContent" class="text-xs text-slate-800 space-y-2 bg-amber-50/60 p-3 rounded-lg border border-amber-200">
-                <!-- Dynamic risk advice -->
-            </div>
-        </div>
-
-        <div class="mt-8 pt-4 border-t border-slate-300 grid grid-cols-2 gap-8 text-xs text-center">
-            <div>
-                <p class="font-bold text-slate-800">BỆNH NHÂN / GIÁM HỘ</p>
-                <p class="text-slate-400 italic text-[10px] mt-1">(Ký và ghi rõ họ tên)</p>
-            </div>
-            <div>
-                <p class="font-bold text-slate-800">BÁC SĨ CHUYÊN KHOA</p>
-                <p class="text-slate-400 italic text-[10px] mt-1">(Ký, đóng dấu và cho ý kiến chuyên môn)</p>
-                <div class="h-16"></div>
-            </div>
-        </div>
     </div>
 
     <!-- MODALS SECTION -->
@@ -1286,10 +1197,7 @@
                 </div>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                <button onclick="generateDoctorPdfReport()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1 touch-active">
-                    <i class="fa-solid fa-file-pdf text-indigo-600"></i> In Báo Cáo
-                </button>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end items-center">
                 <button onclick="closeModal('labConsultationModal')" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs shadow">
                     Đã Hiểu
                 </button>
@@ -1374,7 +1282,7 @@
     </div>
 
     <script>
-        const APP_VERSION = "v1.04";
+        const APP_VERSION = "v1.06";
 
         // Curated Fast Lookup Database for Popular Nhà Thuốc Long Châu Medications
         const longChauDrugDatabase = [
@@ -1740,7 +1648,7 @@
                 ctx.fillRect(0, 0, 640, 420);
                 ctx.fillStyle = "#10b981";
                 ctx.font = "bold 13px monospace";
-                ctx.fillText("ULTRASOUND ABDOMEN 3.5MHz (v1.04)", 20, 30);
+                ctx.fillText("ULTRASOUND ABDOMEN 3.5MHz (v1.05)", 20, 30);
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "11px monospace";
                 ctx.fillText("GAIN: 82% | MI: 1.1 | TIS: 0.4", 20, 48);
@@ -1753,7 +1661,7 @@
                 ctx.fillText("R", 580, 40);
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "11px monospace";
-                ctx.fillText("CHEST AP DIRECT DIGITAL X-RAY (v1.04)", 20, 30);
+                ctx.fillText("CHEST AP DIRECT DIGITAL X-RAY (v1.05)", 20, 30);
             }
             return canvas.toDataURL('image/png');
         }
@@ -2590,64 +2498,6 @@ Quy tắc trả lời:
             };
         }
 
-        function generateDoctorPdfReport() {
-            const member = getActiveMember();
-            if (!member) return;
-
-            document.getElementById('pdfReportExportDate').textContent = new Date().toISOString().split('T')[0];
-            document.getElementById('pdfReportCode').textContent = "MH-" + Math.floor(10000 + Math.random() * 90000);
-            document.getElementById('pdfPatientName').textContent = member.name;
-            document.getElementById('pdfPatientAgeGender').textContent = `${calculateAge(member.dob)} tuổi / ${member.gender || 'Nam'}`;
-            document.getElementById('pdfPatientBlood').textContent = member.blood || 'O+';
-            document.getElementById('pdfPatientBMI').textContent = `${member.height || '--'} cm / ${member.weight || '--'} kg`;
-            document.getElementById('pdfPatientConditions').textContent = member.conditions || 'Chưa ghi nhận';
-            document.getElementById('pdfPatientAllergies').textContent = member.allergies || 'Chưa có dị ứng';
-
-            const labs = member.labTests || [];
-            document.getElementById('pdfLabCount').textContent = labs.length;
-
-            const pdfLabTbody = document.getElementById('pdfLabTableBody');
-            pdfLabTbody.innerHTML = labs.map(l => `
-                <tr class="border-b border-slate-200">
-                    <td class="p-2 border border-slate-200">${l.date}</td>
-                    <td class="p-2 border border-slate-200 font-bold">${l.name}</td>
-                    <td class="p-2 border border-slate-200">${l.category}</td>
-                    <td class="p-2 border border-slate-200 font-bold">${l.value} ${l.unit}</td>
-                    <td class="p-2 border border-slate-200 text-slate-500">${l.refRange || '--'}</td>
-                    <td class="p-2 border border-slate-200 font-bold ${l.status === 'Cao' ? 'text-rose-700' : 'text-emerald-700'}">${l.status}</td>
-                </tr>
-            `).join('');
-
-            const highLabs = labs.filter(l => l.status === 'Cao');
-            const pdfMedTbody = document.getElementById('pdfMedTableBody');
-            const pdfRiskContent = document.getElementById('pdfRiskAdvisoryContent');
-
-            if (highLabs.length === 0) {
-                pdfMedTbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-slate-500 border border-slate-200">Tất cả chỉ số bình thường.</td></tr>`;
-                pdfRiskContent.innerHTML = `<p class="text-emerald-800 font-bold">Chỉ số an toàn. Tiếp tục duy trì chế độ dinh dưỡng tích cực.</p>`;
-            } else {
-                let riskHtmlArr = [];
-                pdfMedTbody.innerHTML = highLabs.map(l => {
-                    const info = getConsultationInfo(l.name, l.status, l.value);
-                    riskHtmlArr.push(`<div><strong class="text-rose-900">• ${l.name} (${l.value} ${l.unit}):</strong> ${info.risks}</div>`);
-                    return `
-                        <tr class="border-b border-slate-200">
-                            <td class="p-2 border border-slate-200 font-bold text-rose-700">${l.name} (${l.value})</td>
-                            <td class="p-2 border border-slate-200 font-bold text-indigo-950">${info.suggestedMed.name}</td>
-                            <td class="p-2 border border-slate-200">${info.suggestedMed.dose}</td>
-                            <td class="p-2 border border-slate-200">${info.suggestedMed.time}</td>
-                            <td class="p-2 border border-slate-200 font-bold">${info.suggestedMed.duration || '30 ngày'}</td>
-                            <td class="p-2 border border-slate-200 text-slate-600">${info.meds}</td>
-                        </tr>
-                    `;
-                }).join('');
-                pdfRiskContent.innerHTML = riskHtmlArr.join('');
-            }
-
-            showToast("Đang chuẩn bị bản in / Báo cáo PDF...");
-            setTimeout(() => window.print(), 300);
-        }
-
         function switchOcrInputMode(mode) {
             const uploadBtn = document.getElementById('tabModeUpload');
             const cameraBtn = document.getElementById('tabModeCamera');
@@ -2765,7 +2615,7 @@ Quy tắc trả lời:
             ctx.fillRect(0, 0, 720, 480);
             ctx.fillStyle = "#0f766e";
             ctx.font = "bold 18px Inter, sans-serif";
-            ctx.fillText("BỆNH VIỆN ĐA KHOA MEDLATEC (v1.04)", 30, 35);
+            ctx.fillText("BỆNH VIỆN ĐA KHOA MEDLATEC (v1.05)", 30, 35);
             ctx.fillStyle = "#334155";
             ctx.font = "12px Inter, sans-serif";
             ctx.fillText("PHIẾU KẾT QUẢ XÉT NGHIỆM TỔNG QUÁT", 30, 56);
