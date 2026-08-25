@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0f766e">
-    <title>Sổ Sức Khỏe Điện Tử - MedHealth Việt Nam (v1.03)</title>
+    <title>Sổ Sức Khỏe Điện Tử - MedHealth & Tra Thuốc Long Châu (v1.04)</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,12 +31,13 @@
                             800: '#115e59',
                             900: '#134e4a',
                         },
-                        gemini: {
-                            50: '#f0f4ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
+                        longchau: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
                         }
                     },
                     fontFamily: {
@@ -49,6 +50,7 @@
             }
         }
     </script>
+    
     <style>
         body { 
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -56,7 +58,7 @@
             touch-action: manipulation;
         }
         
-        /* iPhone 16 Pro Max Safe Area Insets */
+        /* iPhone 16 Pro Max & iOS Safe Area Insets */
         .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
         .mb-safe { margin-bottom: env(safe-area-inset-bottom, 20px); }
@@ -72,7 +74,7 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
         
-        /* Active touch state animations for mobile button feedback */
+        /* Active touch state animations for mobile feedback */
         .touch-active:active {
             transform: scale(0.96);
             opacity: 0.9;
@@ -94,47 +96,51 @@
             body { background: white !important; color: black !important; font-size: 11pt; }
             .pdf-container { width: 100% !important; margin: 0 !important; padding: 0 !important; }
         }
-        .print-only { display: none; }
+        .print-only { display: block; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-full flex flex-col antialiased pb-24 md:pb-6">
+<body class="bg-slate-100 text-slate-800 min-h-full flex flex-col antialiased pb-28 md:pb-6">
 
     <header class="ios-glass border-b border-slate-200/80 sticky top-0 z-40 shadow-xs pt-safe no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14 sm:h-16 items-center">
                 
                 <!-- Logo & Version Badge -->
-                <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-medical-700 to-medical-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-medical-600/30 touch-active">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-medical-700 to-medical-500 text-white flex items-center justify-center font-bold text-base sm:text-lg shadow-md shadow-medical-600/30 touch-active">
                         <i class="fa-solid fa-heart-pulse"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-1.5">
-                            <h1 class="text-base font-extrabold text-slate-900 leading-tight">MedHealth</h1>
-                            <span id="appVersionBadge" class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-indigo-200 uppercase tracking-wider">v1.03</span>
+                            <h1 class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">MedHealth</h1>
+                            <span id="appVersionBadge" class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-indigo-200 uppercase tracking-wider">v1.04</span>
                         </div>
-                        <p class="text-[11px] text-medical-600 font-semibold truncate">Sổ Sức Khỏe & Tra Thuốc AI</p>
+                        <p class="text-[10px] sm:text-[11px] text-longchau-600 font-bold truncate flex items-center gap-1">
+                            <i class="fa-solid fa-prescription-bottle-medical text-longchau-600"></i> Tra Thuốc Long Châu AI
+                        </p>
                     </div>
                 </div>
 
                 <!-- Action Controls: Gemini AI Chat & Member Switcher -->
-                <div class="flex items-center gap-2">
-                    <!-- Gemini AI Quick Header Button -->
-                    <button onclick="openGeminiChatModal()" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hover:opacity-95 text-white text-xs font-black px-3.5 py-2 rounded-full shadow-md shadow-indigo-500/20 transition flex items-center gap-1.5 touch-active border border-white/20">
-                        <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
-                        <span>Hỏi AI Gemini</span>
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <!-- Long Châu Lookup Quick Header Button -->
+                    <button onclick="switchTab('diseaseLookupTab')" class="bg-gradient-to-r from-longchau-700 to-longchau-500 hover:opacity-95 text-white text-[11px] sm:text-xs font-black px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full shadow-md shadow-longchau-500/20 transition flex items-center gap-1 touch-active border border-white/20">
+                        <i class="fa-solid fa-pills text-amber-300"></i>
+                        <span class="hidden sm:inline">Tra Thuốc Long Châu</span>
+                        <span class="sm:hidden">Long Châu</span>
                     </button>
 
-                    <button onclick="generateDoctorPdfReport()" class="hidden promax:flex bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs transition items-center gap-1.5 touch-active">
-                        <i class="fa-solid fa-file-pdf"></i>
-                        <span class="hidden sm:inline">Báo Cáo PDF</span>
+                    <!-- Gemini AI Quick Button -->
+                    <button onclick="openGeminiChatModal()" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hover:opacity-95 text-white text-[11px] sm:text-xs font-black px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full shadow-md shadow-indigo-500/20 transition flex items-center gap-1 touch-active border border-white/20">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                        <span class="hidden promax:inline">Bác Sĩ AI</span>
                     </button>
-                    
+
                     <div class="relative">
-                        <button id="profileDropdownBtn" onclick="toggleProfileDropdown()" class="flex items-center gap-2 bg-slate-200/70 hover:bg-slate-200 active:bg-slate-300 transition px-2.5 py-1.5 rounded-full text-xs font-bold text-slate-700 touch-active">
+                        <button id="profileDropdownBtn" onclick="toggleProfileDropdown()" class="flex items-center gap-1.5 bg-slate-200/80 hover:bg-slate-200 active:bg-slate-300 transition px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full text-xs font-bold text-slate-700 touch-active">
                             <span id="activeAvatar" class="w-6 h-6 rounded-full bg-medical-600 text-white flex items-center justify-center font-extrabold text-[10px]">NV</span>
-                            <span id="activeMemberName" class="max-w-[100px] truncate">Nguyễn Văn An</span>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                            <span id="activeMemberName" class="max-w-[70px] sm:max-w-[100px] truncate">Nguyễn Văn An</span>
+                            <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                         </button>
 
                         <!-- Member Selection Dropdown -->
@@ -159,11 +165,11 @@
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full flex flex-col md:flex-row gap-5 no-print">
+    <div class="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-3 sm:py-6 flex-1 w-full flex flex-col md:flex-row gap-4 sm:gap-5 no-print">
 
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation (Desktop & Tablet) -->
         <aside class="hidden md:block w-64 shrink-0 no-print">
-            <nav class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm space-y-1 sticky top-24">
+            <nav class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm space-y-1 sticky top-20">
                 <button onclick="switchTab('dashboardTab')" id="nav-dashboardTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition text-medical-700 bg-medical-50">
                     <i class="fa-solid fa-chart-pie text-sm w-5 text-center"></i>
                     <span>Tổng quan</span>
@@ -173,14 +179,15 @@
                     <span>Chỉ số Xét nghiệm</span>
                     <span class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full ml-auto">AI OCR</span>
                 </button>
+                <button onclick="switchTab('diseaseLookupTab')" id="nav-diseaseLookupTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-50">
+                    <i class="fa-solid fa-prescription-bottle-medical text-sm w-5 text-center text-longchau-600"></i>
+                    <span>Tra Thuốc Long Châu</span>
+                    <span class="bg-longchau-100 text-longchau-700 text-[10px] font-black px-2 py-0.5 rounded-full ml-auto">Mới</span>
+                </button>
                 <button onclick="switchTab('imagingTab')" id="nav-imagingTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-50">
                     <i class="fa-solid fa-x-ray text-sm w-5 text-center text-indigo-600"></i>
                     <span>Chẩn đoán Hình ảnh</span>
                     <span class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full ml-auto" id="sidebarImageCount">0</span>
-                </button>
-                <button onclick="switchTab('diseaseLookupTab')" id="nav-diseaseLookupTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-50">
-                    <i class="fa-solid fa-book-medical text-sm w-5 text-center text-teal-600"></i>
-                    <span>Tra Bệnh & Nhóm Thuốc</span>
                 </button>
                 <button onclick="switchTab('recordsTab')" id="nav-recordsTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-50">
                     <i class="fa-solid fa-notes-medical text-sm w-5 text-center"></i>
@@ -195,7 +202,7 @@
                 <div class="pt-2 border-t border-slate-100">
                     <button onclick="openGeminiChatModal()" class="w-full flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-xs font-black transition bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-md shadow-indigo-500/20 touch-active">
                         <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-base"></i>
-                        <span>Trợ Lý Gemini AI 24/7</span>
+                        <span>Trợ Lý Bác Sĩ AI 24/7</span>
                     </button>
                 </div>
             </nav>
@@ -232,90 +239,88 @@
         </aside>
 
         <!-- Main Workspace Area -->
-        <main class="flex-1 min-w-0 no-print">
+        <main class="flex-1 min-w-0 no-print space-y-4">
 
-            <!-- TAB 1: DASHBOARD OVERVIEW -->
-            <section id="dashboardTab" class="tab-content space-y-5">
-                <!-- Welcome Banner -->
-                <div class="bg-gradient-to-br from-medical-800 via-medical-700 to-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-md relative overflow-hidden">
-                    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <section id="dashboardTab" class="tab-content space-y-4 sm:space-y-5">
+                <!-- Welcome Banner Mobile Optimized -->
+                <div class="bg-gradient-to-br from-medical-800 via-medical-700 to-slate-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-md relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4">
                         <div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-extrabold backdrop-blur-md">Xin chào 👋</span>
-                                <span class="bg-teal-400/30 text-teal-200 px-2 py-0.5 rounded-full text-[10px] font-bold border border-teal-300/20">iPhone 16 Pro Max Ready</span>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="bg-white/20 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold backdrop-blur-md">Xin chào 👋</span>
+                                <span class="bg-amber-400/30 text-amber-200 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold border border-amber-300/20">iPhone 16 Pro Max Ready</span>
                             </div>
-                            <h2 class="text-xl sm:text-2xl font-black mt-2" id="dashWelcomeName">Nguyễn Văn An</h2>
-                            <p class="text-medical-100 text-xs sm:text-sm mt-1 max-w-xl">Hệ thống AI phân tích sẵn sàng. Quét ảnh phiếu xét nghiệm, tra cứu liều thuốc chuẩn hoặc đặt câu hỏi trực tiếp cho Bác Sĩ Gemini AI!</p>
+                            <h2 class="text-lg sm:text-2xl font-black mt-1.5" id="dashWelcomeName">Nguyễn Văn An</h2>
+                            <p class="text-medical-100 text-[11px] sm:text-xs mt-1 max-w-xl leading-relaxed">Tra cứu biệt dược chuẩn Nhà Thuốc Long Châu, tự động bóc tách chỉ số từ camera và đặt câu hỏi cho Bác Sĩ Gemini AI!</p>
                         </div>
-                        <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                            <button onclick="openGeminiChatModal()" class="flex-1 md:flex-initial bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 active:scale-95 text-white font-extrabold px-4 py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2 border border-white/20 touch-active">
-                                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> Hỏi Bác Sĩ Gemini AI
+                        <div class="flex flex-wrap gap-2 w-full md:w-auto pt-1">
+                            <button onclick="switchTab('diseaseLookupTab')" class="flex-1 md:flex-initial bg-gradient-to-r from-longchau-600 to-longchau-800 hover:opacity-95 active:scale-95 text-white font-extrabold px-3.5 py-2 sm:py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 border border-white/20 touch-active">
+                                <i class="fa-solid fa-magnifying-glass text-amber-300"></i> Tra Thuốc Long Châu
                             </button>
-                            <button onclick="generateDoctorPdfReport()" class="flex-1 md:flex-initial bg-slate-800 hover:bg-slate-900 active:scale-95 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center gap-2 border border-slate-700 touch-active">
-                                <i class="fa-solid fa-file-pdf"></i> Xuất Báo Cáo PDF
+                            <button onclick="openGeminiChatModal()" class="flex-1 md:flex-initial bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 active:scale-95 text-white font-extrabold px-3.5 py-2 sm:py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 border border-white/20 touch-active">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> Hỏi AI Gemini
                             </button>
                         </div>
                     </div>
-                    <i class="fa-solid fa-heart-pulse absolute -right-6 -bottom-8 text-9xl text-white/10 pointer-events-none"></i>
+                    <i class="fa-solid fa-heart-pulse absolute -right-6 -bottom-8 text-8xl sm:text-9xl text-white/10 pointer-events-none"></i>
                 </div>
 
-                <!-- Overview Metric Cards -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs touch-active cursor-pointer" onclick="switchTab('labTab')">
-                        <div class="flex justify-between items-center text-slate-500 text-[11px] font-extrabold tracking-wider">
+                <!-- Overview Metric Cards Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+                    <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs touch-active cursor-pointer" onclick="switchTab('labTab')">
+                        <div class="flex justify-between items-center text-slate-500 text-[10px] sm:text-[11px] font-extrabold tracking-wider">
                             <span>CHỈ SỐ XN</span>
-                            <span class="w-7 h-7 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center"><i class="fa-solid fa-vial"></i></span>
+                            <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-xs"><i class="fa-solid fa-vial"></i></span>
                         </div>
                         <div class="mt-2 sm:mt-3">
-                            <span class="text-xl sm:text-2xl font-black text-slate-800" id="dashTotalLabs">0</span>
-                            <span class="text-[11px] text-slate-400 ml-1">chỉ số</span>
+                            <span class="text-lg sm:text-2xl font-black text-slate-800" id="dashTotalLabs">0</span>
+                            <span class="text-[10px] sm:text-[11px] text-slate-400 ml-1">chỉ số</span>
                         </div>
-                        <div class="mt-1 text-[11px] text-teal-700 font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-arrows-rotate text-[9px]"></i> Đã cập nhật
+                        <div class="mt-1 text-[10px] sm:text-[11px] text-teal-700 font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-arrows-rotate text-[8px]"></i> Cập nhật AI OCR
                         </div>
                     </div>
 
-                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs touch-active cursor-pointer" onclick="switchTab('imagingTab')">
-                        <div class="flex justify-between items-center text-slate-500 text-[11px] font-extrabold tracking-wider">
-                            <span>PHIM CHỤP</span>
-                            <span class="w-7 h-7 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-x-ray"></i></span>
+                    <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs touch-active cursor-pointer" onclick="switchTab('diseaseLookupTab')">
+                        <div class="flex justify-between items-center text-slate-500 text-[10px] sm:text-[11px] font-extrabold tracking-wider">
+                            <span>TRA THUỐC</span>
+                            <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-longchau-50 text-longchau-600 flex items-center justify-center text-xs"><i class="fa-solid fa-prescription-bottle-medical"></i></span>
                         </div>
                         <div class="mt-2 sm:mt-3">
-                            <span class="text-xl sm:text-2xl font-black text-indigo-600" id="dashImageCount">0</span>
-                            <span class="text-[11px] text-slate-400 ml-1">tệp ảnh</span>
+                            <span class="text-sm sm:text-lg font-black text-longchau-700">Nhà Thuốc Long Châu</span>
                         </div>
-                        <div class="mt-1 text-[11px] text-indigo-600 font-bold truncate">Thư viện ảnh y tế</div>
+                        <div class="mt-1 text-[10px] sm:text-[11px] text-longchau-600 font-bold truncate">Tư vấn liều & thời điểm</div>
                     </div>
 
-                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs touch-active cursor-pointer" onclick="switchTab('medsTab')">
-                        <div class="flex justify-between items-center text-slate-500 text-[11px] font-extrabold tracking-wider">
+                    <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs touch-active cursor-pointer" onclick="switchTab('medsTab')">
+                        <div class="flex justify-between items-center text-slate-500 text-[10px] sm:text-[11px] font-extrabold tracking-wider">
                             <span>LỊCH THUỐC HÔM NAY</span>
-                            <span class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-pills"></i></span>
+                            <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs"><i class="fa-solid fa-pills"></i></span>
                         </div>
                         <div class="mt-2 sm:mt-3">
-                            <span class="text-xl sm:text-2xl font-black text-slate-800" id="dashMedsCount">0/0</span>
-                            <span class="text-[11px] text-slate-400 ml-1">liều</span>
+                            <span class="text-lg sm:text-2xl font-black text-slate-800" id="dashMedsCount">0/0</span>
+                            <span class="text-[10px] sm:text-[11px] text-slate-400 ml-1">liều</span>
                         </div>
-                        <div class="mt-1 text-[11px] text-emerald-600 font-bold">Tiến độ trong ngày</div>
+                        <div class="mt-1 text-[10px] sm:text-[11px] text-emerald-600 font-bold">Tiến độ hôm nay</div>
                     </div>
 
-                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs touch-active cursor-pointer" onclick="openGeminiChatModal()">
-                        <div class="flex justify-between items-center text-slate-500 text-[11px] font-extrabold tracking-wider">
+                    <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs touch-active cursor-pointer" onclick="openGeminiChatModal()">
+                        <div class="flex justify-between items-center text-slate-500 text-[10px] sm:text-[11px] font-extrabold tracking-wider">
                             <span>TRỢ LÝ AI GEMINI</span>
-                            <span class="w-7 h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                            <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xs"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
                         </div>
                         <div class="mt-2 sm:mt-3">
-                            <span class="text-sm font-black text-purple-700">Tư vấn 24/7</span>
+                            <span class="text-xs sm:text-sm font-black text-purple-700">Bác Sĩ Tư Vấn 24/7</span>
                         </div>
-                        <div class="mt-1 text-[11px] text-purple-600 font-bold">Bấm để đặt câu hỏi</div>
+                        <div class="mt-1 text-[10px] sm:text-[11px] text-purple-600 font-bold">Hỏi bất kỳ triệu chứng nào</div>
                     </div>
                 </div>
 
                 <!-- Two column section: Today Medications & Recent Examinations -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+                    <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
                         <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                            <h3 class="font-extrabold text-slate-800 text-xs sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-pills text-medical-600"></i> Lịch Uống Thuốc Hôm Nay
                             </h3>
                             <button onclick="switchTab('medsTab')" class="text-xs text-medical-600 font-bold hover:underline">Xem tất cả</button>
@@ -325,32 +330,31 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
                         <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                            <h3 class="font-extrabold text-slate-800 text-xs sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-calendar-check text-medical-600"></i> Lịch Sử Khám Bệnh Mới
                             </h3>
                             <button onclick="switchTab('recordsTab')" class="text-xs text-medical-600 font-bold hover:underline">Chi tiết</button>
                         </div>
-                        <div id="dashActivityList" class="space-y-3">
+                        <div id="dashActivityList" class="space-y-2.5">
                             <!-- Dynamic timeline items -->
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- TAB 2: LAB TESTS & AI ADVISORY -->
-            <section id="labTab" class="tab-content space-y-5 hidden">
-                <div class="flex justify-between items-center flex-wrap gap-3">
+            <section id="labTab" class="tab-content space-y-4 sm:space-y-5 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-black text-slate-900">Chỉ Số & Kết Quả Xét Nghiệm</h2>
-                        <p class="text-xs text-slate-500">Tự động bóc tách chỉ số từ camera, phân tích liều thuốc & xuất PDF cho Bác sĩ</p>
+                        <h2 class="text-base sm:text-xl font-black text-slate-900">Chỉ Số & Kết Quả Xét Nghiệm</h2>
+                        <p class="text-[11px] text-slate-500">Bóc tách chỉ số tự động từ Camera, phân tích nguy cơ cơ quan & xuất báo cáo PDF</p>
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <button onclick="openOcrScanModal()" class="flex-1 sm:flex-initial bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2 touch-active">
+                        <button onclick="openOcrScanModal()" class="flex-1 sm:flex-initial bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition flex items-center justify-center gap-1.5 touch-active">
                             <i class="fa-solid fa-camera"></i> Quét AI / Camera
                         </button>
-                        <button onclick="openModal('addLabModal')" class="flex-1 sm:flex-initial bg-medical-600 hover:bg-medical-700 active:scale-95 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2 touch-active">
+                        <button onclick="openModal('addLabModal')" class="flex-1 sm:flex-initial bg-medical-600 hover:bg-medical-700 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition flex items-center justify-center gap-1.5 touch-active">
                             <i class="fa-solid fa-plus"></i> Nhập thủ công
                         </button>
                     </div>
@@ -358,63 +362,63 @@
 
                 <!-- Lab Statistics Cards -->
                 <div class="grid grid-cols-3 gap-2 sm:gap-4">
-                    <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-sm sm:text-lg shrink-0">
+                    <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-2 sm:gap-3">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-xs sm:text-lg shrink-0">
                             <i class="fa-solid fa-vial"></i>
                         </div>
                         <div>
-                            <span class="text-[10px] sm:text-xs text-slate-400 block font-semibold">Tổng chỉ số</span>
-                            <span class="text-base sm:text-xl font-black text-slate-800" id="labTotalCount">0</span>
+                            <span class="text-[9px] sm:text-xs text-slate-400 block font-bold">Tổng chỉ số</span>
+                            <span class="text-sm sm:text-xl font-black text-slate-800" id="labTotalCount">0</span>
                         </div>
                     </div>
-                    <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm sm:text-lg shrink-0">
+                    <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-2 sm:gap-3">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs sm:text-lg shrink-0">
                             <i class="fa-solid fa-circle-check"></i>
                         </div>
                         <div>
-                            <span class="text-[10px] sm:text-xs text-slate-400 block font-semibold">Bình thường</span>
-                            <span class="text-base sm:text-xl font-black text-emerald-600" id="labNormalCount">0</span>
+                            <span class="text-[9px] sm:text-xs text-slate-400 block font-bold">Bình thường</span>
+                            <span class="text-sm sm:text-xl font-black text-emerald-600" id="labNormalCount">0</span>
                         </div>
                     </div>
-                    <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm sm:text-lg shrink-0">
+                    <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-2 sm:gap-3">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xs sm:text-lg shrink-0">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                         <div>
-                            <span class="text-[10px] sm:text-xs text-slate-400 block font-semibold">Tăng cao</span>
-                            <span class="text-base sm:text-xl font-black text-rose-600" id="labAbnormalCount">0</span>
+                            <span class="text-[9px] sm:text-xs text-slate-400 block font-bold">Tăng cao</span>
+                            <span class="text-sm sm:text-xl font-black text-rose-600" id="labAbnormalCount">0</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- AI Organ Risk & Comprehensive Medication Consultation Banner -->
-                <div id="labAiAdvisoryCard" class="hidden bg-gradient-to-br from-rose-50 via-amber-50 to-orange-50 border border-rose-200 rounded-3xl p-4 sm:p-5 shadow-xs space-y-4">
-                    <div class="flex items-center justify-between border-b border-rose-200/60 pb-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-rose-600/20 shrink-0">
+                <div id="labAiAdvisoryCard" class="hidden bg-gradient-to-br from-rose-50 via-amber-50 to-orange-50 border border-rose-200 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 shadow-xs space-y-3">
+                    <div class="flex items-center justify-between border-b border-rose-200/60 pb-2.5">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-rose-600/20 shrink-0">
                                 <i class="fa-solid fa-user-doctor"></i>
                             </div>
                             <div>
-                                <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 flex items-center gap-1.5 flex-wrap">
+                                <h3 class="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-1.5 flex-wrap">
                                     Tư Vấn Thuốc & Liều Dùng Cho Chỉ Số Tăng Cao
                                     <span class="bg-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase">AI Doctor</span>
                                 </h3>
-                                <p class="text-[11px] text-slate-600 mt-0.5">Phát hiện <span id="highIndicatorsCount" class="font-extrabold text-rose-700">0</span> chỉ số xét nghiệm tăng vượt ngưỡng an toàn</p>
+                                <p class="text-[10px] sm:text-[11px] text-slate-600 mt-0.5">Phát hiện <span id="highIndicatorsCount" class="font-extrabold text-rose-700">0</span> chỉ số xét nghiệm vượt ngưỡng an toàn</p>
                             </div>
                         </div>
                         <button onclick="generateDoctorPdfReport()" class="hidden md:flex bg-white hover:bg-slate-50 text-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs border border-indigo-200 shadow-xs items-center gap-1.5 touch-active">
-                            <i class="fa-solid fa-file-pdf text-indigo-600"></i> Xuất PDF
+                            <i class="fa-solid fa-file-pdf text-indigo-600"></i> Xuất PDF Bác Sĩ
                         </button>
                     </div>
 
                     <!-- Consultation Cards Grid -->
-                    <div id="labAiConsultationDetails" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div id="labAiConsultationDetails" class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
                         <!-- Dynamic consultation cards injected here -->
                     </div>
                 </div>
 
                 <!-- Category Filters & Search Bar -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
                     <div class="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar" id="labCategoryFilter">
                         <button onclick="filterLabCategory('all')" id="labFilter-all" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 bg-medical-600 text-white">Tất cả</button>
                         <button onclick="filterLabCategory('Sinh hóa máu')" id="labFilter-Sinh hóa máu" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Sinh hóa máu</button>
@@ -422,23 +426,23 @@
                         <button onclick="filterLabCategory('Nước tiểu')" id="labFilter-Nước tiểu" class="lab-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Nước tiểu</button>
                     </div>
                     <div class="relative w-full sm:w-60">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-                        <input type="text" id="searchLabInput" oninput="renderLabTests()" placeholder="Tìm tên chỉ số..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-medical-500">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchLabInput" oninput="renderLabTests()" placeholder="Tìm tên chỉ số..." class="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-medical-500 font-semibold">
                     </div>
                 </div>
 
-                <!-- Lab Results Table -->
+                <!-- Lab Results Table Responsive Mobile Card View -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-slate-600">
                             <thead class="bg-slate-50 text-slate-400 uppercase font-bold text-[10px]">
                                 <tr>
-                                    <th class="px-4 py-3">Ngày XN</th>
-                                    <th class="px-4 py-3">Tên Chỉ Số</th>
-                                    <th class="px-4 py-3">Kết quả</th>
-                                    <th class="px-4 py-3">Tham chiếu</th>
-                                    <th class="px-4 py-3">Đánh giá</th>
-                                    <th class="px-4 py-3 text-right">Thao tác</th>
+                                    <th class="px-3 sm:px-4 py-2.5">Ngày XN</th>
+                                    <th class="px-3 sm:px-4 py-2.5">Tên Chỉ Số</th>
+                                    <th class="px-3 sm:px-4 py-2.5">Kết quả</th>
+                                    <th class="px-3 sm:px-4 py-2.5">Tham chiếu</th>
+                                    <th class="px-3 sm:px-4 py-2.5">Đánh giá</th>
+                                    <th class="px-3 sm:px-4 py-2.5 text-right">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="labTableBody" class="divide-y divide-slate-100">
@@ -449,22 +453,62 @@
                 </div>
             </section>
 
-            <!-- TAB 3: MEDICAL IMAGING ARCHIVE -->
-            <section id="imagingTab" class="tab-content space-y-5 hidden">
-                <div class="flex justify-between items-center flex-wrap gap-3">
+            <section id="diseaseLookupTab" class="tab-content space-y-4 sm:space-y-5 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-2">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+                        <h2 class="text-base sm:text-xl font-black text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-prescription-bottle-medical text-longchau-600"></i> Tra Thuốc & Biệt Dược Nhà Thuốc Long Châu
+                        </h2>
+                        <p class="text-[11px] text-slate-500">Tra cứu liều lượng chuẩn, thời điểm uống chính xác (sáng/trưa/tối, trước/sau ăn) và đặt lịch tự động</p>
+                    </div>
+                </div>
+
+                <!-- Search Bar with Live Long Châu Suggestion Engine -->
+                <div class="bg-white p-3 sm:p-4 rounded-2xl border border-longchau-200 shadow-xs space-y-2">
+                    <div class="flex items-center gap-2 bg-slate-50 p-2 sm:p-2.5 rounded-xl border border-slate-200">
+                        <i class="fa-solid fa-magnifying-glass text-longchau-600 text-sm"></i>
+                        <input type="text" id="diseaseSearchInput" oninput="handleLongChauSearchInput(this.value)" placeholder="Nhập tên biệt dược (Panadol, Metformin, Crestor, Augmentin, Nexium...)" class="w-full text-xs bg-transparent focus:outline-none text-slate-800 font-bold">
+                        <button onclick="searchLongChauViaGeminiAi()" class="bg-longchau-600 hover:bg-longchau-700 text-white font-extrabold px-3 py-1.5 rounded-lg text-[10px] shrink-0 flex items-center gap-1 touch-active">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> Tra AI Long Châu
+                        </button>
+                    </div>
+
+                    <!-- Instant Long Châu Suggestion Chips -->
+                    <div id="longChauQuickSuggestions" class="flex gap-1.5 overflow-x-auto pb-1 text-[10px] custom-scrollbar">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Quick Category Buttons -->
+                <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
+                    <button onclick="filterDiseaseCategory('all')" id="disFilter-all" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-longchau-600 text-white">Tất cả danh mục</button>
+                    <button onclick="filterDiseaseCategory('Chuyển hóa')" id="disFilter-Chuyển hóa" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Đường / Mỡ / Gút</button>
+                    <button onclick="filterDiseaseCategory('Tim mạch')" id="disFilter-Tim mạch" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Tim mạch & Huyết áp</button>
+                    <button onclick="filterDiseaseCategory('Gan - Thận')" id="disFilter-Gan - Thận" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Gan & Thận</button>
+                    <button onclick="filterDiseaseCategory('Tiêu hóa')" id="disFilter-Tiêu hóa" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Dạ dày & Tiêu hóa</button>
+                </div>
+
+                <!-- Disease & Drug Library Grid -->
+                <div id="diseaseLibraryGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+                    <!-- Dynamic Disease & Drug Cards -->
+                </div>
+            </section>
+
+            <section id="imagingTab" class="tab-content space-y-4 sm:space-y-5 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <div>
+                        <h2 class="text-base sm:text-xl font-black text-slate-900 flex items-center gap-2">
                             <i class="fa-solid fa-x-ray text-indigo-600"></i> Phim Chụp & Ảnh Y Tế
                         </h2>
-                        <p class="text-xs text-slate-500">Lưu trữ phim X-Quang, ảnh Siêu âm, CT/MRI, Kết quả Nội soi... Xem lại sắc nét</p>
+                        <p class="text-[11px] text-slate-500">Lưu trữ phim X-Quang, Siêu âm, CT/MRI, Nội soi... Xem lại sắc nét</p>
                     </div>
-                    <button onclick="openModal('addImagingModal')" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 touch-active">
-                        <i class="fa-solid fa-plus"></i> Thêm tệp ảnh mới
+                    <button onclick="openModal('addImagingModal')" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5 touch-active">
+                        <i class="fa-solid fa-plus"></i> Thêm tệp ảnh
                     </button>
                 </div>
 
                 <!-- Filter Pills & Search Bar -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-xs">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-xs">
                     <div class="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar" id="imagingCategoryFilters">
                         <button onclick="filterImagingCategory('all')" id="imgFilter-all" class="img-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 bg-indigo-600 text-white">Tất cả</button>
                         <button onclick="filterImagingCategory('Siêu âm')" id="imgFilter-Siêu âm" class="img-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 bg-slate-100 text-slate-600 hover:bg-slate-200">Siêu âm</button>
@@ -473,81 +517,50 @@
                     </div>
 
                     <div class="relative w-full sm:w-60">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-xs"></i>
-                        <input type="text" id="searchImagingInput" oninput="renderImagingGallery()" placeholder="Tìm tên ảnh..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:bg-white focus:border-indigo-500">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchImagingInput" oninput="renderImagingGallery()" placeholder="Tìm tên ảnh..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:bg-white focus:border-indigo-500 font-semibold">
                     </div>
                 </div>
 
                 <!-- Imaging Cards Grid Gallery -->
-                <div id="imagingGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div id="imagingGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
                     <!-- Dynamic Imaging Cards -->
                 </div>
             </section>
 
-            <!-- TAB 4: DISEASE & MEDICATION LOOKUP -->
-            <section id="diseaseLookupTab" class="tab-content space-y-5 hidden">
-                <div>
-                    <h2 class="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-book-medical text-teal-600"></i> Tra Cứu Bệnh Lý & Liều Dùng Thuốc
-                    </h2>
-                    <p class="text-xs text-slate-500">Tra cứu liều lượng chuẩn, số ngày dùng, thời điểm uống và giới hạn an toàn 24h</p>
-                </div>
-
-                <!-- Search Disease Bar -->
-                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3">
-                    <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
-                    <input type="text" id="diseaseSearchInput" oninput="renderDiseaseLibrary()" placeholder="Nhập tên bệnh hoặc chỉ số (Tiểu đường, Mỡ máu, Gút, Men gan...)" class="w-full text-xs bg-transparent focus:outline-none text-slate-800 font-bold">
-                </div>
-
-                <!-- Quick Category Buttons -->
-                <div class="flex gap-2 overflow-x-auto pb-1 text-xs custom-scrollbar">
-                    <button onclick="filterDiseaseCategory('all')" id="disFilter-all" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-teal-600 text-white">Tất cả bệnh lý</button>
-                    <button onclick="filterDiseaseCategory('Chuyển hóa')" id="disFilter-Chuyển hóa" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Chuyển hóa (Đường / Mỡ / Gút)</button>
-                    <button onclick="filterDiseaseCategory('Tim mạch')" id="disFilter-Tim mạch" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Tim mạch & Huyết áp</button>
-                    <button onclick="filterDiseaseCategory('Gan - Thận')" id="disFilter-Gan - Thận" class="dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200">Gan & Thận</button>
-                </div>
-
-                <!-- Disease Library Grid -->
-                <div id="diseaseLibraryGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Dynamic Disease Cards -->
-                </div>
-            </section>
-
-            <!-- TAB 5: MEDICAL RECORDS -->
-            <section id="recordsTab" class="tab-content space-y-5 hidden">
-                <div class="flex justify-between items-center flex-wrap gap-3">
+            <section id="recordsTab" class="tab-content space-y-4 sm:space-y-5 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-2">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-black text-slate-900">Khám Bệnh & Toa Thuốc</h2>
-                        <p class="text-xs text-slate-500">Lưu trữ nhật ký khám chữa bệnh tại các cơ sở y tế</p>
+                        <h2 class="text-base sm:text-xl font-black text-slate-900">Khám Bệnh & Toa Thuốc</h2>
+                        <p class="text-[11px] text-slate-500">Lưu trữ nhật ký khám chữa bệnh tại các cơ sở y tế</p>
                     </div>
-                    <button onclick="openModal('addRecordModal')" class="bg-medical-600 hover:bg-medical-700 active:scale-95 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 touch-active">
+                    <button onclick="openModal('addRecordModal')" class="bg-medical-600 hover:bg-medical-700 active:scale-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5 touch-active">
                         <i class="fa-solid fa-plus"></i> Thêm phiếu khám
                     </button>
                 </div>
 
                 <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-                    <input type="text" id="searchRecordInput" oninput="renderRecords()" placeholder="Tìm theo Chẩn đoán, Bệnh viện, Bác sĩ..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-medical-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchRecordInput" oninput="renderRecords()" placeholder="Tìm theo Chẩn đoán, Bệnh viện, Bác sĩ..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-medical-500 font-semibold">
                 </div>
 
-                <div id="recordsList" class="space-y-4">
+                <div id="recordsList" class="space-y-3 sm:space-y-4">
                     <!-- Dynamic Record Cards -->
                 </div>
             </section>
 
-            <!-- TAB 6: MEDICATION REMINDERS -->
-            <section id="medsTab" class="tab-content space-y-5 hidden">
-                <div class="flex justify-between items-center flex-wrap gap-3">
+            <section id="medsTab" class="tab-content space-y-4 sm:space-y-5 hidden">
+                <div class="flex justify-between items-center flex-wrap gap-2">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-black text-slate-900">Lịch Uống Thuốc</h2>
-                        <p class="text-xs text-slate-500">Thời gian biểu uống thuốc chuẩn xác mỗi ngày</p>
+                        <h2 class="text-base sm:text-xl font-black text-slate-900">Lịch Uống Thuốc</h2>
+                        <p class="text-[11px] text-slate-500">Thời gian biểu uống thuốc chuẩn xác mỗi ngày</p>
                     </div>
-                    <button onclick="openModal('addMedModal')" class="bg-medical-600 hover:bg-medical-700 active:scale-95 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 touch-active">
+                    <button onclick="openModal('addMedModal')" class="bg-medical-600 hover:bg-medical-700 active:scale-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5 touch-active">
                         <i class="fa-solid fa-plus"></i> Thêm thuốc mới
                     </button>
                 </div>
 
-                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between gap-4">
+                <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between gap-3">
                     <div class="space-y-0.5">
                         <h3 class="font-extrabold text-slate-800 text-xs sm:text-sm">Tiến độ hôm nay</h3>
                         <p class="text-[11px] text-slate-500" id="medProgressText">Đã hoàn thành 0/0 liều thuốc</p>
@@ -557,7 +570,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4">
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-3.5 sm:p-4">
                     <div id="medsScheduleList" class="space-y-2.5">
                         <!-- Dynamic Medication Items -->
                     </div>
@@ -570,11 +583,11 @@
     <!-- Mobile Bottom Navigation Bar tailored for iPhone 16 Pro Max -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 ios-glass border-t border-slate-200/80 z-40 pb-safe no-print">
         <div class="grid grid-cols-5 h-14 items-center max-w-md mx-auto px-1">
-            <button onclick="switchTab('dashboardTab')" id="mbNav-dashboardTab" class="flex flex-col items-center justify-center text-medical-700 font-extrabold text-[10px] space-y-0.5 touch-active">
+            <button onclick="switchTab('dashboardTab')" id="mbNav-dashboardTab" class="flex flex-col items-center justify-center text-medical-700 font-extrabold text-[9px] space-y-0.5 touch-active">
                 <i class="fa-solid fa-chart-pie text-base"></i>
                 <span>Tổng quan</span>
             </button>
-            <button onclick="switchTab('labTab')" id="mbNav-labTab" class="flex flex-col items-center justify-center text-slate-400 font-semibold text-[10px] space-y-0.5 touch-active">
+            <button onclick="switchTab('labTab')" id="mbNav-labTab" class="flex flex-col items-center justify-center text-slate-400 font-semibold text-[9px] space-y-0.5 touch-active">
                 <i class="fa-solid fa-vial-virus text-base"></i>
                 <span>Xét nghiệm</span>
             </button>
@@ -587,11 +600,11 @@
                 <span class="text-[9px] font-black text-indigo-700 mt-0.5">AI Gemini</span>
             </button>
 
-            <button onclick="switchTab('imagingTab')" id="mbNav-imagingTab" class="flex flex-col items-center justify-center text-slate-400 font-semibold text-[10px] space-y-0.5 touch-active">
-                <i class="fa-solid fa-x-ray text-base"></i>
-                <span>Ảnh Y Tế</span>
+            <button onclick="switchTab('diseaseLookupTab')" id="mbNav-diseaseLookupTab" class="flex flex-col items-center justify-center text-slate-400 font-semibold text-[9px] space-y-0.5 touch-active">
+                <i class="fa-solid fa-prescription-bottle-medical text-base text-longchau-600"></i>
+                <span>Thuốc LC</span>
             </button>
-            <button onclick="switchTab('medsTab')" id="mbNav-medsTab" class="flex flex-col items-center justify-center text-slate-400 font-semibold text-[10px] space-y-0.5 touch-active">
+            <button onclick="switchTab('medsTab')" id="mbNav-medsTab" class="flex flex-col items-center justify-center text-slate-400 font-semibold text-[9px] space-y-0.5 touch-active">
                 <i class="fa-solid fa-pills text-base"></i>
                 <span>Lịch Thuốc</span>
             </button>
@@ -610,8 +623,8 @@
     <div id="printableDoctorPdfReport" class="print-only p-8 bg-white text-slate-900 max-w-4xl mx-auto">
         <div class="border-b-2 border-indigo-900 pb-4 mb-6 flex justify-between items-start">
             <div>
-                <h1 class="text-xl font-black text-indigo-950 uppercase">MEDHEALTH VIỆT NAM - BÁO CÁO Y TẾ & CHỈ SỐ XÉT NGHIỆM (v1.03)</h1>
-                <p class="text-xs text-slate-600">Trích xuất từ Hồ sơ Sức Khỏe Điện Tử & Trợ lý Bác Sĩ AI Gemini</p>
+                <h1 class="text-xl font-black text-indigo-950 uppercase">MEDHEALTH VIỆT NAM - BÁO CÁO Y TẾ & ĐƠN THUỐC THAM KHẢO (v1.04)</h1>
+                <p class="text-xs text-slate-600">Trích xuất từ Hồ sơ Sức Khỏe Điện Tử & Tra thuốc Nhà Thuốc Long Châu AI</p>
             </div>
             <div class="text-right text-xs">
                 <p><strong>Ngày xuất:</strong> <span id="pdfReportExportDate">2026-08-25</span></p>
@@ -652,13 +665,13 @@
 
         <div class="mb-6 space-y-2">
             <h2 class="text-sm font-bold text-slate-900 uppercase border-b border-slate-300 pb-1">
-                2. Phác Đồ Thuốc Tham Khảo & Thời Gian Sử Dụng Phù Hợp
+                2. Phác Đồ Thuốc Tham Khảo Long Châu & Thời Gian Sử Dụng Phù Hợp
             </h2>
             <table class="w-full text-left text-xs border-collapse">
                 <thead>
                     <tr class="bg-slate-100 text-slate-700 border-b border-slate-300 font-bold">
                         <th class="p-2 border border-slate-200">Chỉ số tăng cao</th>
-                        <th class="p-2 border border-slate-200">Thuốc đề xuất</th>
+                        <th class="p-2 border border-slate-200">Biệt dược đề xuất</th>
                         <th class="p-2 border border-slate-200">Liều dùng / lần</th>
                         <th class="p-2 border border-slate-200">Thời điểm uống</th>
                         <th class="p-2 border border-slate-200">Số ngày dùng</th>
@@ -673,7 +686,7 @@
 
         <div class="mb-6 space-y-1">
             <h2 class="text-sm font-bold text-slate-900 uppercase border-b border-slate-300 pb-1">
-                3. Đánh Giá Nguy Cơ Cơ Quan & Khuyên Dùng
+                3. Đánh Giá Nguy Cơ Cơ Quan & Lời Khuyên Bác Sĩ
             </h2>
             <div id="pdfRiskAdvisoryContent" class="text-xs text-slate-800 space-y-2 bg-amber-50/60 p-3 rounded-lg border border-amber-200">
                 <!-- Dynamic risk advice -->
@@ -696,7 +709,7 @@
     <!-- MODALS SECTION -->
 
     <!-- Modal 1: Add/Edit Member -->
-    <div id="addMemberModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="addMemberModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative">
             <h3 class="text-base font-extrabold text-slate-900 mb-3" id="memberModalTitle">Thêm Thành Viên Mới</h3>
             <form id="memberForm" onsubmit="handleSaveMember(event)" class="space-y-3 text-xs">
@@ -754,7 +767,7 @@
     </div>
 
     <!-- Modal 2: Add Medical Imaging Upload / Camera Modal -->
-    <div id="addImagingModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="addImagingModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-3">
                 <h3 class="text-sm sm:text-base font-extrabold text-slate-900 flex items-center gap-2">
@@ -869,7 +882,7 @@
     </div>
 
     <!-- Modal 4: Add Medical Record -->
-    <div id="addRecordModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="addRecordModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h3 class="text-base font-extrabold text-slate-900 mb-3">Thêm Hồ Sơ Khám Bệnh</h3>
             <form onsubmit="handleSaveRecord(event)" class="space-y-3 text-xs">
@@ -910,55 +923,82 @@
         </div>
     </div>
 
-    <!-- Modal 5: Add Medication -->
-    <div id="addMedModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative">
-            <h3 class="text-base font-extrabold text-slate-900 mb-1">Thêm Thuốc & Lịch Uống</h3>
-            <p class="text-[11px] text-slate-400 mb-3">Ghi nhận liều dùng chuẩn, số ngày điều trị và thời gian nhắc</p>
+    <!-- Modal 5: Add Medication with Long Châu Search Auto-Suggest -->
+    <div id="addMedModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-1">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-1.5">
+                    <i class="fa-solid fa-prescription-bottle-medical text-longchau-600"></i> Thêm Thuốc & Lịch Uống
+                </h3>
+                <button onclick="closeModal('addMedModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <p class="text-[11px] text-slate-500 mb-3">Tra cứu biệt dược chuẩn Nhà Thuốc Long Châu để tự động điền liều dùng & thời điểm uống</p>
+            
             <form onsubmit="handleSaveMed(event)" class="space-y-3 text-xs">
-                <div>
-                    <label class="font-bold text-slate-700 block mb-1">Tên thuốc / Biệt dược</label>
-                    <input type="text" id="inputMedName" placeholder="VD: Metformin 500mg..." required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
+                
+                <!-- Long Châu Auto-Suggest Search Box -->
+                <div class="relative">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <label class="font-bold text-slate-800 block">Tên thuốc / Biệt dược (Nhà Thuốc Long Châu)</label>
+                        <button type="button" onclick="searchLongChauForModal()" class="text-[10px] bg-longchau-50 text-longchau-700 font-extrabold px-2 py-0.5 rounded-lg border border-longchau-200 hover:bg-longchau-100 flex items-center gap-1">
+                            <i class="fa-solid fa-magnifying-glass text-amber-500"></i> Tra Long Châu AI
+                        </button>
+                    </div>
+                    
+                    <div class="relative">
+                        <input type="text" id="inputMedName" oninput="handleModalMedSearchInput(this.value)" autocomplete="off" placeholder="Gõ tên thuốc (Panadol, Metformin, Crestor, Augmentin...)" required class="w-full p-2.5 pr-8 bg-slate-50 border border-longchau-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-longchau-600">
+                        <i class="fa-solid fa-prescription-bottle-medical absolute right-3 top-3 text-longchau-500 text-xs pointer-events-none"></i>
+                    </div>
+
+                    <!-- Long Châu Live Auto-Suggest Popup Dropdown -->
+                    <div id="modalLongChauSuggestions" class="hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-2xl border border-longchau-200 z-50 max-h-52 overflow-y-auto custom-scrollbar p-1">
+                        <!-- Populated dynamically -->
+                    </div>
                 </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">Liều dùng / lần</label>
+                        <label class="font-bold text-slate-700 block mb-1">Liều dùng phù hợp / lần</label>
                         <input type="text" id="inputMedDose" placeholder="VD: 1 viên (500mg)" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
                     </div>
                     <div>
                         <label class="font-bold text-slate-700 block mb-1">Số ngày điều trị</label>
-                        <input type="text" id="inputMedDuration" placeholder="VD: 30 ngày" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
+                        <input type="text" id="inputMedDuration" placeholder="VD: 30 ngày (tái khám)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
                     </div>
                 </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">Giờ uống</label>
+                        <label class="font-bold text-slate-700 block mb-1">Giờ uống nhắc nhở</label>
                         <input type="time" id="inputMedTime" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-indigo-700">
                     </div>
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">Đối tượng</label>
+                        <label class="font-bold text-slate-700 block mb-1">Đối tượng sử dụng</label>
                         <select id="inputMedTargetGroup" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold">
                             <option value="Người lớn">Người lớn (Liều chuẩn)</option>
-                            <option value="Trẻ em">Trẻ em (Theo mg/kg)</option>
+                            <option value="Trẻ em">Trẻ em (Tính mg/kg)</option>
                             <option value="Người cao tuổi">Người cao tuổi / Suy thận</option>
                         </select>
                     </div>
                 </div>
+
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">Hướng dẫn thời điểm uống</label>
-                    <input type="text" id="inputMedNote" placeholder="VD: Uống ngay sau bữa ăn sáng no" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                    <label class="font-bold text-slate-700 block mb-1">Hướng dẫn thời điểm uống thuốc chuẩn y khoa</label>
+                    <input type="text" id="inputMedNote" placeholder="VD: Uống ngay sau bữa ăn sáng no" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-longchau-800">
                 </div>
 
-                <div class="flex justify-end gap-2 pt-2">
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
                     <button type="button" onclick="closeModal('addMedModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Hủy</button>
-                    <button type="submit" class="px-4 py-2 bg-medical-600 hover:bg-medical-700 text-white font-bold rounded-xl text-xs">Lưu Lịch Uống</button>
+                    <button type="submit" class="px-5 py-2 bg-longchau-600 hover:bg-longchau-700 text-white font-extrabold rounded-xl text-xs shadow-md touch-active flex items-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu Lịch Uống Thuốc
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Modal 6: Manual Add Lab Test -->
-    <div id="addLabModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="addLabModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center mb-1">
                 <h3 class="text-base font-extrabold text-slate-900">Nhập Chỉ Số Xét Nghiệm</h3>
@@ -1183,7 +1223,7 @@
     </div>
 
     <!-- Modal 8: Detailed AI Medical Advisory Modal -->
-    <div id="labConsultationModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="labConsultationModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-start pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-3">
@@ -1192,7 +1232,7 @@
                     </div>
                     <div>
                         <h3 class="text-sm sm:text-base font-extrabold text-slate-900" id="consultModalTitle">Tư Vấn Chỉ Số & Nguy Cơ Bệnh Lý</h3>
-                        <p class="text-[11px] text-slate-500" id="consultModalSubtitle">Phân tích y khoa chi tiết và nhóm thuốc đề xuất</p>
+                        <p class="text-[11px] text-slate-500" id="consultModalSubtitle">Phân tích y khoa chi tiết và biệt dược đề xuất từ Long Châu</p>
                     </div>
                 </div>
                 <button onclick="closeModal('labConsultationModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -1232,15 +1272,15 @@
                     </div>
                 </div>
 
-                <div class="bg-indigo-50/80 border border-indigo-200 p-3.5 rounded-2xl space-y-2">
-                    <h4 class="font-bold text-indigo-900 flex items-center gap-1.5 text-xs uppercase tracking-wide">
-                        <i class="fa-solid fa-pills text-indigo-600"></i> Nhóm Thuốc Điều Trị Tham Khảo & Liều Dùng
+                <div class="bg-longchau-50/80 border border-longchau-200 p-3.5 rounded-2xl space-y-2">
+                    <h4 class="font-bold text-longchau-900 flex items-center gap-1.5 text-xs uppercase tracking-wide">
+                        <i class="fa-solid fa-prescription-bottle-medical text-longchau-600"></i> Biệt Dược Tham Khảo Nhà Thuốc Long Châu & Thời Điểm Uống
                     </h4>
                     <div id="consultModalMeds" class="text-slate-800 text-xs leading-relaxed space-y-1.5">
                         --
                     </div>
-                    <div class="pt-2 border-t border-indigo-200/60 flex justify-end">
-                        <button id="btnQuickAddMedFromLab" onclick="quickAddSuggestedMedication()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1.5 touch-active">
+                    <div class="pt-2 border-t border-longchau-200/60 flex justify-end">
+                        <button id="btnQuickAddMedFromLab" onclick="quickAddSuggestedMedication()" class="bg-longchau-600 hover:bg-longchau-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1.5 touch-active">
                             <i class="fa-solid fa-plus-circle"></i> Thêm Thuốc Này Vào Lịch Uống
                         </button>
                     </div>
@@ -1262,22 +1302,22 @@
     <div id="geminiChatModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
         <div class="bg-white rounded-3xl max-w-2xl w-full h-[92vh] sm:h-[88vh] shadow-2xl flex flex-col overflow-hidden border border-slate-200">
             <!-- Gemini Chat Header -->
-            <div class="bg-gradient-to-r from-indigo-700 via-purple-700 to-slate-900 p-4 text-white flex justify-between items-center shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-amber-300 text-xl font-bold shadow-md">
+            <div class="bg-gradient-to-r from-indigo-700 via-purple-700 to-slate-900 p-3.5 sm:p-4 text-white flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-amber-300 text-lg sm:text-xl font-bold shadow-md">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-extrabold text-sm sm:text-base text-white">Bác Sĩ Trợ Lý Gemini AI</h3>
-                            <span class="bg-emerald-500/30 text-emerald-300 text-[9px] font-black px-2 py-0.5 rounded-full border border-emerald-400/30 uppercase tracking-wider flex items-center gap-1">
+                        <div class="flex items-center gap-1.5">
+                            <h3 class="font-extrabold text-xs sm:text-base text-white">Bác Sĩ Trợ Lý AI Gemini</h3>
+                            <span class="bg-emerald-500/30 text-emerald-300 text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full border border-emerald-400/30 uppercase tracking-wider flex items-center gap-1">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online 24/7
                             </span>
                         </div>
-                        <p class="text-[11px] text-indigo-200">Tư vấn y khoa cá nhân hóa theo hồ sơ sức khỏe hiện tại</p>
+                        <p class="text-[10px] sm:text-[11px] text-indigo-200">Tư vấn y khoa & liều dùng biệt dược Nhà Thuốc Long Châu</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5">
                     <button onclick="clearGeminiChatHistory()" title="Xóa lịch sử chat" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 flex items-center justify-center text-xs transition">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
@@ -1288,42 +1328,39 @@
             </div>
 
             <!-- Context Banner -->
-            <div class="bg-indigo-50/80 px-4 py-2 border-b border-indigo-100 flex items-center justify-between text-[11px] text-indigo-900 shrink-0">
-                <div class="flex items-center gap-2 truncate">
+            <div class="bg-indigo-50/80 px-3.5 py-1.5 sm:py-2 border-b border-indigo-100 flex items-center justify-between text-[10px] sm:text-[11px] text-indigo-900 shrink-0">
+                <div class="flex items-center gap-1.5 truncate">
                     <i class="fa-solid fa-user-shield text-indigo-600"></i>
-                    <span class="truncate">Đang kết nối dữ liệu của: <strong id="geminiPatientContextName" class="text-indigo-950 font-extrabold">Nguyễn Văn An</strong></span>
+                    <span class="truncate">Đang kết nối: <strong id="geminiPatientContextName" class="text-indigo-950 font-extrabold">Nguyễn Văn An</strong></span>
                 </div>
-                <span class="bg-indigo-200/60 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0" id="geminiContextBadge">7 chỉ số XN</span>
+                <span class="bg-indigo-200/60 text-indigo-800 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0" id="geminiContextBadge">7 chỉ số XN</span>
             </div>
 
             <!-- Chat Messages Container -->
-            <div id="geminiChatMessages" class="flex-1 min-h-0 p-4 overflow-y-auto custom-scrollbar space-y-3.5 bg-slate-50/60">
+            <div id="geminiChatMessages" class="flex-1 min-h-0 p-3 sm:p-4 overflow-y-auto custom-scrollbar space-y-3 bg-slate-50/60">
                 <!-- Messages populated dynamically -->
             </div>
 
             <!-- Quick Suggestion Chips -->
             <div class="p-2 bg-white border-t border-slate-100 overflow-x-auto custom-scrollbar shrink-0">
-                <div class="flex gap-1.5 text-[11px]">
-                    <button onclick="sendQuickGeminiPrompt('Phân tích các chỉ số xét nghiệm tăng cao của tôi và lời khuyên')" class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold border border-indigo-200 shrink-0 touch-active">
+                <div class="flex gap-1.5 text-[10px] sm:text-[11px]">
+                    <button onclick="sendQuickGeminiPrompt('Tra cứu biệt dược chuẩn Nhà Thuốc Long Châu cho bệnh Tiểu đường & Mỡ máu')" class="px-2.5 py-1.5 rounded-xl bg-longchau-50 hover:bg-longchau-100 text-longchau-800 font-bold border border-longchau-200 shrink-0 touch-active">
+                        💊 Biệt dược Long Châu
+                    </button>
+                    <button onclick="sendQuickGeminiPrompt('Phân tích các chỉ số xét nghiệm tăng cao của tôi và lời khuyên')" class="px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold border border-indigo-200 shrink-0 touch-active">
                         🔍 Phân tích chỉ số XN cao
                     </button>
-                    <button onclick="sendQuickGeminiPrompt('Các loại thuốc tôi đang uống có tương tác gì không?')" class="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold border border-purple-200 shrink-0 touch-active">
-                        💊 Kiểm tra đơn thuốc
-                    </button>
-                    <button onclick="sendQuickGeminiPrompt('Tư vấn chế độ ăn uống giúp giảm Mỡ Máu và Đường Huyết')" class="px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 font-bold border border-teal-200 shrink-0 touch-active">
-                        🥗 Thực đơn dinh dưỡng
-                    </button>
-                    <button onclick="sendQuickGeminiPrompt('Liều dùng Paracetamol khuyến cáo cho người lớn cách mấy tiếng?')" class="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold border border-amber-200 shrink-0 touch-active">
-                        ⏱️ Liều Paracetamol
+                    <button onclick="sendQuickGeminiPrompt('Thời điểm uống thuốc Panadol, Efferalgan cách mấy tiếng và uống lúc nào?')" class="px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold border border-amber-200 shrink-0 touch-active">
+                        ⏱️ Thời điểm uống thuốc
                     </button>
                 </div>
             </div>
 
             <!-- Input Box Form -->
-            <div class="p-3 bg-white border-t border-slate-200 shrink-0">
+            <div class="p-2.5 sm:p-3 bg-white border-t border-slate-200 shrink-0">
                 <form onsubmit="handleSendGeminiMessage(event)" class="flex items-center gap-2">
-                    <input type="text" id="geminiInputQuery" placeholder="Hỏi AI Gemini về triệu chứng, thuốc, chỉ số..." autocomplete="off" required class="flex-1 bg-slate-100 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-800">
-                    <button type="submit" id="btnSendGemini" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-95 text-white font-bold flex items-center justify-center shadow-md transition touch-active shrink-0">
+                    <input type="text" id="geminiInputQuery" placeholder="Hỏi AI Gemini về thuốc, thời điểm uống, biệt dược..." autocomplete="off" required class="flex-1 bg-slate-100 border border-slate-200 rounded-2xl px-3.5 py-2 sm:py-2.5 text-xs font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-800">
+                    <button type="submit" id="btnSendGemini" class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-95 text-white font-bold flex items-center justify-center shadow-md transition touch-active shrink-0">
                         <i class="fa-solid fa-paper-plane text-xs"></i>
                     </button>
                 </form>
@@ -1332,13 +1369,127 @@
     </div>
 
     <!-- Custom Toast Message -->
-    <div id="toast" class="hidden fixed bottom-16 sm:bottom-5 right-5 bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-2.5 text-xs border border-slate-700 transition-all duration-300 no-print backdrop-blur-md">
-        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <div id="toast" class="hidden fixed bottom-16 sm:bottom-5 right-4 sm:right-5 bg-slate-900/95 text-white px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-2 text-xs border border-slate-700 transition-all duration-300 no-print backdrop-blur-md">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-sm sm:text-base"></i>
         <span id="toastMsg" class="font-bold">Thao tác thành công!</span>
     </div>
 
     <script>
-        const APP_VERSION = "v1.03";
+        const APP_VERSION = "v1.04";
+
+        // Curated Fast Lookup Database for Popular Nhà Thuốc Long Châu Medications
+        const longChauDrugDatabase = [
+            {
+                brandName: "Panadol Extra 500mg/65mg",
+                genericName: "Paracetamol 500mg + Caffeine 65mg",
+                category: "Giảm đau - Hạ sốt",
+                standardDose: "1 - 2 viên / lần",
+                duration: "3 - 5 ngày",
+                timingNote: "Uống ngay sau khi ăn no, cách nhau tối thiểu 4 - 6 tiếng",
+                defaultHour: "08:00",
+                maxDose24h: "Tối đa 8 viên / 24 giờ",
+                precautions: "Tránh dùng đồ uống chứa Caffein. Dị ứng Paracetamol tuyệt đối không dùng."
+            },
+            {
+                brandName: "Efferalgan 500mg (Viên sủi)",
+                genericName: "Paracetamol 500mg",
+                category: "Giảm đau - Hạ sốt",
+                standardDose: "1 viên / lần (hoà tan trong 200ml nước)",
+                duration: "3 - 5 ngày",
+                timingNote: "Uống sau ăn no hoặc khi sốt > 38.5°C, cách nhau 4 - 6 giờ",
+                defaultHour: "08:00",
+                maxDose24h: "Tối đa 4g (8 viên) / 24 giờ",
+                precautions: "Người bệnh tăng huyết áp chú ý hàm lượng muối Natri trong viên sủi."
+            },
+            {
+                brandName: "Glucophage 850mg",
+                genericName: "Metformin Hydrochloride 850mg",
+                category: "Tiểu đường - Chuyển hóa",
+                standardDose: "1 viên / lần x 1 - 2 lần/ngày",
+                duration: "30 ngày (tái khám)",
+                timingNote: "Uống ngay sau bữa ăn sáng và ăn tối no để giảm rối loạn tiêu hóa",
+                defaultHour: "08:00",
+                maxDose24h: "Tối đa 2.550mg (3 viên) / 24 giờ",
+                precautions: "Theo dõi chỉ số đường huyết lúc đói và HbA1c định kỳ 3 tháng."
+            },
+            {
+                brandName: "Crestor 10mg",
+                genericName: "Rosuvastatin 10mg",
+                category: "Mỡ máu - Tim mạch",
+                standardDose: "1 viên / lần (1 lần/ngày)",
+                duration: "30 - 60 ngày",
+                timingNote: "Uống vào buổi tối trước khi đi ngủ (hoặc cố định 20:30 mỗi ngày)",
+                defaultHour: "20:30",
+                maxDose24h: "Tối đa 40mg / 24 giờ",
+                precautions: "Kiêng ăn nhiều chất béo động vật. Kiểm tra men gan định kỳ."
+            },
+            {
+                brandName: "Lipanthyl NT 145mg",
+                genericName: "Fenofibrate 145mg",
+                category: "Mỡ máu - Triglyceride",
+                standardDose: "1 viên / lần (1 lần/ngày)",
+                duration: "30 ngày",
+                timingNote: "Uống ngay sau bữa ăn chính trưa hoặc tối (thức ăn giúp hấp thu thuốc tốt nhất)",
+                defaultHour: "12:30",
+                maxDose24h: "Tối đa 145mg / 24 giờ",
+                precautions: "Đặc trị chỉ số Triglyceride tăng cao nguy cơ viêm tụy cấp."
+            },
+            {
+                brandName: "Nexium 40mg",
+                genericName: "Esomeprazole 40mg",
+                category: "Dạ dày - Kháng Axit",
+                standardDose: "1 viên / lần (1 lần/ngày)",
+                duration: "14 - 28 ngày",
+                timingNote: "Uống trước bữa ăn sáng 30 - 60 phút với nước lọc",
+                defaultHour: "07:00",
+                maxDose24h: "Tối đa 80mg / 24 giờ",
+                precautions: "Nuốt nguyên viên thuốc, không bẻ hoặc nghiền nhỏ."
+            },
+            {
+                brandName: "Augmentin 1g (875mg/125mg)",
+                genericName: "Amoxicillin + Clavulanic Acid",
+                category: "Kháng sinh nhiễm khuẩn",
+                standardDose: "1 viên / lần x 2 lần/ngày",
+                duration: "7 - 10 ngày (theo đơn Bác sĩ)",
+                timingNote: "Uống ngay đầu bữa ăn (sáng và tối cách nhau 12 giờ) để tránh kích ứng dạ dày",
+                defaultHour: "08:00",
+                maxDose24h: "Uống đủ liều, đủ số ngày kê đơn không tự ý dừng",
+                precautions: "Thông báo Bác sĩ nếu có tiền sử dị ứng Penicillin."
+            },
+            {
+                brandName: "Allopurinol Stada 100mg",
+                genericName: "Allopurinol 100mg",
+                category: "Bệnh Gút - Acid Uric",
+                standardDose: "1 - 2 viên / lần (1 lần/ngày)",
+                duration: "30 ngày",
+                timingNote: "Uống sau bữa ăn sáng no với 1 ly nước lớn (> 250ml)",
+                defaultHour: "08:30",
+                maxDose24h: "Tối đa 800mg / 24 giờ",
+                precautions: "Uống nhiều nước (> 2.5L/ngày) để hạn chế nguy cơ lắng đọng sỏi thận."
+            },
+            {
+                brandName: "Boganic Liqcaps",
+                genericName: "Cao Actiso + Nhân trần + Bìm bìm",
+                category: "Bổ gan - Giải độc",
+                standardDose: "1 - 2 viên / lần x 3 lần/ngày",
+                duration: "30 - 60 ngày",
+                timingNote: "Uống sau bữa ăn sáng, trưa, tối 30 phút",
+                defaultHour: "12:30",
+                maxDose24h: "Tối đa 6 viên / 24 giờ",
+                precautions: "Thảo dược thiên nhiên hỗ trợ hạ men gan và mát gan."
+            },
+            {
+                brandName: "Telfast HD 180mg",
+                genericName: "Fexofenadine Hydrochloride 180mg",
+                category: "Chống dị ứng - Kháng Histamin",
+                standardDose: "1 viên / lần (1 lần/ngày)",
+                duration: "5 - 7 ngày",
+                timingNote: "Uống trước bữa ăn với nhiều nước lọc (tránh uống cùng nước hoa quả)",
+                defaultHour: "09:00",
+                maxDose24h: "Tối đa 180mg / 24 giờ",
+                precautions: "Không uống thuốc cùng lúc với các chất kháng axit chứa nhôm/magiê."
+            }
+        ];
 
         let appData = {
             activeMemberId: "m1",
@@ -1365,9 +1516,9 @@
                         }
                     ],
                     medications: [
-                        { id: "md1", name: "Vitamin C 500mg", dose: "1 viên", duration: "30 ngày", time: "08:00", note: "Uống sau bữa sáng", takenToday: true },
-                        { id: "md2", name: "Omega 3 Dầu Cá", dose: "1 viên", duration: "60 ngày", time: "12:30", note: "Uống sau bữa trưa", takenToday: false },
-                        { id: "md3", name: "Magnesium B6", dose: "1 viên", duration: "30 ngày", time: "21:00", note: "Uống trước khi đi ngủ", takenToday: false }
+                        { id: "md1", name: "Vitamin C 500mg", dose: "1 viên", duration: "30 ngày", time: "08:00", note: "Uống ngay sau bữa ăn sáng", takenToday: true },
+                        { id: "md2", name: "Omega 3 Dầu Cá Long Châu", dose: "1 viên", duration: "60 ngày", time: "12:30", note: "Uống ngay sau bữa ăn trưa no", takenToday: false },
+                        { id: "md3", name: "Magnesium B6", dose: "1 viên", duration: "30 ngày", time: "21:00", note: "Uống trước khi đi ngủ 30 phút", takenToday: false }
                     ],
                     labTests: [
                         { id: "l1", name: "Glucose máu", category: "Sinh hóa máu", value: "6.8", unit: "mmol/L", refRange: "3.9 - 6.4", status: "Cao", date: "2026-08-15", facility: "Bệnh viện Bạch Mai" },
@@ -1410,8 +1561,8 @@
                 labMarkers: "Glucose máu (> 6.4 mmol/L) hoặc HbA1c (> 5.7%)",
                 risks: "Tăng nguy cơ xơ vữa động mạch, biến chứng võng mạc gây giảm thị lực, bệnh thận đái tháo đường, tê bì hoại tử chi.",
                 meds: [
-                    { name: "Metformin 500mg", dose: "500mg - 850mg / lần (1 - 2 lần/ngày)", duration: "30 ngày (tái khám)", maxDose: "Max 2.000mg / 24h", time: "08:00", note: "Uống ngay sau bữa ăn sáng" },
-                    { name: "Gliclazide 30mg MR", dose: "30mg - 60mg / lần (1 lần/sáng)", duration: "30 ngày", maxDose: "Max 120mg / 24h", time: "07:30", note: "Uống trước bữa ăn sáng 30 phút" }
+                    { name: "Glucophage 850mg (Metformin)", dose: "1 viên / lần (1 - 2 lần/ngày)", duration: "30 ngày (tái khám)", maxDose: "Max 2.550mg / 24h", time: "08:00", note: "Uống ngay sau bữa ăn sáng và ăn tối no" },
+                    { name: "Diamicron MR 30mg", dose: "1 - 2 viên / lần (1 lần/sáng)", duration: "30 ngày", maxDose: "Max 120mg / 24h", time: "07:30", note: "Uống trước bữa ăn sáng 30 phút" }
                 ],
                 diet: "Hạn chế tinh bột chuyển hóa nhanh, đường tinh luyện. Bổ sung nhiều rau xanh, ngũ cốc nguyên cám."
             },
@@ -1422,8 +1573,8 @@
                 labMarkers: "Cholesterol toàn phần (> 5.2 mmol/L), Triglyceride (> 1.7 mmol/L)",
                 risks: "Hẹp tắc động mạch vành gây đau thắt ngực, nguy cơ nhồi máu cơ tim, xơ vữa mạch máu não dẫn tới đột quỵ.",
                 meds: [
-                    { name: "Atorvastatin 10mg", dose: "10mg - 20mg / lần (1 lần/ngày)", duration: "30 - 60 ngày", maxDose: "Max 80mg / 24h", time: "20:30", note: "Uống vào buổi tối trước khi đi ngủ" },
-                    { name: "Fenofibrate 145mg", dose: "145mg / lần (1 lần/ngày)", duration: "30 ngày", maxDose: "Max 200mg / 24h", time: "12:30", note: "Uống ngay sau bữa ăn trưa" }
+                    { name: "Crestor 10mg (Rosuvastatin)", dose: "1 viên / lần (1 lần/ngày)", duration: "30 - 60 ngày", maxDose: "Max 40mg / 24h", time: "20:30", note: "Uống vào buổi tối trước khi đi ngủ" },
+                    { name: "Lipanthyl NT 145mg (Fenofibrate)", dose: "1 viên / lần (1 lần/ngày)", duration: "30 ngày", maxDose: "Max 145mg / 24h", time: "12:30", note: "Uống ngay sau bữa ăn trưa no" }
                 ],
                 diet: "Hạn chế mỡ động vật, nội tạng, đồ chiên xào. Bổ sung dầu thực vật và béo Omega-3."
             },
@@ -1434,21 +1585,21 @@
                 labMarkers: "Acid Uric máu (> 420 μmol/L ở Nam, > 360 μmol/L ở Nữ)",
                 risks: "Lắng đọng tinh thể Urat gây viêm khớp cấp (sưng đỏ đau dữ dội), biến dạng khớp (hạt Tophi) và sỏi thận.",
                 meds: [
-                    { name: "Allopurinol 100mg", dose: "100mg - 300mg / ngày (1 lần/ngày)", duration: "30 ngày", maxDose: "Max 600mg / 24h", time: "08:30", note: "Uống sau bữa ăn sáng với nhiều nước" },
-                    { name: "Colchicine 1mg", dose: "1mg / lần", duration: "3 - 5 ngày (đợt cấp)", maxDose: "Max 2mg / 24h", time: "08:00", note: "Dùng khi có cơn gút cấp" }
+                    { name: "Allopurinol Stada 100mg", dose: "1 - 2 viên / lần (1 lần/ngày)", duration: "30 ngày", maxDose: "Max 800mg / 24h", time: "08:30", note: "Uống sau bữa ăn sáng với nhiều nước" },
+                    { name: "Colchicine 1mg Long Châu", dose: "1 viên / lần", duration: "3 - 5 ngày (đợt cấp)", maxDose: "Max 2mg / 24h", time: "08:00", note: "Dùng khi có cơn gút cấp" }
                 ],
                 diet: "Kiêng tuyệt đối rượu bia. Tránh thực phẩm giàu Purin (thịt đỏ, hải sản). Uống đủ 2.5L nước/ngày."
             },
             {
-                id: "d_liver",
-                name: "Tổn Thương Tế Bào Gan / Men Gan Cao",
-                category: "Gan - Thận",
-                labMarkers: "AST (GOT) > 40 U/L hoặc ALT (GPT) > 40 U/L",
-                risks: "Tổn thương tế bào gan do vi-rút, gan nhiễm mỡ, rượu bia. Kéo dài dẫn tới viêm gan mạn và xơ gan.",
+                id: "d_gastritis",
+                name: "Viêm Trào Nhược Dạ Dày - Tá Tràng (GERD)",
+                category: "Tiêu hóa",
+                labMarkers: "Đau thượng vị, ợ chua, trào ngược dịch vị",
+                risks: "Viêm loét niêm mạc dạ dày, xuất huyết tiêu hóa, hẹp môn vị.",
                 meds: [
-                    { name: "Silymarin 140mg", dose: "140mg / lần x 2 lần/ngày", duration: "30 - 60 ngày", maxDose: "Max 420mg / 24h", time: "08:30", note: "Uống sau bữa ăn sáng và tối" }
+                    { name: "Nexium 40mg (Esomeprazole)", dose: "1 viên / lần (1 lần/ngày)", duration: "14 - 28 ngày", maxDose: "Max 80mg / 24h", time: "07:00", note: "Uống trước bữa ăn sáng 30 - 60 phút" }
                 ],
-                diet: "Tuyệt đối không uống rượu bia. Tránh thức khuya sau 23h."
+                diet: "Chia nhỏ bữa ăn, tránh ăn quá no trước khi ngủ 3 tiếng. Kiêng đồ cay nóng, cà phê, rượu bia."
             }
         ];
 
@@ -1466,34 +1617,34 @@
 
         const labConsultationMap = {
             "Glucose": {
-                suggestedMed: { name: "Metformin 500mg", dose: "1 viên/lần (2 lần/ngày)", duration: "30 ngày (tái khám)", time: "08:00", note: "Uống sau bữa ăn sáng và tối" },
+                suggestedMed: { name: "Glucophage 850mg (Metformin)", dose: "1 viên/lần (2 lần/ngày)", duration: "30 ngày (tái khám)", time: "08:00", note: "Uống ngay sau bữa ăn sáng và tối no" },
                 risks: "<strong>Ảnh hưởng cơ thể:</strong> Tăng đường huyết kéo dài gây tổn thương vi mạch tim, bệnh võng mạc giảm thị lực, suy thận và tê bì chi.",
                 treatment: "<strong>Khuyên dùng:</strong> Kiêng đường tinh luyện, giảm tinh bột nhanh. Tập thể dục 30 phút/ngày.",
-                meds: "Metformin 500mg (1 viên x 2 lần/ngày sau ăn, liệu trình 30 ngày)."
+                meds: "Glucophage 850mg (1 viên x 2 lần/ngày sau ăn no, liệu trình 30 ngày)."
             },
             "HbA1c": {
-                suggestedMed: { name: "Metformin 500mg", dose: "1 viên/lần", duration: "30 ngày", time: "08:00", note: "Uống sau bữa ăn sáng" },
+                suggestedMed: { name: "Glucophage 850mg (Metformin)", dose: "1 viên/lần", duration: "30 ngày", time: "08:00", note: "Uống ngay sau bữa ăn sáng" },
                 risks: "<strong>Ảnh hưởng cơ thể:</strong> HbA1c cao chứng tỏ mất kiểm soát đường huyết 3 tháng qua, tăng nguy cơ biến chứng xơ vữa.",
                 treatment: "<strong>Khuyên dùng:</strong> Tuân thủ chế độ ăn kiêng đạm/đường béo.",
                 meds: "Phác đồ hạ đường huyết theo chỉ chỉ định Bác sĩ."
             },
             "Cholesterol": {
-                suggestedMed: { name: "Atorvastatin 10mg", dose: "1 viên/lần", duration: "30 - 60 ngày", time: "20:30", note: "Uống tối trước khi đi ngủ" },
+                suggestedMed: { name: "Crestor 10mg (Rosuvastatin)", dose: "1 viên/lần", duration: "30 - 60 ngày", time: "20:30", note: "Uống vào buổi tối trước khi đi ngủ" },
                 risks: "<strong>Ảnh hưởng cơ thể:</strong> Lắng đọng mảng xơ vữa thành mạch máu, hẹp động mạch vành (đau thắt ngực), tăng nguy cơ nhồi máu cơ tim.",
                 treatment: "<strong>Khuyên dùng:</strong> Kiêng mỡ động vật, nội tạng. Bổ sung dầu thực vật.",
-                meds: "Atorvastatin 10mg (1 viên/ngày uống tối 20h30, dùng đợt 30 - 60 ngày)."
+                meds: "Crestor 10mg (1 viên/ngày uống tối 20h30, đợt 30 - 60 ngày)."
             },
             "Triglyceride": {
-                suggestedMed: { name: "Fenofibrate 145mg", dose: "1 viên/lần", duration: "30 ngày", time: "12:30", note: "Uống sau bữa ăn trưa" },
+                suggestedMed: { name: "Lipanthyl NT 145mg (Fenofibrate)", dose: "1 viên/lần", duration: "30 ngày", time: "12:30", note: "Uống ngay sau bữa ăn trưa no" },
                 risks: "<strong>Ảnh hưởng cơ thể:</strong> Triglyceride tăng quá cao nguy cơ Viêm tụy cấp tính và Gan nhiễm mỡ.",
                 treatment: "<strong>Khuyên dùng:</strong> Kiêng tuyệt đối rượu bia và nước ngọt đường cao.",
-                meds: "Fenofibrate 145mg (1 viên/ngày sau ăn trưa, đợt 30 ngày)."
+                meds: "Lipanthyl NT 145mg (1 viên/ngày sau ăn trưa, đợt 30 ngày)."
             },
             "Acid Uric": {
-                suggestedMed: { name: "Allopurinol 100mg", dose: "1 viên/lần", duration: "30 ngày", time: "08:30", note: "Uống sau bữa ăn sáng" },
+                suggestedMed: { name: "Allopurinol Stada 100mg", dose: "1 viên/lần", duration: "30 ngày", time: "08:30", note: "Uống sau bữa ăn sáng với nhiều nước" },
                 risks: "<strong>Ảnh hưởng cơ thể:</strong> Tinh thể Urat đọng ở khớp gây Viêm khớp Gút cấp (sưng đau dữ dội), biến dạng khớp và đọng sỏi thận Acid Uric.",
                 treatment: "<strong>Khuyên dùng:</strong> Hạn chế thịt đỏ, hải sản, nội tạng, kiêng rượu bia. Uống 2.5L nước/ngày.",
-                meds: "Allopurinol 100mg (1 viên/ngày sau ăn sáng, dùng 30 ngày)."
+                meds: "Allopurinol Stada 100mg (1 viên/ngày sau ăn sáng, dùng 30 ngày)."
             }
         };
 
@@ -1530,6 +1681,7 @@
 
             renderAll();
             initGeminiChat();
+            renderLongChauQuickSuggestions();
         }
 
         function saveAppData() {
@@ -1589,7 +1741,7 @@
                 ctx.fillRect(0, 0, 640, 420);
                 ctx.fillStyle = "#10b981";
                 ctx.font = "bold 13px monospace";
-                ctx.fillText("ULTRASOUND ABDOMEN 3.5MHz (v1.03)", 20, 30);
+                ctx.fillText("ULTRASOUND ABDOMEN 3.5MHz (v1.04)", 20, 30);
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "11px monospace";
                 ctx.fillText("GAIN: 82% | MI: 1.1 | TIS: 0.4", 20, 48);
@@ -1602,16 +1754,117 @@
                 ctx.fillText("R", 580, 40);
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "11px monospace";
-                ctx.fillText("CHEST AP DIRECT DIGITAL X-RAY (v1.03)", 20, 30);
+                ctx.fillText("CHEST AP DIRECT DIGITAL X-RAY (v1.04)", 20, 30);
             }
             return canvas.toDataURL('image/png');
+        }
+
+        function renderLongChauQuickSuggestions() {
+            const container = document.getElementById('longChauQuickSuggestions');
+            if (!container) return;
+
+            container.innerHTML = longChauDrugDatabase.map(drug => `
+                <button type="button" onclick="selectLongChauDrugFromDatabase('${drug.brandName}')" class="px-2.5 py-1 rounded-xl bg-longchau-50 hover:bg-longchau-100 text-longchau-800 font-bold border border-longchau-200 shrink-0 touch-active">
+                    💊 ${drug.brandName}
+                </button>
+            `).join('');
+        }
+
+        function handleLongChauSearchInput(query) {
+            const searchVal = query.trim().toLowerCase();
+            renderDiseaseLibrary(); // Filter disease grid
+        }
+
+        function selectLongChauDrugFromDatabase(brandName) {
+            const drug = longChauDrugDatabase.find(d => d.brandName.toLowerCase() === brandName.toLowerCase());
+            if (!drug) return;
+
+            openModal('addMedModal');
+            document.getElementById('inputMedName').value = drug.brandName;
+            document.getElementById('inputMedDose').value = drug.standardDose;
+            document.getElementById('inputMedDuration').value = drug.duration;
+            document.getElementById('inputMedTime').value = drug.defaultHour || "08:00";
+            document.getElementById('inputMedNote').value = drug.timingNote;
+            
+            showToast(`Đã tự động điền liều & thời điểm uống cho ${drug.brandName}`);
+        }
+
+        function handleModalMedSearchInput(query) {
+            const searchVal = query.trim().toLowerCase();
+            const popup = document.getElementById('modalLongChauSuggestions');
+            if (!popup) return;
+
+            if (!searchVal) {
+                popup.classList.add('hidden');
+                return;
+            }
+
+            const matches = longChauDrugDatabase.filter(d => 
+                d.brandName.toLowerCase().includes(searchVal) || 
+                d.genericName.toLowerCase().includes(searchVal) ||
+                d.category.toLowerCase().includes(searchVal)
+            );
+
+            if (matches.length === 0) {
+                popup.innerHTML = `<div class="p-2.5 text-xs text-slate-400 text-center font-bold">Không thấy trong kho nhanh. Bấm "Tra Long Châu AI" bên cạnh!</div>`;
+                popup.classList.remove('hidden');
+                return;
+            }
+
+            popup.innerHTML = matches.map(drug => `
+                <div onclick="applyModalLongChauDrug('${drug.brandName}')" class="p-2 hover:bg-longchau-50 cursor-pointer rounded-xl transition border-b border-slate-100 last:border-none">
+                    <div class="flex justify-between items-center">
+                        <span class="font-extrabold text-xs text-longchau-800">${drug.brandName}</span>
+                        <span class="bg-longchau-100 text-longchau-700 text-[9px] font-extrabold px-1.5 py-0.5 rounded-md">${drug.category}</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-0.5"><i class="fa-regular fa-clock text-longchau-600 mr-1"></i><strong>Thời điểm:</strong> ${drug.timingNote}</p>
+                </div>
+            `).join('');
+
+            popup.classList.remove('hidden');
+        }
+
+        function applyModalLongChauDrug(brandName) {
+            const drug = longChauDrugDatabase.find(d => d.brandName === brandName);
+            if (!drug) return;
+
+            document.getElementById('inputMedName').value = drug.brandName;
+            document.getElementById('inputMedDose').value = drug.standardDose;
+            document.getElementById('inputMedDuration').value = drug.duration;
+            document.getElementById('inputMedTime').value = drug.defaultHour || "08:00";
+            document.getElementById('inputMedNote').value = drug.timingNote;
+
+            const popup = document.getElementById('modalLongChauSuggestions');
+            if (popup) popup.classList.add('hidden');
+            showToast(`Đã áp dụng liều chuẩn & thời điểm uống của Long Châu!`);
+        }
+
+        async function searchLongChauViaGeminiAi() {
+            const inputVal = document.getElementById('diseaseSearchInput').value.trim();
+            if (!inputVal) {
+                showToast("Vui lòng nhập tên biệt dược cần tra cứu!");
+                return;
+            }
+            openGeminiChatModal();
+            sendQuickGeminiPrompt(`Tra cứu chi tiết biệt dược "${inputVal}" trên Nhà Thuốc Long Châu: Thành phần, Liều dùng phù hợp, Thời điểm uống trong ngày (trước/sau ăn, sáng/tối), Số ngày dùng và Lưu ý an toàn.`);
+        }
+
+        async function searchLongChauForModal() {
+            const medName = document.getElementById('inputMedName').value.trim();
+            if (!medName) {
+                showToast("Vui lòng gõ tên thuốc cần tra cứu!");
+                return;
+            }
+            closeModal('addMedModal');
+            openGeminiChatModal();
+            sendQuickGeminiPrompt(`Tra cứu nhanh thuốc "${medName}" theo tiêu chuẩn Nhà Thuốc Long Châu: Liều dùng / lần, thời điểm uống chính xác (sáng/trưa/tối, trước/sau ăn no) và lưu ý.`);
         }
 
         function initGeminiChat() {
             geminiChatHistory = [
                 {
                     sender: 'ai',
-                    text: 'Xin chào! Tôi là **Trợ lý Bác Sĩ Gemini AI**. Tôi đã kết nối dữ liệu hồ sơ sức khỏe và danh sách xét nghiệm của bạn. Bạn muốn tư vấn về chỉ số xét nghiệm, liều dùng thuốc hay hướng điều trị nào?',
+                    text: 'Xin chào! Tôi là **Trợ lý Bác Sĩ Gemini AI** tư vấn biệt dược & phác đồ chuẩn **Nhà Thuốc Long Châu**. Bạn muốn tra cứu liều lượng, thời điểm uống thuốc hay phân tích chỉ số xét nghiệm nào?',
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 }
             ];
@@ -1680,7 +1933,7 @@
             const allLabsStr = (member.labTests || []).map(l => `${l.name}: ${l.value} ${l.unit} (${l.status})`).join(', ');
             const medsStr = (member.medications || []).map(m => `${m.name} (${m.dose}, ${m.time})`).join(', ');
 
-            const systemPrompt = `BẠN LÀ MỘT BÁC SĨ TƯ VẤN AI CHUYÊN NGHIỆP TRONG ỨNG DỤNG MEDHEALTH VIỆT NAM.
+            const systemPrompt = `BẠN LÀ BÁC SĨ CHUYÊN GIA TƯ VẤN BIỆT DƯỢC & DƯỢC LÝ TRONG ỨNG DỤNG MEDHEALTH (HỢP TÁC TRA CỨU DỮ LIỆU NHÀ THUỐC LONG CHÂU VIỆT NAM).
 Dữ liệu bệnh nhân hiện tại:
 - Họ tên: ${member.name}, ${calculateAge(member.dob)} tuổi, Giới tính: ${member.gender || 'Nam'}, Nhóm máu: ${member.blood || 'O+'}
 - Bệnh nền: ${member.conditions || 'Không có'}
@@ -1690,13 +1943,12 @@ Dữ liệu bệnh nhân hiện tại:
 - Thuốc đang uống: ${medsStr || 'Không có'}
 
 Nhiệm vụ của bạn:
-1. Trả lời bằng tiếng Việt thân thiện, đồng cảm, chuyên môn y khoa chuẩn xác, bố cục mạch lạc với bullet points.
-2. Khi bệnh nhân hỏi về chỉ số cao hoặc liều lượng thuốc, hãy phân tích tác động cơ quan, nhóm thuốc điều trị tham khảo, thời điểm uống (sáng/tối, trước/sau ăn), số ngày dùng và lời khuyên sinh hoạt.
-3. Luôn luôn nhắc nhở bệnh nhân tham khảo thêm ý kiến Bác sĩ điều trị trực tiếp trước khi thay đổi đơn thuốc.`;
+1. Khi người dùng tra cứu thuốc/biệt dược, hãy đóng vai Dược sĩ chuyên khoa Nhà Thuốc Long Châu tư vấn chi tiết: Tên biệt dược chính hãng, Liều dùng phù hợp/lần, THỜI ĐIỂM UỐNG THUỐC CHUẨN XÁC (Sáng/Trưa/Tối, Trước hay Sau khi ăn no bao nhiêu phút), Số ngày dùng khuyến cáo và Lưu ý an toàn.
+2. Trả lời bằng tiếng Việt thân thiện, trình bày bullet points rõ ràng.
+3. Nhắc nhở bệnh nhân luôn tuân thủ đơn kê trực tiếp của Bác sĩ điều trị.`;
 
             try {
                 const aiResponseText = await callGeminiApiWithRetry(userQuery, systemPrompt);
-                // Remove loading item
                 geminiChatHistory = geminiChatHistory.filter(m => !m.isLoading);
                 geminiChatHistory.push({
                     sender: 'ai',
@@ -1708,7 +1960,7 @@ Nhiệm vụ của bạn:
                 geminiChatHistory = geminiChatHistory.filter(m => !m.isLoading);
                 geminiChatHistory.push({
                     sender: 'ai',
-                    text: '⚠️ **Rất tiếc!** Đã xảy ra gián đoạn kết nối tới AI Gemini. Vui lòng kiểm tra lại kết nối mạng và thử lại câu hỏi.',
+                    text: '⚠️ **Gián đoạn kết nối!** Không thể kết nối với Bác Sĩ AI Gemini. Vui lòng kiểm tra lại mạng internet.',
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 });
             }
@@ -1753,13 +2005,13 @@ Nhiệm vụ của bạn:
             container.innerHTML = geminiChatHistory.map(msg => {
                 if (msg.isLoading) {
                     return `
-                        <div class="flex items-start gap-2.5">
-                            <div class="w-8 h-8 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-                                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                        <div class="flex items-start gap-2">
+                            <div class="w-7 h-7 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-[10px]"></i>
                             </div>
                             <div class="bg-white p-3 rounded-2xl border border-indigo-100 shadow-xs text-xs text-slate-500 flex items-center gap-2">
                                 <i class="fa-solid fa-circle-notch fa-spin text-indigo-600"></i>
-                                <span>Bác Sĩ Gemini AI đang suy ngẫm câu trả lời...</span>
+                                <span>Bác Sĩ Gemini AI đang tra cứu dữ liệu Long Châu...</span>
                             </div>
                         </div>
                     `;
@@ -1779,14 +2031,14 @@ Nhiệm vụ của bạn:
                     `;
                 } else {
                     return `
-                        <div class="flex items-start gap-2.5">
-                            <div class="w-8 h-8 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-                                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                        <div class="flex items-start gap-2">
+                            <div class="w-7 h-7 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-[10px]"></i>
                             </div>
-                            <div class="max-w-[88%] bg-white p-3.5 rounded-2xl rounded-tl-xs border border-indigo-100 shadow-xs text-xs text-slate-800 space-y-2">
+                            <div class="max-w-[88%] bg-white p-3 sm:p-3.5 rounded-2xl rounded-tl-xs border border-indigo-100 shadow-xs text-xs text-slate-800 space-y-2">
                                 <div class="prose prose-xs text-slate-800 leading-relaxed font-normal">${formattedText}</div>
                                 <div class="flex justify-between items-center pt-1 border-t border-slate-100 text-[9px] text-slate-400">
-                                    <span>Tư vấn AI Gemini</span>
+                                    <span>Tư vấn AI Gemini • Nhà Thuốc Long Châu</span>
                                     <span>${msg.time}</span>
                                 </div>
                             </div>
@@ -1819,7 +2071,6 @@ Nhiệm vụ của bạn:
             document.getElementById('dashTotalLabs').textContent = labs.length;
 
             const images = member.images || [];
-            document.getElementById('dashImageCount').textContent = images.length;
             document.getElementById('sidebarImageCount').textContent = images.length;
 
             const meds = member.medications || [];
@@ -1832,11 +2083,11 @@ Nhiệm vụ của bạn:
             } else {
                 dashMedsContainer.innerHTML = meds.map(m => `
                     <div class="flex items-center justify-between p-2 bg-slate-50 rounded-xl">
-                        <div class="flex items-center gap-2.5">
+                        <div class="flex items-center gap-2">
                             <input type="checkbox" ${m.takenToday ? 'checked' : ''} onchange="toggleMedState('${m.id}')" class="w-4 h-4 text-medical-600 rounded cursor-pointer">
                             <div>
                                 <p class="text-xs font-bold ${m.takenToday ? 'line-through text-slate-400' : 'text-slate-800'}">${m.name} (${m.dose})</p>
-                                <p class="text-[10px] text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${m.time} - ${m.note}</p>
+                                <p class="text-[10px] text-slate-500"><i class="fa-regular fa-clock mr-1 text-longchau-600"></i>${m.time} - <strong class="text-longchau-700">${m.note}</strong></p>
                             </div>
                         </div>
                         <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${m.takenToday ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
@@ -1852,8 +2103,8 @@ Nhiệm vụ của bạn:
                 dashActContainer.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">Chưa có lịch sử khám bệnh.</p>`;
             } else {
                 dashActContainer.innerHTML = records.slice(0, 2).map(r => `
-                    <div class="flex items-start gap-2.5 p-2 bg-slate-50 rounded-xl">
-                        <div class="w-7 h-7 rounded-lg bg-medical-100 text-medical-700 flex items-center justify-center shrink-0 font-bold text-xs">
+                    <div class="flex items-start gap-2 p-2 bg-slate-50 rounded-xl">
+                        <div class="w-6 h-6 rounded-lg bg-medical-100 text-medical-700 flex items-center justify-center shrink-0 font-bold text-xs">
                             <i class="fa-solid fa-stethoscope"></i>
                         </div>
                         <div>
@@ -1881,12 +2132,12 @@ Nhiệm vụ của bạn:
 
             if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-full bg-white p-8 rounded-3xl border border-slate-200/80 text-center space-y-2">
-                        <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto text-lg">
+                    <div class="col-span-full bg-white p-6 rounded-3xl border border-slate-200/80 text-center space-y-2">
+                        <div class="w-9 h-9 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto text-base">
                             <i class="fa-solid fa-x-ray"></i>
                         </div>
                         <p class="text-xs font-bold text-slate-800">Chưa có ảnh chẩn đoán y tế nào</p>
-                        <button onclick="openModal('addImagingModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow inline-flex items-center gap-1.5">
+                        <button onclick="openModal('addImagingModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow inline-flex items-center gap-1">
                             <i class="fa-solid fa-plus"></i> Thêm ảnh mới
                         </button>
                     </div>
@@ -2042,14 +2293,14 @@ Nhiệm vụ của bạn:
             }
 
             recordsContainer.innerHTML = records.map(r => `
-                <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-2">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-3.5 sm:p-4 shadow-xs space-y-2">
                     <div class="flex justify-between items-start flex-wrap gap-2">
                         <div>
                             <span class="bg-medical-100 text-medical-800 px-2 py-0.5 rounded-full text-[9px] font-black uppercase">Hồ sơ khám</span>
-                            <h3 class="text-sm font-extrabold text-slate-800 mt-1">${r.title}</h3>
+                            <h3 class="text-xs sm:text-sm font-extrabold text-slate-800 mt-1">${r.title}</h3>
                         </div>
                         <div class="text-right">
-                            <span class="text-xs font-bold text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${r.date}</span>
+                            <span class="text-[11px] font-bold text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${r.date}</span>
                             <button onclick="deleteMedicalRecord('${r.id}')" class="ml-2 text-red-400 hover:text-red-600 text-xs"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </div>
@@ -2079,12 +2330,13 @@ Nhiệm vụ của bạn:
             }
 
             medsContainer.innerHTML = meds.map(m => `
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
-                    <div class="flex items-center gap-3">
+                <div class="flex items-center justify-between p-2.5 sm:p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex items-center gap-2.5">
                         <input type="checkbox" ${m.takenToday ? 'checked' : ''} onchange="toggleMedState('${m.id}')" class="w-4 h-4 text-medical-600 rounded cursor-pointer">
                         <div>
                             <p class="text-xs font-bold ${m.takenToday ? 'line-through text-slate-400' : 'text-slate-800'}">${m.name}</p>
-                            <p class="text-[11px] text-slate-500">Liều: <span class="font-bold text-slate-700">${m.dose}</span> • Giờ: <span class="font-bold text-slate-700">${m.time}</span></p>
+                            <p class="text-[10px] sm:text-[11px] text-slate-500">Liều: <span class="font-bold text-slate-700">${m.dose}</span> • Giờ: <span class="font-bold text-slate-700">${m.time}</span></p>
+                            <p class="text-[10px] text-longchau-800 font-bold"><i class="fa-regular fa-clock text-longchau-600 mr-1"></i>${m.note}</p>
                         </div>
                     </div>
                     <button onclick="deleteMedication('${m.id}')" class="text-slate-400 hover:text-red-500 p-1"><i class="fa-solid fa-trash-can"></i></button>
@@ -2121,17 +2373,17 @@ Nhiệm vụ của bạn:
             tbody.innerHTML = filteredLabs.slice().reverse().map(l => {
                 return `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                        <td class="px-4 py-2.5 font-bold text-slate-800">${l.date}</td>
-                        <td class="px-4 py-2.5 font-extrabold text-slate-900">${l.name}</td>
-                        <td class="px-4 py-2.5 font-extrabold text-slate-900">${l.value} <span class="text-[10px] font-normal text-slate-400">${l.unit}</span></td>
-                        <td class="px-4 py-2.5 text-slate-500">${l.refRange || "--"}</td>
-                        <td class="px-4 py-2.5">
+                        <td class="px-3 sm:px-4 py-2.5 font-bold text-slate-800 text-[11px]">${l.date}</td>
+                        <td class="px-3 sm:px-4 py-2.5 font-extrabold text-slate-900">${l.name}</td>
+                        <td class="px-3 sm:px-4 py-2.5 font-extrabold text-slate-900">${l.value} <span class="text-[10px] font-normal text-slate-400">${l.unit}</span></td>
+                        <td class="px-3 sm:px-4 py-2.5 text-slate-500">${l.refRange || "--"}</td>
+                        <td class="px-3 sm:px-4 py-2.5">
                             <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${l.status === 'Cao' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800'}">
                                 ${l.status}
                             </span>
                         </td>
-                        <td class="px-4 py-2.5 text-right flex items-center justify-end gap-1.5">
-                            <button onclick="openLabConsultationModal('${l.id}')" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-2 py-1 rounded-lg font-bold border border-indigo-200 touch-active">
+                        <td class="px-3 sm:px-4 py-2.5 text-right flex items-center justify-end gap-1">
+                            <button onclick="openLabConsultationModal('${l.id}')" class="text-[10px] sm:text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-2 py-1 rounded-lg font-bold border border-indigo-200 touch-active">
                                 <i class="fa-solid fa-user-doctor"></i> Tư vấn
                             </button>
                             <button onclick="deleteLabTest('${l.id}')" class="text-red-400 hover:text-red-600 p-1"><i class="fa-solid fa-trash-can"></i></button>
@@ -2159,7 +2411,7 @@ Nhiệm vụ của bạn:
                 const info = getConsultationInfo(l.name, l.status, l.value);
                 const medJson = JSON.stringify(info.suggestedMed).replace(/"/g, '&quot;');
                 return `
-                    <div class="bg-white p-3.5 rounded-2xl border border-rose-200/80 shadow-xs space-y-1.5">
+                    <div class="bg-white p-3 rounded-2xl border border-rose-200/80 shadow-xs space-y-1.5">
                         <div class="flex justify-between items-center border-b border-slate-100 pb-1.5">
                             <h4 class="font-extrabold text-slate-900 text-xs">${l.name}</h4>
                             <span class="bg-rose-100 text-rose-700 text-[10px] font-black px-2 py-0.5 rounded-full">
@@ -2168,12 +2420,12 @@ Nhiệm vụ của bạn:
                         </div>
                         <div class="text-[11px] text-slate-700 space-y-1">
                             <div>${info.risks}</div>
-                            <div class="pt-1 border-t border-slate-100 text-indigo-950 font-medium bg-indigo-50/60 p-2 rounded-xl">
-                                <strong>Nhóm thuốc đề xuất:</strong> ${info.meds}
+                            <div class="pt-1 border-t border-slate-100 text-longchau-900 font-medium bg-longchau-50/60 p-2 rounded-xl">
+                                <strong>Biệt dược đề xuất Long Châu:</strong> ${info.meds}
                             </div>
                         </div>
                         <div class="pt-1.5 border-t border-slate-100 flex justify-end">
-                            <button onclick="quickAddMedObj(${medJson})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-xl text-[10px] shadow-xs flex items-center gap-1 touch-active">
+                            <button onclick="quickAddMedObj(${medJson})" class="bg-longchau-600 hover:bg-longchau-700 text-white font-bold px-2.5 py-1 rounded-xl text-[10px] shadow-xs flex items-center gap-1 touch-active">
                                 <i class="fa-solid fa-plus-circle"></i> Đặt Lịch Uống Thuốc
                             </button>
                         </div>
@@ -2191,30 +2443,36 @@ Nhiệm vụ của bạn:
                 filtered = diseaseLibrary.filter(d => d.category === activeDiseaseCategoryFilter);
             }
             if (searchVal) {
-                filtered = filtered.filter(d => d.name.toLowerCase().includes(searchVal));
+                filtered = filtered.filter(d => 
+                    d.name.toLowerCase().includes(searchVal) ||
+                    d.meds.some(m => m.name.toLowerCase().includes(searchVal))
+                );
             }
 
             container.innerHTML = filtered.map(d => `
-                <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-2.5 text-xs">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-3.5 sm:p-4 shadow-xs space-y-2 text-xs">
                     <div class="border-b border-slate-100 pb-1.5">
-                        <span class="bg-teal-100 text-teal-800 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">${d.category}</span>
-                        <h3 class="text-sm font-extrabold text-slate-900 mt-1">${d.name}</h3>
+                        <span class="bg-longchau-100 text-longchau-800 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">${d.category}</span>
+                        <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 mt-1">${d.name}</h3>
                     </div>
                     <div class="text-slate-600 space-y-1">
                         <p><strong>Chỉ số nguy cơ:</strong> ${d.labMarkers}</p>
                         <p><strong>Nguy cơ:</strong> ${d.risks}</p>
                     </div>
-                    <div class="bg-indigo-50/60 p-2.5 rounded-xl border border-indigo-100 space-y-1.5">
-                        <strong class="text-indigo-900 font-bold block">Nhóm thuốc & Liều dùng chuẩn:</strong>
+                    <div class="bg-longchau-50/60 p-2.5 rounded-xl border border-longchau-100 space-y-1.5">
+                        <strong class="text-longchau-900 font-bold block flex items-center gap-1 text-[11px]">
+                            <i class="fa-solid fa-prescription-bottle-medical text-longchau-600"></i> Biệt dược Long Châu & Liều lượng chuẩn:
+                        </strong>
                         ${d.meds.map(m => {
                             const mJson = JSON.stringify(m).replace(/"/g, '&quot;');
                             return `
-                                <div class="bg-white p-2 rounded-xl border border-indigo-100 flex justify-between items-center text-[11px]">
+                                <div class="bg-white p-2 rounded-xl border border-longchau-100 flex justify-between items-center text-[11px]">
                                     <div>
-                                        <p class="font-bold text-slate-800">${m.name}</p>
+                                        <p class="font-extrabold text-slate-800">${m.name}</p>
                                         <p class="text-slate-500">${m.dose} • ${m.duration || '30 ngày'}</p>
+                                        <p class="text-longchau-700 font-bold text-[10px] mt-0.5"><i class="fa-regular fa-clock mr-1"></i>${m.note}</p>
                                     </div>
-                                    <button onclick="quickAddMedObj(${mJson})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] shrink-0 touch-active">
+                                    <button onclick="quickAddMedObj(${mJson})" class="bg-longchau-600 hover:bg-longchau-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] shrink-0 touch-active">
                                         + Đặt lịch
                                     </button>
                                 </div>
@@ -2232,7 +2490,7 @@ Nhiệm vụ của bạn:
                 }
             }
             return {
-                suggestedMed: { name: `Thuốc điều trị ${labName}`, dose: "1 viên/lần", duration: "30 ngày", time: "08:00", note: "Uống theo đơn kê bác sĩ" },
+                suggestedMed: { name: `Biệt dược ${labName} Long Châu`, dose: "1 viên/lần", duration: "30 ngày", time: "08:00", note: "Uống ngay sau bữa ăn" },
                 risks: `<strong>Ảnh hưởng cơ thể:</strong> Chỉ số ${labName} đang ở mức [${status}]. Phản ánh biến động chức năng cơ quan tương ứng.`,
                 treatment: `<strong>Khuyên dùng:</strong> Duy trì lối sống lành mạnh, tái khám sau 30 ngày.`,
                 meds: "Sử dụng thuốc theo chỉ chỉ định Bác sĩ chuyên khoa."
@@ -2414,7 +2672,7 @@ Nhiệm vụ của bạn:
             ctx.fillRect(0, 0, 720, 480);
             ctx.fillStyle = "#0f766e";
             ctx.font = "bold 18px Inter, sans-serif";
-            ctx.fillText("BỆNH VIỆN ĐA KHOA MEDLATEC (v1.03)", 30, 35);
+            ctx.fillText("BỆNH VIỆN ĐA KHOA MEDLATEC (v1.04)", 30, 35);
             ctx.fillStyle = "#334155";
             ctx.font = "12px Inter, sans-serif";
             ctx.fillText("PHIẾU KẾT QUẢ XÉT NGHIỆM TỔNG QUÁT", 30, 56);
@@ -2645,7 +2903,7 @@ Nhiệm vụ của bạn:
             });
             const activeBtn = document.getElementById(`disFilter-${category}`);
             if (activeBtn) {
-                activeBtn.className = "dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-teal-600 text-white";
+                activeBtn.className = "dis-filter-btn px-3 py-1.5 rounded-xl font-bold shrink-0 bg-longchau-600 text-white";
             }
             renderDiseaseLibrary();
         }
@@ -2724,7 +2982,7 @@ Nhiệm vụ của bạn:
 
             document.getElementById('consultModalRisks').innerHTML = info.risks;
             document.getElementById('consultModalTreatment').innerHTML = info.treatment;
-            document.getElementById('consultModalMeds').innerHTML = `<p><strong>Thuốc đề xuất:</strong> ${info.meds}</p>`;
+            document.getElementById('consultModalMeds').innerHTML = `<p><strong>Biệt dược đề xuất Long Châu:</strong> ${info.meds}</p>`;
 
             openModal('labConsultationModal');
         }
@@ -2752,7 +3010,7 @@ Nhiệm vụ của bạn:
                 dose: medObj.dose || '1 viên/lần',
                 duration: medObj.duration || '30 ngày',
                 time: medObj.time || '08:00',
-                note: medObj.note || 'Uống sau ăn',
+                note: medObj.note || 'Uống ngay sau bữa ăn',
                 takenToday: false
             });
 
@@ -2792,7 +3050,7 @@ Nhiệm vụ của bạn:
             // Mobile Bottom Nav Highlights
             document.querySelectorAll('nav.md\\:hidden button').forEach(btn => {
                 if (btn.id && btn.id.startsWith('mbNav-')) {
-                    btn.className = "flex flex-col items-center justify-center text-slate-400 font-semibold text-[10px] space-y-0.5 touch-active";
+                    btn.className = "flex flex-col items-center justify-center text-slate-400 font-semibold text-[9px] space-y-0.5 touch-active";
                 }
             });
 
@@ -2805,7 +3063,7 @@ Nhiệm vụ của bạn:
 
             const activeMbNav = document.getElementById(`mbNav-${tabId}`);
             if (activeMbNav) {
-                activeMbNav.className = "flex flex-col items-center justify-center text-medical-700 font-extrabold text-[10px] space-y-0.5 touch-active";
+                activeMbNav.className = "flex flex-col items-center justify-center text-medical-700 font-extrabold text-[9px] space-y-0.5 touch-active";
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2941,6 +3199,12 @@ Nhiệm vụ của bạn:
             const dropdown = document.getElementById('profileDropdown');
             if (btn && dropdown && !btn.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.classList.add('hidden');
+            }
+
+            const modalPopup = document.getElementById('modalLongChauSuggestions');
+            const medInput = document.getElementById('inputMedName');
+            if (modalPopup && medInput && !modalPopup.contains(e.target) && !medInput.contains(e.target)) {
+                modalPopup.classList.add('hidden');
             }
         });
 
