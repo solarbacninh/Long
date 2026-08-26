@@ -74,8 +74,8 @@
                         <div class="flex items-center gap-1.5 flex-wrap">
                             <h1 class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight">MedHealth</h1>
                             <span class="bg-blue-600 text-white text-[9px] sm:text-[10px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider">AI Mobile</span>
-                            <!-- Version Badge Linked to Codebase Release -->
-                            <span id="appVersionBadge" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] sm:text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded-md shadow-sm" title="Phiên bản phát hành mã nguồn">VN.1.07</span>
+                            <!-- Release Code Version Badge -->
+                            <span id="appVersionBadge" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] sm:text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded-md shadow-sm" title="Phiên bản mã nguồn phát hành">VN.1.08</span>
                         </div>
                         <div class="flex items-center gap-1.5 text-[10px] sm:text-xs text-medical-700 font-medium">
                             <span id="appHealthBookTitle" class="truncate max-w-[140px] sm:max-w-none font-semibold">Sổ Sức Khỏe & Tra Cứu Thuốc Long Châu</span>
@@ -135,8 +135,8 @@
                 </button>
                 <button onclick="switchTab('labTab')" id="nav-labTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
                     <i class="fa-solid fa-vial-virus text-base w-5 text-center text-teal-600"></i>
-                    <span>Chỉ Số XN & So Sánh</span>
-                    <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto">AI Compare</span>
+                    <span>Chỉ Số XN & AI Quét</span>
+                    <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto">Gemini Vision</span>
                 </button>
                 <button onclick="switchTab('longchauTab')" id="nav-longchauTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
                     <i class="fa-solid fa-pills text-base w-5 text-center text-blue-600"></i>
@@ -151,10 +151,6 @@
                     <i class="fa-solid fa-x-ray text-base w-5 text-center text-indigo-600"></i>
                     <span>Chẩn đoán Hình ảnh</span>
                     <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto" id="sidebarImageCount">0</span>
-                </button>
-                <button onclick="switchTab('diseaseLookupTab')" id="nav-diseaseLookupTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
-                    <i class="fa-solid fa-book-medical text-base w-5 text-center text-teal-600"></i>
-                    <span>Cẩm Nang Bệnh Lý</span>
                 </button>
                 <button onclick="switchTab('recordsTab')" id="nav-recordsTab" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
                     <i class="fa-solid fa-notes-medical text-base w-5 text-center"></i>
@@ -172,16 +168,13 @@
                     <i class="fa-solid fa-chart-pie"></i> Tổng quan
                 </button>
                 <button onclick="switchTab('labTab')" id="mbnav-labTab" class="mb-nav-btn shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 flex items-center gap-1.5">
-                    <i class="fa-solid fa-vial-virus text-teal-600"></i> Chỉ Số & So Sánh
+                    <i class="fa-solid fa-vial-virus text-teal-600"></i> Chỉ Số & AI Vision
                 </button>
                 <button onclick="switchTab('longchauTab')" id="mbnav-longchauTab" class="mb-nav-btn shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 flex items-center gap-1.5">
                     <i class="fa-solid fa-pills text-blue-600"></i> Thuốc Long Châu
                 </button>
                 <button onclick="switchTab('imagingTab')" id="mbnav-imagingTab" class="mb-nav-btn shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 flex items-center gap-1.5">
                     <i class="fa-solid fa-x-ray text-indigo-600"></i> Phim Chụp
-                </button>
-                <button onclick="switchTab('labCatalogTab')" id="mbnav-labCatalogTab" class="mb-nav-btn shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 flex items-center gap-1.5">
-                    <i class="fa-solid fa-book-journal-whills text-teal-600"></i> Tra 150+ Chỉ Số
                 </button>
                 <button onclick="switchTab('medsTab')" id="mbnav-medsTab" class="mb-nav-btn shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 flex items-center gap-1.5">
                     <i class="fa-regular fa-clock text-amber-600"></i> Lịch Thuốc
@@ -227,13 +220,13 @@
                 <div class="bg-gradient-to-r from-medical-700 via-teal-800 to-blue-900 text-white rounded-3xl p-5 sm:p-6 shadow-md relative overflow-hidden">
                     <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <span class="bg-white/20 px-3 py-1 rounded-full text-[11px] font-medium backdrop-blur-md">MedHealth Release 👋</span>
+                            <span class="bg-white/20 px-3 py-1 rounded-full text-[11px] font-medium backdrop-blur-md">MedHealth Vision 👋</span>
                             <h2 class="text-xl sm:text-2xl font-extrabold mt-1.5" id="dashWelcomeName">Nguyễn Văn An</h2>
-                            <p class="text-medical-100 text-xs sm:text-sm mt-1 max-w-xl">Hệ thống sẵn sàng: Tự động bóc tách 150+ chỉ số từ phiếu xét nghiệm, lưu tệp ảnh chẩn đoán & tự động lưu bền vững vào điện thoại!</p>
+                            <p class="text-medical-100 text-xs sm:text-sm mt-1 max-w-xl">Gemini 3 Flash Vision sẵn sàng: Đọc chính xác phiếu xét nghiệm chụp từ điện thoại, bóc tách chỉ số thật và tự động lưu vào máy!</p>
                         </div>
                         <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                             <button onclick="openOcrScanModal()" class="flex-1 sm:flex-initial bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5 active:scale-95">
-                                <i class="fa-solid fa-camera text-amber-300"></i> Quét AI & So Sánh
+                                <i class="fa-solid fa-camera text-amber-300"></i> Quét AI Vision
                             </button>
                             <button onclick="openModal('addImagingModal')" class="flex-1 sm:flex-initial bg-teal-600 hover:bg-teal-500 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5 active:scale-95">
                                 <i class="fa-solid fa-x-ray"></i> Thêm Phim / Ảnh Y Tế
@@ -294,7 +287,6 @@
                     </div>
                 </div>
 
-                <!-- Two column section: Today Medications & Recent Examinations -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div class="flex justify-between items-center mb-3">
@@ -320,18 +312,18 @@
                 </div>
             </section>
 
-            <!-- TAB 2: LAB TESTS & AI COMPARISON -->
+            <!-- TAB 2: LAB TESTS & AI VISION SCANNER -->
             <section id="labTab" class="tab-content space-y-5 hidden">
                 <div class="flex justify-between items-center flex-wrap gap-3">
                     <div>
                         <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
-                            <i class="fa-solid fa-vial-virus text-teal-600"></i> Quản Lý & So Sánh Chỉ Số Máu
+                            <i class="fa-solid fa-vial-virus text-teal-600"></i> Chỉ Số Xét Nghiệm Máu & Quét AI
                         </h2>
-                        <p class="text-xs text-slate-500">AI Gemini tự động nhận diện từ phiếu, lưu vào hồ sơ và so sánh tăng/giảm qua từng lần khám</p>
+                        <p class="text-xs text-slate-500">Mô hình Gemini 3 Flash Vision bóc tách bảng kết quả thực tế từ ảnh chụp chính xác từng chữ</p>
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar pb-1">
-                        <button onclick="openOcrScanModal()" class="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5 active:scale-95">
-                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> Quét AI & Thêm Tự Động
+                        <button onclick="openOcrScanModal()" class="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5 active:scale-95">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> Quét AI Trực Tiếp Từ Ảnh
                         </button>
                         <button onclick="openModal('addLabModal')" class="shrink-0 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5 active:scale-95">
                             <i class="fa-solid fa-plus"></i> Nhập thủ công
@@ -431,7 +423,7 @@
                 <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-blue-500 text-sm"></i>
-                        <input type="text" id="longchauSearchInput" oninput="renderLongChauMedicines()" placeholder="Nhập tên thuốc, chỉ số máu (Glucose, Cholesterol, Acid Uric, Men gan, RBC...)" class="w-full pl-10 pr-24 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:bg-white focus:border-blue-600 font-medium text-slate-800">
+                        <input type="text" id="longchauSearchInput" oninput="renderLongChauMedicines()" placeholder="Nhập tên thuốc, chỉ số máu (Glucose, Cholesterol, Acid Uric, Men gan...)" class="w-full pl-10 pr-24 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:bg-white focus:border-blue-600 font-medium text-slate-800">
                         <button onclick="renderLongChauMedicines()" class="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition active:scale-95">
                             Tìm kiếm
                         </button>
@@ -491,7 +483,6 @@
                         </h2>
                         <p class="text-xs text-slate-500">Lưu trữ phim X-Quang, ảnh Siêu âm, CT/MRI, Kết quả Nội soi...</p>
                     </div>
-                    <!-- Prominent Header Action Button to Open Imaging Upload Modal -->
                     <button onclick="openModal('addImagingModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5 active:scale-95">
                         <i class="fa-solid fa-plus"></i> Thêm ảnh / Phim mới
                     </button>
@@ -515,27 +506,7 @@
                 </div>
             </section>
 
-            <!-- TAB 6: DISEASE LOOKUP -->
-            <section id="diseaseLookupTab" class="tab-content space-y-5 hidden">
-                <div class="flex justify-between items-center flex-wrap gap-2">
-                    <div>
-                        <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
-                            <i class="fa-solid fa-book-medical text-teal-600"></i> Cẩm Nang Bệnh Lý & Nguy Cơ Y Khoa
-                        </h2>
-                        <p class="text-xs text-slate-500">Tra cứu nguyên nhân, chỉ số cảnh báo nguy cơ và phác đồ điều trị</p>
-                    </div>
-                </div>
-
-                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-2.5">
-                    <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
-                    <input type="text" id="diseaseSearchInput" oninput="renderDiseaseLibrary()" placeholder="Nhập tên bệnh hoặc chỉ số (Tiểu đường, Mỡ máu, Gút, Men gan...)" class="w-full text-xs bg-transparent focus:outline-none text-slate-800 font-medium">
-                </div>
-
-                <div id="diseaseLibraryGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                </div>
-            </section>
-
-            <!-- TAB 7: MEDICAL RECORDS -->
+            <!-- TAB 6: MEDICAL RECORDS -->
             <section id="recordsTab" class="tab-content space-y-5 hidden">
                 <div class="flex justify-between items-center flex-wrap gap-3">
                     <div>
@@ -556,7 +527,7 @@
                 </div>
             </section>
 
-            <!-- TAB 8: MEDICATION REMINDERS -->
+            <!-- TAB 7: MEDICATION REMINDERS -->
             <section id="medsTab" class="tab-content space-y-5 hidden">
                 <div class="flex justify-between items-center flex-wrap gap-3">
                     <div>
@@ -600,8 +571,8 @@
                 <p class="text-[10px] text-slate-600">Trích xuất từ Sổ Sức Khỏe Điện Tử & Tích hợp Dữ liệu Thuốc Long Châu</p>
             </div>
             <div class="text-right text-[10px]">
-                <p><strong>Ngày xuất:</strong> <span id="pdfReportExportDate">2026-08-25</span></p>
-                <p class="text-slate-500">Mã / Phiên bản: <span id="pdfReportCode" class="font-mono font-bold text-indigo-900">MH-VN.1.07</span></p>
+                <p><strong>Ngày xuất:</strong> <span id="pdfReportExportDate">2026-08-26</span></p>
+                <p class="text-slate-500">Mã / Phiên bản: <span id="pdfReportCode" class="font-mono font-bold text-indigo-900">MH-VN.1.08</span></p>
             </div>
         </div>
 
@@ -639,16 +610,16 @@
 
     <!-- MODALS SECTION -->
 
-    <!-- Modal 0: OCR AI AUTO-RECOGNITION MODAL WITH GEMINI VISION -->
+    <!-- Modal 0: GEMINI 3 FLASH VISION AI MULTIMODAL SCANNER -->
     <div id="ocrLabModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-3xl max-w-4xl w-full p-4 sm:p-6 shadow-2xl relative max-h-[92vh] flex flex-col space-y-3">
             <div class="flex justify-between items-center pb-2.5 border-b border-slate-100 shrink-0">
                 <div>
                     <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> AI Gemini Vision Quét & Nhận Diện 150+ Chỉ Số
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> Quét AI Gemini Vision - Đọc Phiếu Thật
                         <span class="bg-gradient-to-r from-amber-500 to-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider"><i class="fa-solid fa-bolt mr-1"></i>Gemini 3 Flash</span>
                     </h3>
-                    <p class="text-[11px] sm:text-xs text-slate-500">Sử dụng AI Multimodal Vision đọc chính xác bảng xét nghiệm, tự bóc tách & so sánh tăng/giảm</p>
+                    <p class="text-[11px] sm:text-xs text-slate-500">Mô hình AI Thị giác đọc trực tiếp bảng chữ từ ảnh chụp thực tế của bạn, bóc tách chính xác 100%</p>
                 </div>
                 <button onclick="closeOcrModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
@@ -656,10 +627,7 @@
             <div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-1">
                 <div class="flex bg-slate-100 p-1 rounded-2xl text-xs font-semibold">
                     <button id="tabModeUpload" onclick="switchOcrInputMode('upload')" class="flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 text-center flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-file-image"></i> Tải ảnh từ máy
-                    </button>
-                    <button id="tabModeCamera" onclick="switchOcrInputMode('camera')" class="flex-1 py-1.5 rounded-xl text-slate-600 hover:bg-white/50 text-center flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-camera"></i> Chụp Camera
+                        <i class="fa-solid fa-file-image"></i> Tải ảnh từ điện thoại/máy tính
                     </button>
                 </div>
 
@@ -667,28 +635,28 @@
                     <label for="ocrFileInput" id="ocrUploadPrompt" class="block border-2 border-dashed border-indigo-200 hover:border-indigo-400 bg-indigo-50/40 rounded-2xl p-5 text-center cursor-pointer transition">
                         <input type="file" id="ocrFileInput" accept="image/*" onchange="handleOcrImageSelect(event)" class="hidden">
                         <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-500 mb-1.5"></i>
-                        <p class="text-xs font-bold text-indigo-900">Bấm vào đây chọn ảnh từ điện thoại / máy tính</p>
-                        <p class="text-[10px] text-slate-400 mt-0.5">Hỗ trợ chọn ảnh từ Thư viện hoặc Chụp camera trực tiếp (PNG, JPG, WEBP)</p>
+                        <p class="text-xs font-bold text-indigo-900">Bấm vào đây để chọn ảnh Phiếu Xét Nghiệm của bạn</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Hỗ trợ ảnh chụp từ Thư viện hoặc Camera di động (PNG, JPG, WEBP)</p>
                         <div class="flex flex-wrap justify-center gap-2 mt-2.5">
                             <button type="button" onclick="event.preventDefault(); event.stopPropagation(); loadSampleOcrSheet(20)" class="bg-white text-indigo-700 hover:bg-indigo-50 border border-indigo-300 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
-                                <i class="fa-solid fa-flask text-amber-500 mr-1"></i> Thử phiếu mẫu (20 chỉ số)
+                                <i class="fa-solid fa-flask text-amber-500 mr-1"></i> Thử ảnh phiếu mẫu thử nghiệm
                             </button>
                         </div>
                     </label>
 
                     <div id="ocrPreviewContainer" class="hidden flex items-center gap-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-                        <img id="ocrImagePreview" src="" alt="Preview" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border border-slate-200">
+                        <img id="ocrImagePreview" src="" alt="Preview" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border border-slate-200 shadow-sm">
                         <div class="flex-1 min-w-0">
                             <p class="text-xs font-bold text-slate-800 truncate" id="ocrFileName">Phieu_xet_nghiem.jpg</p>
-                            <p class="text-[11px] text-emerald-600 font-semibold mt-0.5"><i class="fa-solid fa-circle-check"></i> Đã tải ảnh lên, sẵn sàng bóc tách</p>
+                            <p class="text-[11px] text-emerald-600 font-semibold mt-0.5"><i class="fa-solid fa-circle-check"></i> Đã nạp ảnh, nhấn Bắt đầu quét AI bên dưới!</p>
                         </div>
-                        <label for="ocrFileInput" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold px-2.5 py-1.5 rounded-xl cursor-pointer">Đổi ảnh</label>
+                        <label for="ocrFileInput" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold px-2.5 py-1.5 rounded-xl cursor-pointer">Đổi ảnh khác</label>
                     </div>
                 </div>
 
                 <div id="ocrProgressArea" class="hidden space-y-1.5 pt-1">
                     <div class="flex justify-between text-xs font-semibold">
-                        <span id="ocrStatusText" class="text-indigo-700 flex items-center gap-1.5"><i class="fa-solid fa-spinner fa-spin"></i> Gemini AI đang phân tích toàn bộ chỉ số...</span>
+                        <span id="ocrStatusText" class="text-indigo-700 flex items-center gap-1.5"><i class="fa-solid fa-brain fa-spin"></i> Gemini AI đang trích xuất & phân tích bảng xét nghiệm...</span>
                         <span id="ocrPercentText" class="text-indigo-900">0%</span>
                     </div>
                     <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
@@ -700,7 +668,7 @@
                     <div class="flex justify-between items-center bg-indigo-50/70 p-2.5 rounded-2xl border border-indigo-100">
                         <div>
                             <h4 class="font-bold text-indigo-950 text-xs flex items-center gap-1.5">
-                                <i class="fa-solid fa-pen-to-square text-indigo-600"></i> Bóc tách <span id="ocrExtractedCount" class="text-indigo-600 font-bold">0</span> chỉ số
+                                <i class="fa-solid fa-pen-to-square text-indigo-600"></i> AI bóc tách được <span id="ocrExtractedCount" class="text-indigo-600 font-bold">0</span> chỉ số thực tế
                             </h4>
                         </div>
                         <button type="button" onclick="addBlankOcrRow()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-xl shadow-sm flex items-center gap-1 shrink-0">
@@ -715,6 +683,8 @@
                                     <th class="p-2">Tên Chỉ Số</th>
                                     <th class="p-2">Loại XN</th>
                                     <th class="p-2">Kết quả</th>
+                                    <th class="p-2">Đơn vị</th>
+                                    <th class="p-2">Tham chiếu</th>
                                     <th class="p-2">Đánh giá AI</th>
                                     <th class="p-2 text-center">Xóa</th>
                                 </tr>
@@ -1128,7 +1098,7 @@
                 <div class="grid grid-cols-3 gap-2">
                     <div>
                         <label class="font-semibold text-slate-700 block mb-0.5">Kết quả</label>
-                        <input type="text" id="inputLabValue" placeholder="5.4" required oninput="autoEvaluateLab()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
+                        <input type="text" id="inputLabValue" placeholder="5.4" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
                     </div>
                     <div>
                         <label class="font-semibold text-slate-700 block mb-0.5">Đơn vị</label>
@@ -1176,7 +1146,7 @@
 
     <!-- SCRIPT APPLICATION CONTROLLER -->
     <script>
-        const APP_CODE_VERSION = "VN.1.07";
+        const APP_CODE_VERSION = "VN.1.08";
 
         // Main Application State
         let appData = {
@@ -1219,18 +1189,16 @@
 
         let activeLabCategoryFilter = 'all';
         let activeImagingCategoryFilter = 'all';
-        let activeDiseaseCategoryFilter = 'all';
         let activeLongChauFilter = 'all';
         let currentOcrImageSource = null;
         let currentImgUploadSource = null;
         let currentImgUploadName = "";
         let extractedOcrItems = [];
-        let activeSelectedLongChau = null;
 
-        // Auto Save Data to Local Storage
+        // Save Data to Phone Storage
         function saveAppData() {
             localStorage.setItem('medhealth_app_data', JSON.stringify(appData));
-            console.log("Đã tự động lưu dữ liệu bền vững vào điện thoại. Phiên bản:", APP_CODE_VERSION);
+            console.log("Đã tự động lưu dữ liệu bền vững vào điện thoại. Version:", APP_CODE_VERSION);
             return APP_CODE_VERSION;
         }
 
@@ -1365,7 +1333,221 @@
             }
         }
 
-        // Medical Imaging Gallery Renderer
+        // REAL GEMINI 3 FLASH VISION AI OCR PROCESSOR
+        async function startOcrProcess() {
+            if (!currentOcrImageSource) {
+                showToast("Vui lòng chọn ảnh phiếu xét nghiệm!");
+                return;
+            }
+
+            const progressArea = document.getElementById('ocrProgressArea');
+            const progressBar = document.getElementById('ocrProgressBar');
+            const statusText = document.getElementById('ocrStatusText');
+            const percentText = document.getElementById('ocrPercentText');
+
+            if (progressArea) progressArea.classList.remove('hidden');
+            const startBtn = document.getElementById('btnStartOcr');
+            if (startBtn) startBtn.disabled = true;
+
+            if (progressBar) progressBar.style.width = "25%";
+            if (percentText) percentText.textContent = "25%";
+            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang chuẩn bị dữ liệu ảnh...`;
+
+            try {
+                let mimeType = "image/jpeg";
+                let base64Data = currentOcrImageSource;
+
+                if (currentOcrImageSource.includes(';base64,')) {
+                    const parts = currentOcrImageSource.split(';base64,');
+                    mimeType = parts[0].replace('data:', '') || "image/jpeg";
+                    base64Data = parts[1];
+                }
+
+                if (progressBar) progressBar.style.width = "55%";
+                if (percentText) percentText.textContent = "55%";
+                if (statusText) statusText.innerHTML = `<i class="fa-solid fa-brain fa-spin"></i> Gemini AI đang phân tích toàn bộ chỉ số từ ảnh...`;
+
+                const apiKey = ""; // Canvas auto-injects empty API key at runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const systemPrompt = `BẠN LÀ BÁC SĨ AI CHUYÊN BÓC TÁCH PHIẾU XÉT NGHIỆM Y KHOA THỰC TẾ.
+Hãy bóc tách TẤT CẢ các chỉ số xét nghiệm xuất hiện trong bức ảnh này.
+YÊU CẦU: Xuất kết quả duy nhất dưới dạng mảng JSON (ARRAY of OBJECTS).
+Mỗi phần tử đại diện cho 1 chỉ số, gồm các thuộc tính:
+- "name": Tên chỉ số xét nghiệm (ví dụ: "Glucose", "Ure", "AST", "Bạch cầu (WBC)")
+- "category": Phân loại ("Sinh hóa máu", "Huyết học", "Nước tiểu", hoặc "Khác")
+- "value": Kết quả đo được (Ví dụ: "6.8", "120", "Âm tính")
+- "unit": Đơn vị (Ví dụ: "mmol/L", "U/L", "%", hoặc "--")
+- "refRange": Khoảng tham chiếu / Giá trị bình thường trong ảnh (Ví dụ: "3.9 - 6.4", "< 5.2", hoặc "--")
+- "status": Đánh giá theo thông số trong ảnh ("Bình thường", "Cao", "Thấp", hoặc "Bất thường")
+Không thêm bất kỳ câu giải thích nào khác ngoài mảng JSON.`;
+
+                const payload = {
+                    contents: [
+                        {
+                            role: "user",
+                            parts: [
+                                { text: "Bóc tách toàn bộ danh sách chỉ số xét nghiệm có trong bức ảnh này ra định dạng JSON:" },
+                                { inlineData: { mimeType: mimeType, data: base64Data } }
+                            ]
+                        }
+                    ],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json"
+                    }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                if (progressBar) progressBar.style.width = "85%";
+                if (percentText) percentText.textContent = "85%";
+
+                const result = await response.json();
+                const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (progressBar) progressBar.style.width = "100%";
+                if (percentText) percentText.textContent = "100%";
+
+                if (jsonText) {
+                    let cleanJson = jsonText.trim();
+                    if (cleanJson.startsWith('```json')) cleanJson = cleanJson.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+                    else if (cleanJson.startsWith('```')) cleanJson = cleanJson.replace(/^```\s*/, '').replace(/\s*```$/, '');
+
+                    const parsed = JSON.parse(cleanJson);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        extractedOcrItems = parsed.map((item, idx) => ({
+                            id: 'ocr_' + idx + '_' + Date.now(),
+                            name: item.name || "Chỉ số",
+                            category: item.category || "Sinh hóa máu",
+                            value: String(item.value || "0"),
+                            unit: item.unit || "",
+                            refRange: item.refRange || "--",
+                            status: item.status || "Bình thường"
+                        }));
+
+                        renderOcrExtractedTable();
+                        if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> AI đã nhận diện ${extractedOcrItems.length} chỉ số từ ảnh phiếu của bạn!`;
+                        showToast(`Đã nhận diện ${extractedOcrItems.length} chỉ số từ phiếu!`);
+                        return;
+                    }
+                }
+
+                throw new Error("Không tìm thấy chỉ số xét nghiệm hợp lệ trong ảnh.");
+
+            } catch (e) {
+                console.error("Gemini Vision API OCR error:", e);
+                if (progressBar) progressBar.style.width = "100%";
+                if (percentText) percentText.textContent = "Thất bại";
+                if (statusText) statusText.innerHTML = `<span class="text-rose-600 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Không thể nhận diện chỉ số từ ảnh này. Vui lòng thử chụp lại ảnh rõ nét hơn hoặc thử ảnh mẫu!</span>`;
+                showToast("Không đọc được chỉ số từ ảnh. Vui lòng chụp rõ nét hơn!");
+                if (startBtn) startBtn.disabled = false;
+            }
+        }
+
+        function renderOcrExtractedTable() {
+            const resContainer = document.getElementById('ocrResultsContainer');
+            if (resContainer) resContainer.classList.remove('hidden');
+            const saveBtn = document.getElementById('btnSaveOcrResults');
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            const countEl = document.getElementById('ocrExtractedCount');
+            if (countEl) countEl.textContent = extractedOcrItems.length;
+
+            const tbody = document.getElementById('ocrResultsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = extractedOcrItems.map((item, idx) => `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="p-2"><input type="text" value="${item.name}" oninput="extractedOcrItems[${idx}].name=this.value" class="w-full p-1 bg-slate-50 border rounded text-xs"></td>
+                    <td class="p-2"><input type="text" value="${item.category}" oninput="extractedOcrItems[${idx}].category=this.value" class="w-full p-1 bg-slate-50 border rounded text-xs"></td>
+                    <td class="p-2"><input type="text" value="${item.value}" oninput="extractedOcrItems[${idx}].value=this.value" class="w-20 p-1 bg-slate-50 border rounded text-xs font-bold"></td>
+                    <td class="p-2"><input type="text" value="${item.unit}" oninput="extractedOcrItems[${idx}].unit=this.value" class="w-16 p-1 bg-slate-50 border rounded text-xs"></td>
+                    <td class="p-2"><input type="text" value="${item.refRange}" oninput="extractedOcrItems[${idx}].refRange=this.value" class="w-20 p-1 bg-slate-50 border rounded text-xs"></td>
+                    <td class="p-2"><span class="text-xs font-bold ${item.status === 'Cao' ? 'text-rose-600' : 'text-emerald-600'}">${item.status}</span></td>
+                    <td class="p-2 text-center"><button onclick="extractedOcrItems.splice(${idx}, 1); renderOcrExtractedTable();" class="text-rose-500"><i class="fa-solid fa-trash-can"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function saveOcrBatchResults() {
+            const member = getActiveMember();
+            if (!member.labTests) member.labTests = [];
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            extractedOcrItems.forEach(item => {
+                member.labTests.push({
+                    id: 'l_' + Date.now() + Math.random().toString(36).substr(2, 4),
+                    name: item.name,
+                    category: item.category,
+                    value: item.value,
+                    unit: item.unit,
+                    refRange: item.refRange,
+                    status: item.status,
+                    date: todayStr,
+                    facility: "Bệnh viện (Gemini AI Vision)"
+                });
+            });
+
+            saveAppData();
+            renderAll();
+            closeOcrModal();
+            showToast(`Đã lưu ${extractedOcrItems.length} chỉ số vào sổ sức khỏe!`);
+        }
+
+        function handleOcrImageSelect(event) {
+            const file = event.target.files && event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentOcrImageSource = e.target.result;
+                    const prev = document.getElementById('ocrImagePreview');
+                    if (prev) prev.src = currentOcrImageSource;
+                    const prevContainer = document.getElementById('ocrPreviewContainer');
+                    if (prevContainer) prevContainer.classList.remove('hidden');
+                    const prompt = document.getElementById('ocrUploadPrompt');
+                    if (prompt) prompt.classList.add('hidden');
+                    const startBtn = document.getElementById('btnStartOcr');
+                    if (startBtn) startBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openOcrScanModal() {
+            openModal('ocrLabModal');
+        }
+
+        function closeOcrModal() {
+            closeModal('ocrLabModal');
+        }
+
+        function loadSampleOcrSheet(count) {
+            extractedOcrItems = [
+                { id: "ocr_s1", name: "Glucose máu", category: "Sinh hóa máu", value: "6.8", unit: "mmol/L", refRange: "3.9 - 6.4", status: "Cao" },
+                { id: "ocr_s2", name: "HbA1c", category: "Sinh hóa máu", value: "6.2", unit: "%", refRange: "< 5.7", status: "Cao" },
+                { id: "ocr_s3", name: "Cholesterol toàn phần", category: "Sinh hóa máu", value: "5.8", unit: "mmol/L", refRange: "< 5.2", status: "Cao" },
+                { id: "ocr_s4", name: "Triglyceride", category: "Sinh hóa máu", value: "2.1", unit: "mmol/L", refRange: "< 1.7", status: "Cao" },
+                { id: "ocr_s5", name: "AST (GOT)", category: "Sinh hóa máu", value: "32", unit: "U/L", refRange: "< 40", status: "Bình thường" },
+                { id: "ocr_s6", name: "Acid Uric", category: "Sinh hóa máu", value: "430", unit: "μmol/L", refRange: "210 - 420", status: "Cao" }
+            ];
+            renderOcrExtractedTable();
+            showToast("Đã tải phiếu xét nghiệm mẫu!");
+        }
+
+        function addBlankOcrRow() {
+            extractedOcrItems.push({ id: 'ocr_' + Date.now(), name: "Chỉ số mới", category: "Sinh hóa máu", value: "0", unit: "mmol/L", refRange: "--", status: "Bình thường" });
+            renderOcrExtractedTable();
+        }
+
+        // Imaging Gallery Renderer
         function renderImagingGallery(member) {
             if (!member) member = getActiveMember();
             const images = member.images || [];
@@ -1768,192 +1950,6 @@
             `).join('');
         }
 
-        async function startOcrProcess() {
-            if (!currentOcrImageSource) {
-                showToast("Vui lòng chọn ảnh phiếu xét nghiệm!");
-                return;
-            }
-
-            const progressArea = document.getElementById('ocrProgressArea');
-            const progressBar = document.getElementById('ocrProgressBar');
-            const statusText = document.getElementById('ocrStatusText');
-            const percentText = document.getElementById('ocrPercentText');
-
-            if (progressArea) progressArea.classList.remove('hidden');
-            const startBtn = document.getElementById('btnStartOcr');
-            if (startBtn) startBtn.disabled = true;
-
-            if (progressBar) progressBar.style.width = "40%";
-            if (percentText) percentText.textContent = "40%";
-
-            try {
-                const base64Data = currentOcrImageSource.split(',')[1];
-                const apiKey = ""; // Runtime key auto-filled
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-                const systemPrompt = "BẠN LÀ CHUYÊN GIA AI BÓC TÁCH PHIẾU XÉT NGHIỆM Y KHOA. Hãy bóc tách danh sách tất cả các chỉ số trong ảnh. Xuất duy nhất mảng JSON gồm các đối tượng có thuộc tính: name (Tên chỉ số), category (Sinh hóa máu/Huyết học/Nước tiểu), value (Kết quả dạng chuỗi), unit (Đơn vị), refRange (Tham chiếu), status (Bình thường/Cao/Thấp).";
-
-                const payload = {
-                    contents: [
-                        {
-                            role: "user",
-                            parts: [
-                                { text: "Đọc và bóc tách toàn bộ các chỉ số xét nghiệm từ ảnh này thành JSON:" },
-                                { inlineData: { mimeType: "image/png", data: base64Data } }
-                            ]
-                        }
-                    ],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    generationConfig: {
-                        responseMimeType: "application/json"
-                    }
-                };
-
-                if (progressBar) progressBar.style.width = "75%";
-                if (percentText) percentText.textContent = "75%";
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-                const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                if (progressBar) progressBar.style.width = "100%";
-                if (percentText) percentText.textContent = "100%";
-
-                if (jsonText) {
-                    const parsed = JSON.parse(jsonText);
-                    if (Array.isArray(parsed)) {
-                        extractedOcrItems = parsed.map((item, idx) => ({
-                            id: 'ocr_' + idx + '_' + Date.now(),
-                            name: item.name || "Chỉ số",
-                            category: item.category || "Sinh hóa máu",
-                            value: String(item.value || "0"),
-                            unit: item.unit || "",
-                            refRange: item.refRange || "--",
-                            status: item.status || "Bình thường"
-                        }));
-                    }
-                }
-            } catch (e) {
-                console.warn("Gemini OCR fallback:", e);
-                parseOcrTextToLabResults("");
-            }
-
-            if (extractedOcrItems.length === 0) {
-                parseOcrTextToLabResults("");
-            }
-
-            renderOcrExtractedTable();
-        }
-
-        function parseOcrTextToLabResults(rawText) {
-            extractedOcrItems = [
-                { id: "ocr_1", name: "Glucose máu", category: "Sinh hóa máu", value: "6.8", unit: "mmol/L", refRange: "3.9 - 6.4", status: "Cao" },
-                { id: "ocr_2", name: "Cholesterol toàn phần", category: "Sinh hóa máu", value: "5.8", unit: "mmol/L", refRange: "< 5.2", status: "Cao" },
-                { id: "ocr_3", name: "Triglyceride", category: "Sinh hóa máu", value: "2.1", unit: "mmol/L", refRange: "< 1.7", status: "Cao" },
-                { id: "ocr_4", name: "AST (GOT)", category: "Sinh hóa máu", value: "32", unit: "U/L", refRange: "< 40", status: "Bình thường" },
-                { id: "ocr_5", name: "Acid Uric", category: "Sinh hóa máu", value: "430", unit: "μmol/L", refRange: "210 - 420", status: "Cao" }
-            ];
-        }
-
-        function renderOcrExtractedTable() {
-            const resContainer = document.getElementById('ocrResultsContainer');
-            if (resContainer) resContainer.classList.remove('hidden');
-            const saveBtn = document.getElementById('btnSaveOcrResults');
-            if (saveBtn) saveBtn.classList.remove('hidden');
-            const countEl = document.getElementById('ocrExtractedCount');
-            if (countEl) countEl.textContent = extractedOcrItems.length;
-
-            const tbody = document.getElementById('ocrResultsTableBody');
-            if (!tbody) return;
-
-            tbody.innerHTML = extractedOcrItems.map((item, idx) => `
-                <tr class="hover:bg-slate-50 border-b border-slate-100">
-                    <td class="p-2"><input type="text" value="${item.name}" oninput="extractedOcrItems[${idx}].name=this.value" class="w-full p-1 bg-slate-50 border rounded text-xs"></td>
-                    <td class="p-2"><input type="text" value="${item.category}" oninput="extractedOcrItems[${idx}].category=this.value" class="w-full p-1 bg-slate-50 border rounded text-xs"></td>
-                    <td class="p-2"><input type="text" value="${item.value}" oninput="extractedOcrItems[${idx}].value=this.value" class="w-20 p-1 bg-slate-50 border rounded text-xs font-bold"></td>
-                    <td class="p-2"><span class="text-xs font-bold ${item.status === 'Cao' ? 'text-rose-600' : 'text-emerald-600'}">${item.status}</span></td>
-                    <td class="p-2 text-center"><button onclick="extractedOcrItems.splice(${idx}, 1); renderOcrExtractedTable();" class="text-rose-500"><i class="fa-solid fa-trash-can"></i></button></td>
-                </tr>
-            `).join('');
-        }
-
-        function saveOcrBatchResults() {
-            const member = getActiveMember();
-            if (!member.labTests) member.labTests = [];
-            const todayStr = new Date().toISOString().split('T')[0];
-
-            extractedOcrItems.forEach(item => {
-                member.labTests.push({
-                    id: 'l_' + Date.now() + Math.random().toString(36).substr(2, 4),
-                    name: item.name,
-                    category: item.category,
-                    value: item.value,
-                    unit: item.unit,
-                    refRange: item.refRange,
-                    status: item.status,
-                    date: todayStr,
-                    facility: "Bệnh viện Medlatec (AI OCR)"
-                });
-            });
-
-            saveAppData();
-            renderAll();
-            closeOcrModal();
-            showToast(`Đã lưu ${extractedOcrItems.length} chỉ số vào sổ sức khỏe!`);
-        }
-
-        function handleOcrImageSelect(event) {
-            const file = event.target.files && event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentOcrImageSource = e.target.result;
-                    const prev = document.getElementById('ocrImagePreview');
-                    if (prev) prev.src = currentOcrImageSource;
-                    const prevContainer = document.getElementById('ocrPreviewContainer');
-                    if (prevContainer) prevContainer.classList.remove('hidden');
-                    const prompt = document.getElementById('ocrUploadPrompt');
-                    if (prompt) prompt.classList.add('hidden');
-                    const startBtn = document.getElementById('btnStartOcr');
-                    if (startBtn) startBtn.disabled = false;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function openOcrScanModal() {
-            openModal('ocrLabModal');
-        }
-
-        function closeOcrModal() {
-            closeModal('ocrLabModal');
-        }
-
-        function switchOcrInputMode(mode) {
-            const uploadBtn = document.getElementById('tabModeUpload');
-            const cameraBtn = document.getElementById('tabModeCamera');
-            if (mode === 'upload') {
-                if (uploadBtn) uploadBtn.className = "flex-1 py-1.5 rounded-xl bg-white shadow-sm text-indigo-600 text-center";
-                if (cameraBtn) cameraBtn.className = "flex-1 py-1.5 rounded-xl text-slate-600 text-center";
-            }
-        }
-
-        function loadSampleOcrSheet(count) {
-            parseOcrTextToLabResults("");
-            renderOcrExtractedTable();
-            showToast("Đã tải phiếu xét nghiệm mẫu!");
-        }
-
-        function addBlankOcrRow() {
-            extractedOcrItems.push({ id: 'ocr_' + Date.now(), name: "Chỉ số mới", category: "Sinh hóa máu", value: "0", unit: "mmol/L", refRange: "--", status: "Bình thường" });
-            renderOcrExtractedTable();
-        }
-
         // Member and Book Title Modals
         function handleSaveMember(e) {
             e.preventDefault();
@@ -2231,7 +2227,6 @@
             }
         }
 
-        function autoEvaluateLab() {}
         function switchToOcrFromManual() { closeModal('addLabModal'); openOcrScanModal(); }
 
         function openModal(id) { const m = document.getElementById(id); if (m) m.classList.remove('hidden'); }
