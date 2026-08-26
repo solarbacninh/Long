@@ -75,7 +75,7 @@
                             Sổ Sức Khỏe Điện Tử & Long Châu
                         </h1>
                         <span id="appVersionBadge" class="bg-teal-100 text-teal-800 text-[10px] font-black px-1.5 py-0.5 rounded-md border border-teal-200">
-                            VN.1.24
+                            VN.1.25
                         </span>
                         <button onclick="openEditBookTitleModal()" class="text-slate-400 hover:text-teal-600 text-xs p-1 touch-active" title="Đổi tên Sổ">
                             <i class="fa-solid fa-pen-to-square"></i>
@@ -656,22 +656,14 @@
                 
                 <!-- Upload / Camera Input Box -->
                 <div class="border-2 border-dashed border-slate-300 rounded-3xl p-5 text-center bg-slate-50 hover:bg-slate-100/80 transition cursor-pointer relative">
-                    <input type="file" id="ocrFileInput" accept="image/*" capture="environment" onchange="handleOcrImageSelect(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    <input type="file" id="ocrFileInput" accept="image/*" onchange="handleOcrImageSelect(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                     <div class="space-y-2 pointer-events-none">
                         <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 mx-auto flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-camera"></i>
+                            <i class="fa-solid fa-images"></i>
                         </div>
-                        <p class="text-xs font-black text-slate-800">Bấm đây để Mở Camera Chụp Ảnh hoặc Chọn Ảnh Phiếu</p>
+                        <p class="text-xs font-black text-slate-800">Bấm đây để Chọn Ảnh từ Thư Viện hoặc Chụp Ảnh Phiếu</p>
                         <p class="text-[10px] text-slate-500 font-semibold">Tự động nén tối ưu dung lượng ảnh di động (tránh gián đoạn 4G)</p>
                     </div>
-                </div>
-
-                <!-- Sample Sheet Quick Test Button -->
-                <div class="flex items-center justify-between bg-teal-50 p-3 rounded-2xl border border-teal-200">
-                    <span class="text-xs font-bold text-teal-900">Không có sẵn phiếu in? Dùng thử mẫu:</span>
-                    <button onclick="loadSampleOcrSheet(10)" class="bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs px-3 py-1.5 rounded-xl shadow-2xs touch-active">
-                        <i class="fa-solid fa-vial-circle-check mr-1"></i> Tải Phiếu Mẫu 10 Chỉ Số
-                    </button>
                 </div>
 
                 <!-- Image Preview Area -->
@@ -1245,7 +1237,7 @@
     </div>
 
     <script>
-        const APP_CODE_VERSION = "VN.1.24";
+        const APP_CODE_VERSION = "VN.1.25";
 
         // Master Medical Reference Catalog Database (50+ Clinical Parameters)
         const masterMedicalReferenceDB = [
