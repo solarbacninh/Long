@@ -87,6 +87,11 @@
 
             <!-- Quick Actions & User Switcher -->
             <div class="flex items-center gap-2">
+                <button onclick="openApiKeyModal()" class="flex items-center gap-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs px-3 py-2 rounded-xl border border-amber-300 transition touch-active" title="Cấu hình Gemini API Key cho Điện Thoại">
+                    <i class="fa-solid fa-key text-amber-600"></i>
+                    <span class="hidden sm:inline">API Key</span>
+                </button>
+
                 <button onclick="exportBackupDataJson()" class="hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3 py-2 rounded-xl transition touch-active">
                     <i class="fa-solid fa-download text-teal-600"></i>
                     <span>Sao Lưu JSON</span>
@@ -716,6 +721,10 @@
                     Đóng
                 </button>
                 <div class="flex items-center gap-2">
+                    <button onclick="openApiKeyModal()" class="bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs px-3 py-2.5 rounded-xl border border-amber-300 touch-active flex items-center gap-1">
+                        <i class="fa-solid fa-key text-amber-600"></i>
+                        <span>Khóa API</span>
+                    </button>
                     <button id="btnStartOcr" onclick="startOcrProcess()" disabled class="bg-amber-500 hover:bg-amber-600 text-slate-950 disabled:opacity-50 font-black text-xs px-4 py-2.5 rounded-xl shadow-xs touch-active flex items-center gap-1.5">
                         <i class="fa-solid fa-bolt"></i>
                         <span>Bắt Đầu Quét AI</span>
@@ -1164,67 +1173,33 @@
         </div>
     </div>
 
-    <!-- EDIT MEMBER PROFILE MODAL -->
-    <div id="addMemberModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <!-- GEMINI API KEY CONFIGURATION MODAL FOR MOBILE -->
+    <div id="apiKeyModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
-            <div class="bg-teal-700 p-4 text-white flex justify-between items-center">
-                <h3 id="memberModalTitle" class="font-extrabold text-sm">Sửa Thông Tin Hồ Sơ Thành Viên</h3>
-                <button onclick="closeModal('addMemberModal')" class="text-white hover:text-slate-200 touch-active"><i class="fa-solid fa-xmark text-base"></i></button>
+            <div class="bg-gradient-to-r from-amber-600 to-amber-700 p-4 text-white flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-key text-lg"></i>
+                    <h3 class="font-extrabold text-sm">Cấu Hình Gemini API Key (Điện Thoại)</h3>
+                </div>
+                <button onclick="closeModal('apiKeyModal')" class="text-white hover:text-amber-200 touch-active"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
-
-            <form onsubmit="handleSaveMember(event)" class="p-4 space-y-3">
+            <form onsubmit="handleSaveApiKey(event)" class="p-4 space-y-3">
+                <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-1">
+                    <p class="font-bold"><i class="fa-solid fa-circle-info mr-1"></i>Khắc phục lỗi HTTP 403 trên điện thoại:</p>
+                    <p class="text-[11px] leading-relaxed text-amber-800">
+                        Khi tải file HTML về chạy độc lập trên điện thoại, Google yêu cầu API Key để cho phép quét AI Vision. API Key được lưu bảo mật trên thiết bị di động của bạn.
+                    </p>
+                </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Họ và Tên Bệnh Nhân:</label>
-                    <input type="text" id="inputMemberName" required class="w-full p-2 border border-slate-200 rounded-xl text-xs font-extrabold text-slate-900">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nhập Gemini API Key của bạn:</label>
+                    <input type="text" id="inputGeminiApiKey" placeholder="AIzaSy..." class="w-full p-2.5 border border-slate-200 rounded-xl text-xs font-mono font-semibold text-slate-900 focus:ring-2 focus:ring-amber-500 outline-none">
                 </div>
-
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Năm Sinh:</label>
-                        <input type="number" id="inputMemberDOB" value="1989" required class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Giới Tính:</label>
-                        <select id="inputMemberGender" class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold">
-                            <option value="Nam">Nam</option>
-                            <option value="Nữ">Nữ</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Nhóm Máu:</label>
-                        <select id="inputMemberBlood" class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold">
-                            <option value="O+">O+</option>
-                            <option value="A+">A+</option>
-                            <option value="B+">B+</option>
-                            <option value="AB+">AB+</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Chiều Cao (cm):</label>
-                        <input type="number" id="inputMemberHeight" value="170" class="w-full p-2 border border-slate-200 rounded-xl text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Cân Nặng (kg):</label>
-                        <input type="number" id="inputMemberWeight" value="68" class="w-full p-2 border border-slate-200 rounded-xl text-xs">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Tiền Sử Bệnh Lý:</label>
-                    <input type="text" id="inputMemberConditions" placeholder="VD: Huyết áp cao nhẹ..." class="w-full p-2 border border-slate-200 rounded-xl text-xs">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Dị Ứng Thuốc / Thức Ăn:</label>
-                    <input type="text" id="inputMemberAllergies" placeholder="VD: Paracetamol..." class="w-full p-2 border border-slate-200 rounded-xl text-xs">
-                </div>
-
+                <p class="text-[10px] text-slate-500">
+                    Chưa có key? <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-amber-700 font-bold underline">Bấm đây để lấy Gemini API Key miễn phí tại Google AI Studio</a>
+                </p>
                 <div class="pt-2 flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('addMemberModal')" class="bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl touch-active">Hủy</button>
-                    <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl shadow-xs touch-active">Lưu Hồ Sơ</button>
+                    <button type="button" onclick="closeModal('apiKeyModal')" class="bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl touch-active">Hủy</button>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl shadow-xs touch-active">Lưu Khóa API</button>
                 </div>
             </form>
         </div>
@@ -1237,7 +1212,34 @@
     </div>
 
     <script>
-        const APP_CODE_VERSION = "VN.1.25";
+        const APP_CODE_VERSION = "VN.1.26";
+
+        function getGeminiApiUrl(model = 'gemini-3-flash-preview') {
+            const savedKey = (localStorage.getItem('medhealth_gemini_api_key') || "").trim();
+            if (savedKey) {
+                return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${savedKey}`;
+            }
+            const apiKey = "";
+            return apiKey ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}` : `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+        }
+
+        function openApiKeyModal() {
+            const savedKey = localStorage.getItem('medhealth_gemini_api_key') || "";
+            const input = document.getElementById('inputGeminiApiKey');
+            if (input) input.value = savedKey;
+            openModal('apiKeyModal');
+        }
+
+        function handleSaveApiKey(e) {
+            e.preventDefault();
+            const keyInput = document.getElementById('inputGeminiApiKey');
+            if (keyInput) {
+                const val = keyInput.value.trim();
+                localStorage.setItem('medhealth_gemini_api_key', val);
+                closeModal('apiKeyModal');
+                showToast(val ? "Đã lưu Gemini API Key thành công!" : "Đã xóa API Key cá nhân.");
+            }
+        }
 
         // Master Medical Reference Catalog Database (50+ Clinical Parameters)
         const masterMedicalReferenceDB = [
@@ -2534,8 +2536,7 @@ Mỗi chỉ số bao gồm:
 
                 updateProgress(75, "Gemini AI đang phân tích & bóc tách chỉ số...");
 
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                const apiUrl = getGeminiApiUrl('gemini-3-flash-preview');
 
                 let response = null;
                 let retries = 3;
@@ -2549,7 +2550,11 @@ Mỗi chỉ số bao gồm:
                             body: JSON.stringify(payload)
                         });
                         if (response.ok) break;
+                        if (response.status === 403) {
+                            throw new Error("HTTP_403_FORBIDDEN");
+                        }
                     } catch (err) {
+                        if (err.message === "HTTP_403_FORBIDDEN") throw err;
                         if (i === retries - 1) throw err;
                     }
                     await new Promise(r => setTimeout(r, delay));
@@ -2557,6 +2562,7 @@ Mỗi chỉ số bao gồm:
                 }
 
                 if (!response || !response.ok) {
+                    if (response && response.status === 403) throw new Error("HTTP_403_FORBIDDEN");
                     throw new Error(`API AI không phản hồi (Status ${response ? response.status : 'Network Error'})`);
                 }
 
@@ -2588,83 +2594,17 @@ Mỗi chỉ số bao gồm:
 
             } catch (error) {
                 console.error("Gemini Vision OCR Error:", error);
-                updateProgress(0, "Lỗi quét AI: " + (error.message || "Vui lòng chụp lại ảnh rõ hơn!"));
                 if (startBtn) startBtn.disabled = false;
-                showToast("Lỗi nhận diện AI. Hãy bấm 'Tải Phiếu Mẫu' hoặc chọn ảnh chụp rõ hơn!");
+
+                if (error.message === "HTTP_403_FORBIDDEN" || (error.message && error.message.includes("403"))) {
+                    updateProgress(0, "Lỗi HTTP 403: Google API từ chối do thiếu API Key trên thiết bị di động!");
+                    showToast("Lỗi HTTP 403! Vui lòng dán Gemini API Key miễn phí.");
+                    setTimeout(() => { openApiKeyModal(); }, 1200);
+                } else {
+                    updateProgress(0, "Lỗi quét AI: " + (error.message || "Vui lòng chụp lại ảnh rõ hơn!"));
+                    showToast("Lỗi nhận diện AI. Hãy chọn ảnh phiếu chụp rõ nét hơn!");
+                }
             }
-        }
-
-        function loadSampleOcrSheet(count) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 600;
-            canvas.height = 780;
-            const ctx = canvas.getContext('2d');
-
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, 600, 780);
-
-            ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 20px Inter, sans-serif';
-            ctx.fillText('BỆNH VIỆN ĐA KHOA MEDLATEC', 40, 50);
-
-            ctx.font = '13px Inter, sans-serif';
-            ctx.fillStyle = '#475569';
-            ctx.fillText('PHIẾU KẾT QUẢ XÉT NGHIỆM MÁU VÀ HÓA SINH', 40, 75);
-            ctx.fillText('Họ tên: Nguyễn Văn An - Tuổi: 37 - Giới tính: Nam', 40, 98);
-            ctx.fillText('Ngày xét nghiệm: ' + new Date().toLocaleDateString('vi-VN'), 40, 118);
-
-            ctx.beginPath();
-            ctx.moveTo(40, 132);
-            ctx.lineTo(560, 132);
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            ctx.font = 'bold 12px Inter, sans-serif';
-            ctx.fillStyle = '#1e293b';
-            ctx.fillText('TÊN CHỈ SỐ', 40, 155);
-            ctx.fillText('KẾT QUẢ', 220, 155);
-            ctx.fillText('ĐƠN VỊ', 320, 155);
-            ctx.fillText('THAM CHIẾU', 420, 155);
-
-            const sampleRows = [
-                { name: "Glucose máu", val: "6.8", unit: "mmol/L", ref: "3.9 - 6.4", flag: "H" },
-                { name: "HbA1c", val: "6.2", unit: "%", ref: "< 5.7", flag: "H" },
-                { name: "Cholesterol toàn phần", val: "5.8", unit: "mmol/L", ref: "< 5.2", flag: "H" },
-                { name: "Triglyceride", val: "2.1", unit: "mmol/L", ref: "< 1.7", flag: "H" },
-                { name: "HDL-Cholesterol", val: "1.15", unit: "mmol/L", ref: "> 1.03", flag: "" },
-                { name: "LDL-Cholesterol", val: "3.6", unit: "mmol/L", ref: "< 3.4", flag: "H" },
-                { name: "Acid Uric", val: "430", unit: "μmol/L", ref: "210 - 420", flag: "H" },
-                { name: "AST (GOT)", val: "32", unit: "U/L", ref: "< 40", flag: "" },
-                { name: "ALT (GPT)", val: "38", unit: "U/L", ref: "< 40", flag: "" },
-                { name: "Creatinine", val: "88", unit: "μmol/L", ref: "62 - 115", flag: "" }
-            ];
-
-            let y = 185;
-            ctx.font = '12px Inter, sans-serif';
-            sampleRows.slice(0, count || 10).forEach(row => {
-                ctx.fillStyle = '#0f172a';
-                ctx.fillText(row.name, 40, y);
-                ctx.fillStyle = row.flag === 'H' ? '#dc2626' : '#0f172a';
-                ctx.fillText(row.val + (row.flag ? ' (' + row.flag + ')' : ''), 220, y);
-                ctx.fillStyle = '#475569';
-                ctx.fillText(row.unit, 320, y);
-                ctx.fillText(row.ref, 420, y);
-                y += 26;
-            });
-
-            currentOcrImageSource = canvas.toDataURL('image/jpeg', 0.9);
-
-            const prev = document.getElementById('ocrImagePreview');
-            if (prev) prev.src = currentOcrImageSource;
-            const prevContainer = document.getElementById('ocrPreviewContainer');
-            if (prevContainer) prevContainer.classList.remove('hidden');
-            const fileNameEl = document.getElementById('ocrFileName');
-            if (fileNameEl) fileNameEl.textContent = "Phieu_mau_Medlatec.jpg";
-            const startBtn = document.getElementById('btnStartOcr');
-            if (startBtn) startBtn.disabled = false;
-
-            showToast("Đã tải phiếu mẫu! Bấm 'Bắt đầu quét AI' để dùng Gemini Vision.");
         }
 
         function renderOcrResultsTable(items) {
