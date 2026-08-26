@@ -75,7 +75,7 @@
                             Sổ Sức Khỏe Điện Tử & Long Châu
                         </h1>
                         <span id="appVersionBadge" class="bg-teal-100 text-teal-800 text-[10px] font-black px-1.5 py-0.5 rounded-md border border-teal-200">
-                            VN.1.27
+                            VN.1.30
                         </span>
                         <button onclick="openEditBookTitleModal()" class="text-slate-400 hover:text-teal-600 text-xs p-1 touch-active" title="Đổi tên Sổ">
                             <i class="fa-solid fa-pen-to-square"></i>
@@ -87,9 +87,9 @@
 
             <!-- Quick Actions & User Switcher -->
             <div class="flex items-center gap-2">
-                <button onclick="toggleApiKeyBar()" class="flex items-center gap-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs px-2.5 py-2 rounded-xl transition touch-active" title="Cấu hình Khóa AI trên điện thoại">
+                <button onclick="openApiKeyModal()" class="flex items-center gap-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs px-2.5 py-2 rounded-xl transition touch-active border border-amber-300">
                     <i class="fa-solid fa-key text-amber-600"></i>
-                    <span class="hidden md:inline">Gemini Key</span>
+                    <span class="hidden sm:inline">Gemini Key</span>
                 </button>
 
                 <button onclick="exportBackupDataJson()" class="hidden sm:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3 py-2 rounded-xl transition touch-active">
@@ -290,7 +290,7 @@
                     <div class="flex items-center justify-between">
                         <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                             <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
-                            <span>Cảnh Báo Tự Động Nguy Cơ Bệnh Lý Lệch Chỉ Số</span>
+                            <span>Cảnh Báo Tự Động Nguy Cơ Bệnh Lý Lệch Chỉ Số & Gợi Ý Thuốc</span>
                         </h3>
                         <button onclick="switchTab('analysisTab')" class="text-xs text-teal-700 font-bold hover:underline touch-active">
                             Xem tất cả 150+ chỉ số <i class="fa-solid fa-arrow-right ml-1"></i>
@@ -403,14 +403,14 @@
                     </div>
                 </div>
 
-                <!-- VISUAL REFERENCE SCALE BOARD GRID -->
+                <!-- VISUAL REFERENCE SCALE BOARD GRID (WITH AUTO DRUG MATCHING) -->
                 <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
                     <div class="flex items-center justify-between">
                         <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                             <i class="fa-solid fa-sliders text-teal-600"></i>
-                            <span>Bảng So Sánh Thị Giác Khoảng Tham Chiếu</span>
+                            <span>Bảng So Sánh Thị Giác Khoảng Tham Chiếu & Tự Động Gợi Ý Thuốc</span>
                         </h3>
-                        <span class="text-[10px] text-slate-400 font-bold">Tự động tính vị trí %</span>
+                        <span class="text-[10px] text-slate-400 font-bold">Tự động ghép thuốc Long Châu</span>
                     </div>
 
                     <div id="visualReferenceBoardGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -466,17 +466,80 @@
 
             <!-- TAB 3: 150+ MEDICAL INDICATOR WARNINGS & CATALOG -->
             <section id="analysisTab" class="tab-content hidden space-y-4">
-                <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
-                    <div class="border-b border-slate-100 pb-3">
-                        <span class="text-[10px] font-black uppercase text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
-                            150+ Chỉ Số Y Khoa Tiêu Chuẩn Bộ Y Tế
-                        </span>
-                        <h2 class="text-base font-extrabold text-slate-900 mt-1">Cảnh Báo Nguy Cơ Bệnh Lý & Gợi Ý Thuốc Long Châu</h2>
-                        <p class="text-xs text-slate-500 font-medium">Đối chiếu tự động 100% kết quả xét nghiệm cá nhân với danh mục bệnh lý</p>
+                
+                <!-- Section Header Banner -->
+                <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="border-b border-slate-100 pb-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                        <div>
+                            <span class="text-[10px] font-black uppercase text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
+                                Danh Mục Tra Cứu & Cảnh Báo Tiêu Chuẩn Bộ Y Tế
+                            </span>
+                            <h2 class="text-base font-extrabold text-slate-900 mt-1">Phân Tích 150+ Chỉ Số Y Khoa, Nguy Cơ Bệnh Lý & Gợi Ý Thuốc</h2>
+                            <p class="text-xs text-slate-500 font-medium">Tự động đối chiếu kết quả xét nghiệm cá nhân và tra cứu toàn bộ từ điển chỉ số y khoa</p>
+                        </div>
+                        <button onclick="switchTab('pharmacyTab')" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl shadow-xs transition touch-active shrink-0 flex items-center gap-1.5">
+                            <i class="fa-solid fa-pills"></i>
+                            <span>Xem Thuốc Long Châu</span>
+                        </button>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-3">
-                        <!-- Dynamic full warning card list -->
+                    <!-- Active Personal Health Warnings Section -->
+                    <div class="space-y-3">
+                        <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+                            <span>Cảnh Báo Sức Khỏe Cá Nhân (Dựa Trên Chỉ Số Đã Lưu)</span>
+                        </h3>
+                        <div id="tab3ActivePatientWarnings" class="space-y-2.5">
+                            <!-- Dynamic patient warnings rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 150+ Master Indicator Searchable Dictionary Catalog -->
+                <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                        <div>
+                            <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-book-medical text-teal-600"></i>
+                                <span>Từ Điển 150+ Chỉ Số Xét Nghiệm Y Khoa Tiêu Chuẩn</span>
+                            </h3>
+                            <p class="text-xs text-slate-500 font-medium">Tra cứu nguyên nhân tăng/giảm, nguy cơ bệnh lý và nhóm biệt dược điều trị tương ứng</p>
+                        </div>
+                    </div>
+
+                    <!-- Search Input & Category Filter Tabs for 150+ Catalog -->
+                    <div class="space-y-2.5">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+                            <input type="text" id="search150CatalogInput" onkeyup="render150IndicatorCatalog()" placeholder="Tìm chỉ số (VD: Glucose, HbA1c, Cholesterol, AST, ALT, Creatinine, Acid Uric, TSH, AFP...)" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none">
+                        </div>
+
+                        <!-- Category Filter Chips -->
+                        <div class="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+                            <button id="cat150Filter-all" onclick="filter150Cat('all')" class="cat150-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-xs touch-active">
+                                Tất Cả 150+
+                            </button>
+                            <button id="cat150Filter-Huyết học" onclick="filter150Cat('Huyết học')" class="cat150-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 touch-active">
+                                Huyết Học (CBC)
+                            </button>
+                            <button id="cat150Filter-Chuyển hóa & Mỡ" onclick="filter150Cat('Chuyển hóa & Mỡ')" class="cat150-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 touch-active">
+                                Đường & Mỡ Máu
+                            </button>
+                            <button id="cat150Filter-Gan & Thận" onclick="filter150Cat('Gan & Thận')" class="cat150-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 touch-active">
+                                Chức Năng Gan & Thận
+                            </button>
+                            <button id="cat150Filter-Điện giải & Tim" onclick="filter150Cat('Điện giải & Tim')" class="cat150-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 touch-active">
+                                Điện Giải & Tim Mạch
+                            </button>
+                            <button id="cat150Filter-Hormone & Ung thư" onclick="filter150Cat('Hormone & Ung thư')" class="cat150-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 touch-active">
+                                Hormone & Tầm Soát Ung Thư
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 150+ Catalog List Grid -->
+                    <div id="catalog150GridList" class="space-y-3">
+                        <!-- Dynamic 150+ Indicator Cards -->
                     </div>
                 </div>
             </section>
@@ -644,6 +707,33 @@
         </button>
     </nav>
 
+    <!-- API KEY SETTINGS MODAL -->
+    <div id="apiKeyModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="bg-amber-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-extrabold text-sm"><i class="fa-solid fa-key mr-2"></i>Cấu Hình Gemini API Key</h3>
+                <button onclick="closeModal('apiKeyModal')" class="text-white hover:text-slate-200 touch-active"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <div class="p-4 space-y-3 text-xs">
+                <p class="text-slate-600 leading-relaxed font-medium">
+                    Để dùng tính năng Quét Phiếu AI trên trình duyệt di động cá nhân không bị chặn <strong>HTTP 403</strong>, vui lòng nhập mã Gemini API Key miễn phí của bạn.
+                </p>
+                <div>
+                    <label class="block font-bold text-slate-800 mb-1">Mã API Key:</label>
+                    <input type="text" id="customApiKeyInput" placeholder="AIzaSy..." class="w-full p-2.5 border border-slate-200 rounded-xl font-mono text-xs text-slate-900 focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+                <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-[11px] text-amber-900">
+                    <i class="fa-solid fa-lightbulb text-amber-600 mr-1"></i>
+                    <span>Chưa có Key? Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" class="font-extrabold underline text-amber-700">aistudio.google.com</a> để tạo Key miễn phí chỉ trong 20 giây!</span>
+                </div>
+                <div class="pt-1 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('apiKeyModal')" class="bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl touch-active">Hủy</button>
+                    <button type="button" onclick="saveCustomApiKey()" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl shadow-xs touch-active">Lưu Khóa API</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- OCR LAB SCANNER MODAL -->
     <div id="ocrLabModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
@@ -659,26 +749,7 @@
 
             <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-4">
                 
-                <!-- Mobile Gemini API Key Bar -->
-                <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 space-y-2">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-key text-amber-600 text-sm shrink-0"></i>
-                            <div>
-                                <span class="text-amber-950 font-bold block">Khóa Gemini API Key (Cho Điện Thoại/File Độc Lập)</span>
-                                <span class="text-[10px] text-amber-800 font-medium block">Điện thoại cần API Key để kết nối Google AI. Lấy key miễn phí tại <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold text-teal-700">Google AI Studio</a>.</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-1.5 w-full sm:w-auto shrink-0">
-                            <input type="password" id="mobileApiKeyInput" placeholder="Dán Gemini API Key ở đây..." class="flex-1 sm:w-52 p-2 bg-white border border-amber-300 rounded-xl text-xs font-mono font-bold text-slate-800 focus:ring-2 focus:ring-amber-500 outline-none">
-                            <button onclick="saveMobileApiKey()" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs px-3 py-2 rounded-xl shrink-0 shadow-2xs touch-active">
-                                Lưu Key
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Upload / Camera Input Box (Explicit z-20 layer for mobile touch events) -->
+                <!-- Upload / Camera Input Box -->
                 <div class="border-2 border-dashed border-slate-300 rounded-3xl p-5 text-center bg-slate-50 hover:bg-slate-100/80 transition cursor-pointer relative">
                     <input type="file" id="ocrFileInput" accept="image/*" onchange="handleOcrImageSelect(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
                     <div class="space-y-2 pointer-events-none relative z-10">
@@ -688,6 +759,14 @@
                         <p class="text-xs font-black text-slate-800">Bấm đây để Chọn Ảnh từ Thư Viện hoặc Chụp Ảnh Phiếu</p>
                         <p class="text-[10px] text-slate-500 font-semibold">Tự động nén tối ưu dung lượng ảnh di động (tránh gián đoạn 4G)</p>
                     </div>
+                </div>
+
+                <!-- API Key Notice in Modal -->
+                <div class="bg-amber-50 p-2.5 rounded-2xl border border-amber-200 flex items-center justify-between text-xs">
+                    <span class="text-amber-900 font-semibold"><i class="fa-solid fa-key text-amber-600 mr-1.5"></i>Cấu hình Gemini Key cá nhân:</span>
+                    <button onclick="openApiKeyModal()" class="text-[11px] font-black bg-amber-200 hover:bg-amber-300 text-amber-900 px-2.5 py-1 rounded-xl touch-active">
+                        Nhập / Cập Nhật Key
+                    </button>
                 </div>
 
                 <!-- Image Preview Area -->
@@ -860,17 +939,11 @@
             </div>
 
             <form onsubmit="handleSaveLab(event)" class="p-4 space-y-3">
-                <div class="flex items-center justify-between bg-teal-50 p-2.5 rounded-2xl border border-teal-200 text-xs">
-                    <span class="font-bold text-teal-900">Chọn mẫu nhanh:</span>
-                    <select id="inputLabPreset" onchange="applyLabPreset()" class="p-1.5 bg-white border border-teal-300 rounded-xl font-bold text-teal-800 text-xs">
-                        <option value="">-- Chọn chỉ số mẫu --</option>
-                        <option value="glucose">Glucose (3.9 - 6.4 mmol/L)</option>
-                        <option value="hba1c">HbA1c (&lt; 5.7 %)</option>
-                        <option value="cholesterol">Cholesterol (&lt; 5.2 mmol/L)</option>
-                        <option value="triglyceride">Triglyceride (&lt; 1.7 mmol/L)</option>
-                        <option value="ast">AST (GOT) (&lt; 40 U/L)</option>
-                        <option value="alt">ALT (GPT) (&lt; 40 U/L)</option>
-                        <option value="aciduric">Acid Uric (210 - 420 μmol/L)</option>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-teal-50 p-2.5 rounded-2xl border border-teal-200 text-xs gap-2">
+                    <span class="font-bold text-teal-900 shrink-0"><i class="fa-solid fa-list-check text-teal-600 mr-1"></i>Chọn mẫu nhanh (150+ chỉ số):</span>
+                    <select id="inputLabPreset" onchange="applyLabPreset()" class="w-full sm:w-auto flex-1 p-1.5 bg-white border border-teal-300 rounded-xl font-bold text-teal-800 text-xs focus:ring-2 focus:ring-teal-500 outline-none">
+                        <option value="">-- Chọn mẫu nhanh (150+ chỉ số) --</option>
+                        <!-- Dynamic options populated by populateLabPresetDropdown() -->
                     </select>
                 </div>
 
@@ -1085,40 +1158,70 @@
     <div id="addMedModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
             <div class="bg-amber-600 p-4 text-white flex justify-between items-center">
-                <h3 class="font-extrabold text-sm">Thêm Lịch Uống Thuốc Hàng Ngày</h3>
+                <h3 class="font-extrabold text-sm flex items-center gap-1.5"><i class="fa-solid fa-pills text-amber-200"></i>Thêm Lịch Uống Thuốc Hàng Ngày</h3>
                 <button onclick="closeModal('addMedModal')" class="text-white hover:text-slate-200 touch-active"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
             <form onsubmit="handleSaveMedication(event)" class="p-4 space-y-3">
+                <!-- Quick Preset Pills -->
+                <div class="space-y-1">
+                    <span class="text-[10px] font-black uppercase text-amber-900 flex items-center gap-1">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-600"></i> Chọn nhanh biệt dược Long Châu:
+                    </span>
+                    <div class="flex items-center gap-1 overflow-x-auto custom-scrollbar pb-1">
+                        <button type="button" onclick="applyMedPreset('Crestor 10mg', '1 viên', 28, 'Mỡ máu')" class="shrink-0 text-[10px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-xl border border-amber-200 touch-active">Crestor (Mỡ máu)</button>
+                        <button type="button" onclick="applyMedPreset('Amlor 5mg', '1 viên', 30, 'Huyết áp')" class="shrink-0 text-[10px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-xl border border-amber-200 touch-active">Amlor (Huyết áp)</button>
+                        <button type="button" onclick="applyMedPreset('Glucophage 500mg', '1 viên', 30, 'Tiểu đường')" class="shrink-0 text-[10px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-xl border border-amber-200 touch-active">Glucophage (Đường)</button>
+                        <button type="button" onclick="applyMedPreset('Feburic 80mg', '1 viên', 28, 'Gút')" class="shrink-0 text-[10px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-xl border border-amber-200 touch-active">Feburic (Gút)</button>
+                        <button type="button" onclick="applyMedPreset('Nexium 40mg', '1 viên', 14, 'Dạ dày')" class="shrink-0 text-[10px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-xl border border-amber-200 touch-active">Nexium (Dạ dày)</button>
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Tên Thuốc & Biệt Dược:</label>
-                    <input type="text" id="inputMedName" required placeholder="VD: Crestor 10mg, Amlor 5mg..." class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-900">
+                    <input type="text" id="inputMedName" required oninput="autoSuggestMedTime()" placeholder="Nhập tên thuốc (VD: Crestor, Amlor, Glucophage, Nexium...)" class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+
+                <!-- AI / Clinical Time Suggestion Banner -->
+                <div id="medTimeSuggestionBox" class="hidden bg-gradient-to-r from-amber-50 to-orange-50 p-2.5 rounded-2xl border border-amber-300 space-y-1 text-xs">
+                    <span class="text-[10px] font-black uppercase text-amber-900 flex items-center gap-1">
+                        <i class="fa-solid fa-user-doctor text-amber-600"></i> Gợi ý thời gian uống chuẩn y khoa:
+                    </span>
+                    <div id="medTimeSuggestionText" class="text-[11px] text-slate-800 leading-relaxed font-medium">
+                        <!-- Filled dynamically by autoSuggestMedTime -->
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-1">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Liều/Lần:</label>
+                        <input type="text" id="inputMedDosage" value="1 viên" required class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Số Lượng Có Trong Hộp (Viên):</label>
+                        <input type="number" id="inputMedStock" value="30" min="1" required placeholder="30" class="w-full p-2 border border-slate-200 rounded-xl text-xs font-black text-amber-800 bg-amber-50/50">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Liều Lượng:</label>
-                        <input type="text" id="inputMedDosage" value="1 viên" required class="w-full p-2 border border-slate-200 rounded-xl text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Buổi Uống:</label>
-                        <select id="inputMedSlot" class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold">
-                            <option value="Sáng">Sáng</option>
-                            <option value="Trưa">Trưa</option>
-                            <option value="Chiều">Chiều</option>
-                            <option value="Tối">Tối</option>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Tự Động Chọn Buổi:</label>
+                        <select id="inputMedSlot" class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
+                            <option value="Sáng">🌅 Sáng</option>
+                            <option value="Trưa">☀️ Trưa</option>
+                            <option value="Chiều">🌤️ Chiều</option>
+                            <option value="Tối">🌙 Tối</option>
                         </select>
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Giờ Uống Nhắc Nhở:</label>
+                        <input type="time" id="inputMedTime" value="08:00" class="w-full p-2 border border-slate-200 rounded-xl text-xs font-black text-amber-900">
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Giờ Uống Nhắc Nhở:</label>
-                    <input type="time" id="inputMedTime" value="08:00" class="w-full p-2 border border-slate-200 rounded-xl text-xs font-bold">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Ghi Chú Hướng Dẫn:</label>
-                    <input type="text" id="inputMedNote" placeholder="Uống sau khi ăn 30 phút..." class="w-full p-2 border border-slate-200 rounded-xl text-xs">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Ghi Chú Hướng Dẫn Uống:</label>
+                    <input type="text" id="inputMedNote" placeholder="VD: Uống sau ăn 30 phút, uống nhiều nước..." class="w-full p-2 border border-slate-200 rounded-xl text-xs">
                 </div>
 
                 <div class="pt-2 flex justify-end gap-2">
@@ -1261,7 +1364,7 @@
     </div>
 
     <script>
-        const APP_CODE_VERSION = "VN.1.27";
+        const APP_CODE_VERSION = "VN.1.30";
 
         // Master Medical Reference Catalog Database (50+ Clinical Parameters)
         const masterMedicalReferenceDB = [
@@ -1292,6 +1395,42 @@
             { name: "CRP (C-Reactive Protein)", cat: "Viêm & Tim mạch", ref: "< 5", unit: "mg/L", note: "Dấu ấn phản ứng viêm cấp tính, nhiễm trùng." },
             { name: "TSH (Hormone Tuyến Giáp)", cat: "Nội tiết", ref: "0.4 - 4.0", unit: "μIU/mL", note: "Thấp: Cường giáp. Cao: Suy giáp." }
         ];
+
+        // 150+ Standard Medical Indicators & Disease Risks & Long Chau Drug Mapping Database
+        const catalog150IndicatorsDB = [
+            // 1. Chuyển hóa & Đường & Mỡ máu
+            { name: "Glucose (Đường máu lúc đói)", cat: "Chuyển hóa & Mỡ", ref: "3.9 - 6.4 mmol/L", note: "Định lượng nồng độ đường Glucose trong máu lúc đói.", diseaseHigh: "Bệnh Đái tháo đường (Tuýp 1, Tuýp 2), nguy cơ biến chứng võng mạc, xơ vữa mạch, suy thận.", diseaseLow: "Hạ đường huyết cấp tính, ngất xỉu, suy tuyến thượng thận.", drugMatch: "Glucophage XR 500mg" },
+            { name: "HbA1c (Glycated Hemoglobin)", cat: "Chuyển hóa & Mỡ", ref: "< 5.7 %", note: "Đánh giá mức độ kiểm soát đường huyết trung bình trong 3 tháng.", diseaseHigh: "Chẩn đoán xác định Đái tháo đường (≥ 6.5%), tiền đái tháo đường (5.7 - 6.4%).", diseaseLow: "Thiếu máu mạn tính, tan máu.", drugMatch: "Glucophage XR 500mg" },
+            { name: "Cholesterol toàn phần", cat: "Chuyển hóa & Mỡ", ref: "< 5.2 mmol/L", note: "Tổng lượng Cholesterol trong máu.", diseaseHigh: "Rối loạn Lipid máu, xơ vữa động mạch, nguy cơ Nhồi máu cơ tim, Đột quỵ não.", diseaseLow: "Suy dinh dưỡng, suy gan nặng, cường giáp.", drugMatch: "Crestor 10mg" },
+            { name: "Triglyceride", cat: "Chuyển hóa & Mỡ", ref: "< 1.7 mmol/L", note: "Chất béo trung tính. Tăng mạnh do rượu bia, đường tinh chế.", diseaseHigh: "Tăng mỡ máu trung tính. Tăng rất cao (> 5.6 mmol/L) nguy cơ gây Viêm Tụy Cấp.", diseaseLow: "Suy dinh dưỡng, xơ tủy.", drugMatch: "Crestor 10mg" },
+            { name: "HDL-Cholesterol (Mỡ tốt)", cat: "Chuyển hóa & Mỡ", ref: "> 1.03 mmol/L", note: "Lipoprotein tỷ trọng cao dọn dẹp mỡ thừa từ mạch máu về gan.", diseaseHigh: "Tốt cho tim mạch, giảm xơ vữa.", diseaseLow: "Tăng nguy cơ xơ vữa động mạch & bệnh tim mạch.", drugMatch: "Crestor 10mg" },
+            { name: "LDL-Cholesterol (Mỡ xấu)", cat: "Chuyển hóa & Mỡ", ref: "< 3.4 mmol/L", note: "Lipoprotein gây lắng đọng mảng xơ vữa trong lòng động mạch.", diseaseHigh: "Gây hẹp lòng mạch, bệnh động mạch vành, tai biến mạch máu não.", diseaseLow: "Cường giáp, suy gan.", drugMatch: "Crestor 10mg" },
+
+            // 2. Gan & Thận & Khớp
+            { name: "AST / GOT (Men gan)", cat: "Gan & Thận", ref: "< 40 U/L", note: "Enzyme có ở tim, cơ và tế bào gan.", diseaseHigh: "Tổn thương nhu mô gan, viêm gan vi-rút (B, C), hoại tử tế bào gan do rượu, nhồi máu cơ tim.", diseaseLow: "Thiếu Vitamin B6.", drugMatch: "Boganic Forte" },
+            { name: "ALT / GPT (Men gan)", cat: "Gan & Thận", ref: "< 40 U/L", note: "Enzyme đặc hiệu cho tế bào gan.", diseaseHigh: "Viêm gan cấp, viêm gan mạn, gan nhiễm mỡ, tổn thương gan do thuốc & chất độc.", diseaseLow: "Bình thường.", drugMatch: "Boganic Forte" },
+            { name: "GGT (Gamma GT)", cat: "Gan & Thận", ref: "< 50 U/L", note: "Enzyme đường mật & gan rất nhạy với cồn.", diseaseHigh: "Tổn thương gan do rượu bia, tắc mật, viêm túi mật.", diseaseLow: "Bình thường.", drugMatch: "Boganic Forte" },
+            { name: "Acid Uric", cat: "Gan & Thận", ref: "210 - 420 μmol/L", note: "Sản phẩm chuyển hóa Nhân Purin.", diseaseHigh: "Bệnh Gút (Gout) cấp/mạn, lắng đọng hạt Tophi gây phá hủy khớp, sỏi thận acid uric.", diseaseLow: "Tăng đào thải qua thận.", drugMatch: "Feburic 80mg" },
+            { name: "Creatinine máu", cat: "Gan & Thận", ref: "62 - 115 μmol/L", note: "Sản phẩm thoái hóa Creatine ở cơ, đào thải 100% qua thận.", diseaseHigh: "Suy thận cấp/mạn, tổn thương cầu thận, suy tim.", diseaseLow: "Teo cơ, suy dinh dưỡng.", drugMatch: "Feburic 80mg" },
+            { name: "Ure máu (BUN)", cat: "Gan & Thận", ref: "2.5 - 7.5 mmol/L", note: "Sản phẩm chuyển hóa đạm Protein.", diseaseHigh: "Suy thận, giảm tưới máu thận, xuất huyết tiêu hóa, ăn quá nhiều đạm.", diseaseLow: "Suy gan, chế độ ăn thiếu đạm.", drugMatch: "Feburic 80mg" },
+
+            // 3. Huyết học (CBC)
+            { name: "RBC (Số lượng hồng cầu)", cat: "Huyết học", ref: "4.0 - 5.8 10^12/L", note: "Tế bào vận chuyển O2 và CO2 trong máu.", diseaseHigh: "Bệnh đa hồng cầu, cô đặc máu (mất nước, sốt cao), suy hô hấp mạn.", diseaseLow: "Thiếu máu, xơ gan, mất máu cấp/mạn, suy tủy.", drugMatch: "Ferrovit Bổ Máu" },
+            { name: "HGB / Hb (Huyết sắc tố)", cat: "Huyết học", ref: "120 - 165 g/L", note: "Protein chứa sắt nằm trong hồng cầu.", diseaseHigh: "Cô đặc máu, bệnh tim bẩm sinh.", diseaseLow: "Thiếu máu do thiếu sắt, Thalassemia, chảy máu.", drugMatch: "Ferrovit Bổ Máu" },
+            { name: "WBC (Tổng bạch cầu)", cat: "Huyết học", ref: "4.0 - 10.0 10^9/L", note: "Hệ thống tế bào phòng ngự miễn dịch.", diseaseHigh: "Nhiễm trùng vi khuẩn cấp tính, viêm nhiễm toàn thân, ung thư máu (Leukemia).", diseaseLow: "Suy tủy xương, nhiễm vi-rút nặng (Sốt xuất huyết, HIV).", drugMatch: "Amlor 5mg" },
+            { name: "PLT (Số lượng tiểu cầu)", cat: "Huyết học", ref: "150 - 400 10^9/L", note: "Tế bào tham gia quá trình đông máu ban đầu.", diseaseHigh: "Tăng tiểu cầu nguyên phát, hội chứng viêm mạn.", diseaseLow: "Sốt xuất huyết Dengue, xuất huyết giảm tiểu cầu tự miễn, xơ gan lách to.", drugMatch: "Amlor 5mg" },
+
+            // 4. Điện giải & Tim mạch & Viêm
+            { name: "CRP (C-Reactive Protein)", cat: "Điện giải & Tim", ref: "< 5 mg/L", note: "Protein phản ứng C báo động viêm cấp tính.", diseaseHigh: "Nhiễm trùng vi khuẩn nặng, viêm khớp dạng thấp, hoại tử mô.", diseaseLow: "Bình thường.", drugMatch: "Amlor 5mg" },
+            { name: "Na+ (Natri máu)", cat: "Điện giải & Tim", ref: "135 - 145 mmol/L", note: "Cation chính ngoài tế bào duy trì áp suất thẩm thấu.", diseaseHigh: "Mất nước quá nhiều, đái tháo nhạt.", diseaseLow: "Mất muối, suy tim, xơ gan cổ trướng, nôn ói nhiều.", drugMatch: "Amlor 5mg" },
+            { name: "K+ (Kali máu)", cat: "Điện giải & Tim", ref: "3.5 - 5.0 mmol/L", note: "Ion Kali điều hòa nhịp tim & dẫn truyền cơ.", diseaseHigh: "Suy thận cấp, nguy cơ ngừng tim ngưng thở tức thì.", diseaseLow: "Nôn mửa, tiêu chảy, dùng thuốc lợi tiểu, nguy cơ loạn nhịp tim.", drugMatch: "Amlor 5mg" },
+
+            // 5. Hormone & Ung thư
+            { name: "TSH (Hormone Tuyến Giáp)", cat: "Hormone & Ung thư", ref: "0.4 - 4.0 μIU/mL", note: "Hormone tuyến yên kích thích tuyến giáp.", diseaseHigh: "Suy giáp nguyên phát (Tuyến giáp giảm hoạt động).", diseaseLow: "Cường giáp (Bệnh Basedow), nhân độc tuyến giáp.", drugMatch: "Amlor 5mg" },
+            { name: "AFP (Alpha-Fetoprotein)", cat: "Hormone & Ung thư", ref: "< 10 ng/mL", note: "Dấu ấn ung thư gan nguyên phát.", diseaseHigh: "Ung thư tế bào gan nguyên phát (HCC), ung thư tinh hoàn/buồng trứng, viêm gan tiến triển.", diseaseLow: "Bình thường.", drugMatch: "Crestor 10mg" }
+        ];
+
+        let activeCat150Filter = 'all';
 
         let activeRefCatalogCat = 'all';
 
@@ -1367,13 +1506,9 @@
             { name: "Crestor 10mg", generic: "Rosuvastatin", cat: "Mỡ máu", price: "385.000đ / Hộp 28 viên", desc: "Điều trị tăng cholesterol máu, hạ mỡ máu xấu (LDL-C).", dosage: "1 viên/ngày (Uống tối)" },
             { name: "Amlor 5mg", generic: "Amlodipine Besylate", cat: "Tim mạch", price: "260.000đ / Hộp 30 viên", desc: "Điều trị tăng huyết áp, đau thắt ngực.", dosage: "1 viên/ngày (Uống sáng)" },
             { name: "Glucophage XR 500mg", generic: "Metformin HCl", cat: "Tiểu đường", price: "145.000đ / Hộp 30 viên", desc: "Điều trị Đái tháo đường tuýp 2.", dosage: "1-2 viên/ngày (Uống bữa tối)" },
-            { name: "Feburic 80mg", generic: "Febuxostat", cat: "Gan - Gút", price: "420.000đ / Hộp 28 viên", desc: "Điều trị hạ Acid Uric máu ở bệnh nhân Gút.", dosage: "1 viên/ngày" }
-        ];
-
-        const comprehensiveLabCatalogDB = [
-            { name: "Glucose (Đường máu lúc đói)", cat: "Hóa sinh máu", ref: "3.9 - 6.4 mmol/L", note: "Tầm soát Tiểu Đường.", diseaseHigh: "Cảnh báo bệnh Đái Tháo Đường tuýp 2, nguy cơ biến chứng võng mạc, suy thận.", diseaseLow: "Hạ đường huyết cấp.", medMatch: "Glucophage XR 500mg" },
-            { name: "Cholesterol toàn phần", cat: "Hóa sinh máu", ref: "< 5.2 mmol/L", note: "Mỡ máu toàn phần.", diseaseHigh: "Cảnh báo Xơ vữa động mạch, Đột quỵ brain, Nhồi máu cơ tim.", diseaseLow: "Suy dinh dưỡng.", medMatch: "Crestor 10mg" },
-            { name: "Acid Uric", cat: "Hóa sinh máu", ref: "210 - 420 μmol/L", note: "Chuyển hóa Purin.", diseaseHigh: "Cảnh báo Bệnh Gút (Gout) cấp/mạn, Sỏi Thận.", diseaseLow: "Tăng đào thải.", medMatch: "Feburic 80mg" }
+            { name: "Feburic 80mg", generic: "Febuxostat", cat: "Gan - Gút", price: "420.000đ / Hộp 28 viên", desc: "Điều trị hạ Acid Uric máu ở bệnh nhân Gút.", dosage: "1 viên/ngày" },
+            { name: "Boganic Forte", generic: "Cao Atiso, Bìm bìm, Rau đắng đất", cat: "Gan - Gút", price: "95.000đ / Hộp 50 viên", desc: "Mát gan, hạ men gan, bảo vệ tế bào gan do rượu bia.", dosage: "1-2 viên x 2 lần/ngày" },
+            { name: "Ferrovit Bổ Máu", generic: "Sắt Fumarate & Acid Folic", cat: "Bổ máu", price: "110.000đ / Hộp 50 viên", desc: "Điều trị thiếu máu do thiếu sắt ở người lớn & phụ nữ.", dosage: "1 viên/ngày" }
         ];
 
         let selectedLabDate = "latest";
@@ -1385,28 +1520,29 @@
         let extractedOcrItems = [];
         let pendingUploadImgSrc = null;
 
-        function saveAppData() {
-            localStorage.setItem('medhealth_app_data', JSON.stringify(appData));
-            return APP_CODE_VERSION;
-        }
-
         function getSavedApiKey() {
             return localStorage.getItem('medhealth_gemini_api_key') || "";
         }
 
-        function saveMobileApiKey() {
-            const input = document.getElementById('mobileApiKeyInput');
+        function saveCustomApiKey() {
+            const input = document.getElementById('customApiKeyInput');
             if (input) {
-                const key = input.value.trim();
-                localStorage.setItem('medhealth_gemini_api_key', key);
-                showToast(key ? "Đã lưu Gemini API Key thành công!" : "Đã xóa API Key.");
+                const val = input.value.trim();
+                localStorage.setItem('medhealth_gemini_api_key', val);
+                showToast(val ? "Đã lưu Gemini API Key thành công!" : "Đã xóa Key lưu trữ.");
+                closeModal('apiKeyModal');
             }
         }
 
-        function toggleApiKeyBar() {
-            openOcrScanModal();
-            const input = document.getElementById('mobileApiKeyInput');
-            if (input) input.focus();
+        function openApiKeyModal() {
+            const input = document.getElementById('customApiKeyInput');
+            if (input) input.value = getSavedApiKey();
+            openModal('apiKeyModal');
+        }
+
+        function saveAppData() {
+            localStorage.setItem('medhealth_app_data', JSON.stringify(appData));
+            return APP_CODE_VERSION;
         }
 
         function initApp() {
@@ -1417,10 +1553,6 @@
                 saveAppData();
             }
 
-            const savedKey = getSavedApiKey();
-            const keyInput = document.getElementById('mobileApiKeyInput');
-            if (keyInput && savedKey) keyInput.value = savedKey;
-
             const todayStr = new Date().toISOString().split('T')[0];
             const labDate = document.getElementById('inputLabDate');
             if (labDate) labDate.value = todayStr;
@@ -1430,7 +1562,170 @@
             if (recDate) recDate.value = todayStr;
 
             updateVersionUI();
+            populateLabPresetDropdown();
             renderAll();
+        }
+
+        function populateLabPresetDropdown() {
+            const selectEl = document.getElementById('inputLabPreset');
+            if (!selectEl) return;
+
+            // Expanded 150+ standard medical indicator presets list
+            const masterPresetList = [
+                // Huyết học (CBC & Đông máu)
+                { name: "RBC (Số lượng hồng cầu)", cat: "Huyết học", ref: "4.0 - 5.8", unit: "10^12/L" },
+                { name: "HGB / Hb (Huyết sắc tố)", cat: "Huyết học", ref: "120 - 165", unit: "g/L" },
+                { name: "HCT (Tỷ tích hồng cầu)", cat: "Huyết học", ref: "0.37 - 0.50", unit: "L/L" },
+                { name: "MCV (Thể tích trung bình HC)", cat: "Huyết học", ref: "80 - 100", unit: "fL" },
+                { name: "MCH (Lượng HST trung bình HC)", cat: "Huyết học", ref: "27 - 32", unit: "pg" },
+                { name: "MCHC (Nồng độ HST trung bình HC)", cat: "Huyết học", ref: "320 - 360", unit: "g/L" },
+                { name: "RDW-CV (Độ dải phân bố HC)", cat: "Huyết học", ref: "11.5 - 14.5", unit: "%" },
+                { name: "RDW-SD (Độ phân bố HC thể tích)", cat: "Huyết học", ref: "39 - 46", unit: "fL" },
+                { name: "WBC (Tổng số bạch cầu)", cat: "Huyết học", ref: "4.0 - 10.0", unit: "10^9/L" },
+                { name: "NEUT (Bạch cầu trung tính %)", cat: "Huyết học", ref: "45 - 75", unit: "%" },
+                { name: "NEUT# (Bạch cầu trung tính tuyệt đối)", cat: "Huyết học", ref: "2.0 - 7.5", unit: "10^9/L" },
+                { name: "LYM (Bạch cầu Lympho %)", cat: "Huyết học", ref: "20 - 45", unit: "%" },
+                { name: "LYM# (Bạch cầu Lympho tuyệt đối)", cat: "Huyết học", ref: "1.0 - 4.0", unit: "10^9/L" },
+                { name: "MONO (Bạch cầu Mono %)", cat: "Huyết học", ref: "3 - 9", unit: "%" },
+                { name: "EOS (Bạch cầu ái toan %)", cat: "Huyết học", ref: "1 - 6", unit: "%" },
+                { name: "BASO (Bạch cầu ái kiềm %)", cat: "Huyết học", ref: "0.5 - 1", unit: "%" },
+                { name: "PLT (Số lượng tiểu cầu)", cat: "Huyết học", ref: "150 - 400", unit: "10^9/L" },
+                { name: "MPV (Thể tích trung bình tiểu cầu)", cat: "Huyết học", ref: "7.5 - 11.5", unit: "fL" },
+                { name: "PDW (Độ dải phân bố tiểu cầu)", cat: "Huyết học", ref: "9 - 17", unit: "fL" },
+                { name: "PCT (Thể tích khối tiểu cầu)", cat: "Huyết học", ref: "0.16 - 0.36", unit: "%" },
+                { name: "PT (Thời gian Prothrombin)", cat: "Huyết học", ref: "11 - 14", unit: "s" },
+                { name: "INR (Chỉ số đông máu quốc tế)", cat: "Huyết học", ref: "0.8 - 1.2", unit: "INR" },
+                { name: "APTT (Thời gian Thromboplastin)", cat: "Huyết học", ref: "25 - 35", unit: "s" },
+                { name: "Fibrinogen (Yếu tố I đông máu)", cat: "Huyết học", ref: "2.0 - 4.0", unit: "g/L" },
+                { name: "D-Dimer (Đánh giá huyết khối)", cat: "Huyết học", ref: "< 500", unit: "ng/mL" },
+                { name: "ESR / VS (Tốc độ lắng máu 1h)", cat: "Huyết học", ref: "< 15", unit: "mm/h" },
+
+                // Đường & Chuyển hóa
+                { name: "Glucose (Đường máu lúc đói)", cat: "Sinh hóa máu", ref: "3.9 - 6.4", unit: "mmol/L" },
+                { name: "Glucose ngẫu nhiên / Sau ăn", cat: "Sinh hóa máu", ref: "< 7.8", unit: "mmol/L" },
+                { name: "HbA1c (Đường huyết trung bình 3 tháng)", cat: "Sinh hóa máu", ref: "< 5.7", unit: "%" },
+                { name: "Fructosamine (Đường huyết 2-3 tuần)", cat: "Sinh hóa máu", ref: "205 - 285", unit: "μmol/L" },
+                { name: "Insulin máu lúc đói", cat: "Sinh hóa máu", ref: "2.6 - 24.9", unit: "μIU/mL" },
+                { name: "C-Peptide", cat: "Sinh hóa máu", ref: "1.1 - 4.4", unit: "ng/mL" },
+
+                // Mỡ máu (Lipid Profile)
+                { name: "Cholesterol toàn phần", cat: "Sinh hóa máu", ref: "< 5.2", unit: "mmol/L" },
+                { name: "Triglyceride (Mỡ trung tính)", cat: "Sinh hóa máu", ref: "< 1.7", unit: "mmol/L" },
+                { name: "HDL-Cholesterol (Mỡ tốt)", cat: "Sinh hóa máu", ref: "> 1.03", unit: "mmol/L" },
+                { name: "LDL-Cholesterol (Mỡ xấu)", cat: "Sinh hóa máu", ref: "< 3.4", unit: "mmol/L" },
+                { name: "VLDL-Cholesterol", cat: "Sinh hóa máu", ref: "0.2 - 1.0", unit: "mmol/L" },
+                { name: "Apolipoprotein A1 (ApoA1)", cat: "Sinh hóa máu", ref: "1.05 - 2.05", unit: "g/L" },
+                { name: "Apolipoprotein B (ApoB)", cat: "Sinh hóa máu", ref: "0.6 - 1.3", unit: "g/L" },
+                { name: "Lp(a) Lipoprotein a", cat: "Sinh hóa máu", ref: "< 30", unit: "mg/dL" },
+
+                // Chức năng Gan & Mật
+                { name: "AST / GOT (Men gan tim)", cat: "Sinh hóa máu", ref: "< 40", unit: "U/L" },
+                { name: "ALT / GPT (Men gan đặc hiệu)", cat: "Sinh hóa máu", ref: "< 40", unit: "U/L" },
+                { name: "GGT (Gamma GT men cồn)", cat: "Sinh hóa máu", ref: "< 50", unit: "U/L" },
+                { name: "ALP (Kiềm Phosphatase)", cat: "Sinh hóa máu", ref: "45 - 115", unit: "U/L" },
+                { name: "Bilirubin toàn phần", cat: "Sinh hóa máu", ref: "< 17.1", unit: "μmol/L" },
+                { name: "Bilirubin trực tiếp", cat: "Sinh hóa máu", ref: "< 4.3", unit: "μmol/L" },
+                { name: "Bilirubin gián tiếp", cat: "Sinh hóa máu", ref: "< 12.8", unit: "μmol/L" },
+                { name: "Protein toàn phần máu", cat: "Sinh hóa máu", ref: "66 - 87", unit: "g/L" },
+                { name: "Albumin máu", cat: "Sinh hóa máu", ref: "35 - 52", unit: "g/L" },
+                { name: "Globulin máu", cat: "Sinh hóa máu", ref: "20 - 35", unit: "g/L" },
+                { name: "Cholinesterase (CHE)", cat: "Sinh hóa máu", ref: "5300 - 12900", unit: "U/L" },
+                { name: "LDH (Lactate Dehydrogenase)", cat: "Sinh hóa máu", ref: "135 - 225", unit: "U/L" },
+
+                // Chức năng Thận & Khớp (Gút)
+                { name: "Urea máu", cat: "Sinh hóa máu", ref: "2.5 - 7.5", unit: "mmol/L" },
+                { name: "BUN (Blood Urea Nitrogen)", cat: "Sinh hóa máu", ref: "7 - 20", unit: "mg/dL" },
+                { name: "Creatinine máu", cat: "Sinh hóa máu", ref: "62 - 115", unit: "μmol/L" },
+                { name: "eGFR (Mức lọc cầu thận)", cat: "Sinh hóa máu", ref: "> 90", unit: "mL/min/1.73m²" },
+                { name: "Acid Uric (Bệnh Gút)", cat: "Sinh hóa máu", ref: "210 - 420", unit: "μmol/L" },
+                { name: "Cystatin C", cat: "Sinh hóa máu", ref: "0.51 - 1.05", unit: "mg/L" },
+
+                // Điện giải đồ & Khoáng chất
+                { name: "Na+ (Natri máu)", cat: "Điện giải", ref: "135 - 145", unit: "mmol/L" },
+                { name: "K+ (Kali máu)", cat: "Điện giải", ref: "3.5 - 5.0", unit: "mmol/L" },
+                { name: "Cl- (Clo máu)", cat: "Điện giải", ref: "98 - 106", unit: "mmol/L" },
+                { name: "Ca toàn phần (Canxi máu)", cat: "Điện giải", ref: "2.15 - 2.55", unit: "mmol/L" },
+                { name: "Ca2+ (Canxi ion hóa)", cat: "Điện giải", ref: "1.15 - 1.32", unit: "mmol/L" },
+                { name: "Mg2+ (Magie máu)", cat: "Điện giải", ref: "0.7 - 1.05", unit: "mmol/L" },
+                { name: "Phospho vô cơ (P)", cat: "Điện giải", ref: "0.81 - 1.45", unit: "mmol/L" },
+                { name: "Sắt huyết thanh (Serum Iron)", cat: "Điện giải", ref: "11 - 27", unit: "μmol/L" },
+                { name: "Ferritin (Dự trữ sắt)", cat: "Điện giải", ref: "30 - 300", unit: "ng/mL" },
+
+                // Tim mạch, Cơ & Viêm
+                { name: "CK (Creatine Kinase)", cat: "Sinh hóa máu", ref: "24 - 195", unit: "U/L" },
+                { name: "CK-MB (Enzyme cơ tim)", cat: "Sinh hóa máu", ref: "< 25", unit: "U/L" },
+                { name: "Troponin I hs (Hoại tử cơ tim)", cat: "Sinh hóa máu", ref: "< 0.04", unit: "ng/mL" },
+                { name: "NT-proBNP (Tầm soát suy tim)", cat: "Sinh hóa máu", ref: "< 125", unit: "pg/mL" },
+                { name: "CRP (C-Reactive Protein)", cat: "Sinh hóa máu", ref: "< 5", unit: "mg/L" },
+                { name: "hs-CRP (Xơ vữa tim mạch)", cat: "Sinh hóa máu", ref: "< 1", unit: "mg/L" },
+                { name: "Procalcitonin (PCT nhiễm trùng)", cat: "Sinh hóa máu", ref: "< 0.05", unit: "ng/mL" },
+
+                // Hormone & Tầm soát Ung thư
+                { name: "TSH (Hormone Tuyến Giáp)", cat: "Sinh hóa máu", ref: "0.4 - 4.0", unit: "μIU/mL" },
+                { name: "FT3 (Free T3)", cat: "Sinh hóa máu", ref: "3.1 - 6.8", unit: "pmol/L" },
+                { name: "FT4 (Free T4)", cat: "Sinh hóa máu", ref: "12 - 22", unit: "pmol/L" },
+                { name: "Cortisol (Tuyến thượng thận)", cat: "Sinh hóa máu", ref: "138 - 690", unit: "nmol/L" },
+                { name: "AFP (Ung thư gan nguyên phát)", cat: "Sinh hóa máu", ref: "< 10", unit: "ng/mL" },
+                { name: "CEA (Ung thư đại trực tràng)", cat: "Sinh hóa máu", ref: "< 5", unit: "ng/mL" },
+                { name: "PSA toàn phần (Ung thư tiền liệt tuyến)", cat: "Sinh hóa máu", ref: "< 4", unit: "ng/mL" },
+                { name: "CA 125 (Ung thư buồng trứng)", cat: "Sinh hóa máu", ref: "< 35", unit: "U/mL" },
+                { name: "CA 15-3 (Ung thư vú)", cat: "Sinh hóa máu", ref: "< 30", unit: "U/mL" },
+                { name: "CA 19-9 (Ung thư tụy/mật)", cat: "Sinh hóa máu", ref: "< 37", unit: "U/mL" },
+                { name: "CA 72-4 (Ung thư dạ dày)", cat: "Sinh hóa máu", ref: "< 6.9", unit: "U/mL" },
+                { name: "Cyfra 21-1 (Ung thư phổi)", cat: "Sinh hóa máu", ref: "< 3.3", unit: "ng/mL" },
+
+                // Nước tiểu
+                { name: "Protein niệu (PRO)", cat: "Nước tiểu", ref: "< 0.1", unit: "g/L" },
+                { name: "Microalbumin niệu ngẫu nhiên", cat: "Nước tiểu", ref: "< 20", unit: "mg/L" },
+                { name: "Tỷ lệ ACR (Albumin/Creatinine niệu)", cat: "Nước tiểu", ref: "< 30", unit: "mg/g" },
+                { name: "Glucose niệu (GLU)", cat: "Nước tiểu", ref: "Âm tính", unit: "mmol/L" },
+                { name: "Bạch cầu nước tiểu (LEU)", cat: "Nước tiểu", ref: "0 - 10", unit: "LEU/μL" },
+                { name: "Hồng cầu nước tiểu (BLD)", cat: "Nước tiểu", ref: "Âm tính", unit: "Ery/μL" }
+            ];
+
+            // Group items by category
+            const grouped = {};
+            masterPresetList.forEach(item => {
+                const grp = item.cat || 'Sinh hóa máu';
+                if (!grouped[grp]) grouped[grp] = [];
+                grouped[grp].push(item);
+            });
+
+            let html = '<option value="">-- Chọn mẫu nhanh (150+ chỉ số) --</option>';
+            for (const [grpName, items] of Object.entries(grouped)) {
+                html += `<optgroup label="📂 Phân nhóm: ${grpName}">`;
+                items.forEach(item => {
+                    const encodedVal = encodeURIComponent(JSON.stringify(item));
+                    html += `<option value="${encodedVal}">👉 ${item.name} (${item.ref} ${item.unit})</option>`;
+                });
+                html += `</optgroup>`;
+            }
+
+            selectEl.innerHTML = html;
+        }
+
+        function applyLabPreset() {
+            const selectEl = document.getElementById('inputLabPreset');
+            if (!selectEl || !selectEl.value) return;
+
+            try {
+                const item = JSON.parse(decodeURIComponent(selectEl.value));
+                if (item) {
+                    const nameInput = document.getElementById('inputLabName');
+                    const refInput = document.getElementById('inputLabRefRange');
+                    const unitInput = document.getElementById('inputLabUnit');
+                    const catInput = document.getElementById('inputLabCategory');
+
+                    if (nameInput) nameInput.value = item.name.split('(')[0].trim();
+                    if (refInput) refInput.value = item.ref || '';
+                    if (unitInput) unitInput.value = item.unit || 'mmol/L';
+                    if (catInput) catInput.value = item.cat || 'Sinh hóa máu';
+
+                    showToast(`Đã tự động điền mẫu: ${item.name}`);
+                }
+            } catch (err) {
+                console.error("Error applying preset:", err);
+            }
         }
 
         function updateVersionUI() {
@@ -1440,6 +1735,39 @@
 
         function getActiveMember() {
             return appData.members.find(m => m.id === appData.activeMemberId) || appData.members[0];
+        }
+
+        // Automatic Matching Drug Recommendation Helper for Indicators
+        function getMatchingMedicationForLab(labName, status) {
+            const nameLower = (labName || '').toLowerCase().trim();
+            const statLower = (status || '').toLowerCase().trim();
+
+            if (nameLower.includes('glucose') || nameLower.includes('hba1c') || nameLower.includes('đường')) {
+                return { name: "Glucophage XR 500mg", generic: "Metformin HCl", dosage: "1-2 viên/ngày", desc: "Hạ đường huyết, điều trị Đái Tháo Đường tuýp 2.", drugCat: "Tiểu đường" };
+            }
+            if (nameLower.includes('cholesterol') || nameLower.includes('ldl')) {
+                return { name: "Crestor 10mg", generic: "Rosuvastatin", dosage: "1 viên/ngày (Tối)", desc: "Hạ mỡ máu xấu (LDL-C), ngăn xơ vữa động mạch.", drugCat: "Mỡ máu" };
+            }
+            if (nameLower.includes('triglyceride')) {
+                return { name: "Lipanthyl 200M", generic: "Fenofibrate", dosage: "1 viên/ngày", desc: "Hạ mỡ máu trung tính Triglyceride, phòng viêm tụy cấp.", drugCat: "Mỡ máu" };
+            }
+            if (nameLower.includes('acid uric') || nameLower.includes('uric')) {
+                return { name: "Feburic 80mg", generic: "Febuxostat", dosage: "1 viên/ngày", desc: "Hạ Acid Uric máu, phòng cơn Gút cấp & hạt Tophi.", drugCat: "Gan - Gút" };
+            }
+            if (nameLower.includes('ast') || nameLower.includes('alt') || nameLower.includes('ggt') || nameLower.includes('men gan')) {
+                return { name: "Boganic Forte", generic: "Cao Atiso, Bìm bìm", dosage: "2 viên/ngày", desc: "Mát gan, giải độc, hạ men gan & bảo vệ tế bào gan.", drugCat: "Gan - Gút" };
+            }
+            if (nameLower.includes('rbc') || nameLower.includes('hgb') || nameLower.includes('thiếu máu') || nameLower.includes('hồng cầu')) {
+                return { name: "Ferrovit Bổ Máu", generic: "Sắt & Acid Folic", dosage: "1 viên/ngày", desc: "Bổ sung Sắt & Acid Folic trị thiếu máu hồng cầu nhỏ.", drugCat: "Bổ máu" };
+            }
+            if (nameLower.includes('creatinine') || nameLower.includes('ure') || nameLower.includes('thận')) {
+                return { name: "Bảo Thận Vương", generic: "Thảo dược bảo vệ thận", dosage: "2 viên/ngày", desc: "Hỗ trợ tăng cường chức năng lọc cầu thận.", drugCat: "Thận" };
+            }
+            if (nameLower.includes('huyết áp') || nameLower.includes('nguy cơ tim')) {
+                return { name: "Amlor 5mg", generic: "Amlodipine", dosage: "1 viên/ngày (Sáng)", desc: "Hạ huyết áp, ổn định nhịp tim & cơ tim.", drugCat: "Tim mạch" };
+            }
+
+            return { name: "Amlor 5mg", generic: "Amlodipine", dosage: "1 viên/ngày", desc: "Thuốc tim mạch & huyết áp tiêu chuẩn Long Châu.", drugCat: "Tim mạch" };
         }
 
         function renderAll() {
@@ -1474,6 +1802,7 @@
             populateLabDateDropdown(member);
             renderLabTests(member);
             runAutoAnalysis150();
+            render150AnalysisTab();
             renderLongChauPharmacy();
             renderImagingTab(member);
             renderRecordsTab(member);
@@ -1670,43 +1999,65 @@
                     scaleContainer.innerHTML = filtered.map(l => {
                         const evalRes = evaluateLabAgainstRef(l.value, l.refRange);
                         const prevTrend = getPreviousIndicatorValue(l.name, l.date, member);
+                        const matchedDrug = getMatchingMedicationForLab(l.name, l.status);
 
                         return `
-                            <div class="bg-slate-50/80 p-4 rounded-3xl border ${evalRes.status === 'Cao' ? 'border-rose-200 bg-rose-50/30' : evalRes.status === 'Thấp' ? 'border-amber-200 bg-amber-50/30' : 'border-slate-200'} space-y-2.5">
-                                <div class="flex justify-between items-start gap-2">
-                                    <div>
-                                        <div class="flex items-center gap-1.5 flex-wrap">
-                                            <span class="text-[9px] font-black uppercase ${evalRes.colorClass === 'rose' ? 'bg-rose-100 text-rose-800' : evalRes.colorClass === 'amber' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'} px-2 py-0.5 rounded-md">
-                                                ${l.category || 'Sinh hóa'}
-                                            </span>
-                                            <span class="text-[9px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-md border border-slate-200">
-                                                📅 ${l.date}
-                                            </span>
+                            <div class="bg-slate-50/80 p-4 rounded-3xl border ${evalRes.status === 'Cao' ? 'border-rose-200 bg-rose-50/30' : evalRes.status === 'Thấp' ? 'border-amber-200 bg-amber-50/30' : 'border-slate-200'} space-y-2.5 flex flex-col justify-between">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-start gap-2">
+                                        <div>
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <span class="text-[9px] font-black uppercase ${evalRes.colorClass === 'rose' ? 'bg-rose-100 text-rose-800' : evalRes.colorClass === 'amber' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'} px-2 py-0.5 rounded-md">
+                                                    ${l.category || 'Sinh hóa'}
+                                                </span>
+                                                <span class="text-[9px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+                                                    📅 ${l.date}
+                                                </span>
+                                            </div>
+                                            <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm mt-1.5">${l.name}</h4>
                                         </div>
-                                        <h4 class="font-extrabold text-slate-900 text-xs sm:text-sm mt-1.5">${l.name}</h4>
+                                        <div class="text-right">
+                                            <span class="text-base sm:text-lg font-black ${evalRes.colorClass === 'rose' ? 'text-rose-600' : evalRes.colorClass === 'amber' ? 'text-amber-600' : 'text-emerald-600'}">${l.value} <span class="text-[10px] text-slate-400 font-normal">${l.unit}</span></span>
+                                            <button onclick="lookupReferenceStandard('${l.name}')" class="block text-[10px] text-indigo-700 hover:underline font-bold text-right">Tham chiếu: ${l.refRange || '--'} <i class="fa-solid fa-circle-info text-[9px]"></i></button>
+                                        </div>
                                     </div>
-                                    <div class="text-right">
-                                        <span class="text-base sm:text-lg font-black ${evalRes.colorClass === 'rose' ? 'text-rose-600' : evalRes.colorClass === 'amber' ? 'text-amber-600' : 'text-emerald-600'}">${l.value} <span class="text-[10px] text-slate-400 font-normal">${l.unit}</span></span>
-                                        <button onclick="lookupReferenceStandard('${l.name}')" class="block text-[10px] text-indigo-700 hover:underline font-bold text-right">Tham chiếu: ${l.refRange || '--'} <i class="fa-solid fa-circle-info text-[9px]"></i></button>
+
+                                    <div class="bg-white p-2 rounded-xl border border-slate-200/80 text-[10px] font-extrabold flex items-center justify-between">
+                                        <span class="text-slate-500">So với đợt trước:</span>
+                                        <span class="${prevTrend.badgeClass} px-2 py-0.5 rounded-lg">${prevTrend.text}</span>
+                                    </div>
+
+                                    <div class="space-y-1">
+                                        <div class="relative h-3.5 bg-slate-200 rounded-full overflow-hidden flex border border-slate-300">
+                                            <div class="w-[30%] bg-amber-200/90"></div>
+                                            <div class="w-[40%] bg-emerald-400/90"></div>
+                                            <div class="w-[30%] bg-rose-300/90"></div>
+                                            <div class="absolute top-0 bottom-0 w-3 bg-slate-950 border-2 border-white rounded-full shadow-md transition-all duration-500" style="left: calc(${evalRes.positionPct}% - 6px);"></div>
+                                        </div>
+                                        <div class="flex justify-between text-[9px] text-slate-400 font-bold px-0.5">
+                                            <span>Thấp</span>
+                                            <span class="text-emerald-700">An Toàn</span>
+                                            <span>Vượt Cao</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="bg-white p-2 rounded-xl border border-slate-200/80 text-[10px] font-extrabold flex items-center justify-between">
-                                    <span class="text-slate-500">So với đợt trước:</span>
-                                    <span class="${prevTrend.badgeClass} px-2 py-0.5 rounded-lg">${prevTrend.text}</span>
-                                </div>
-
-                                <div class="space-y-1">
-                                    <div class="relative h-3.5 bg-slate-200 rounded-full overflow-hidden flex border border-slate-300">
-                                        <div class="w-[30%] bg-amber-200/90"></div>
-                                        <div class="w-[40%] bg-emerald-400/90"></div>
-                                        <div class="w-[30%] bg-rose-300/90"></div>
-                                        <div class="absolute top-0 bottom-0 w-3 bg-slate-950 border-2 border-white rounded-full shadow-md transition-all duration-500" style="left: calc(${evalRes.positionPct}% - 6px);"></div>
+                                <!-- Dynamic Long Chau Drug Match Callout Banner -->
+                                <div class="bg-blue-50/90 p-2.5 rounded-2xl border border-blue-200 space-y-1 mt-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[9px] font-black uppercase text-blue-800 flex items-center gap-1">
+                                            <i class="fa-solid fa-pills text-blue-600"></i> Thuốc Long Châu phù hợp:
+                                        </span>
+                                        <span class="text-[9px] font-bold text-blue-600 bg-white px-1.5 py-0.5 rounded-md border border-blue-200">${matchedDrug.drugCat}</span>
                                     </div>
-                                    <div class="flex justify-between text-[9px] text-slate-400 font-bold px-0.5">
-                                        <span>Thấp</span>
-                                        <span class="text-emerald-700">An Toàn</span>
-                                        <span>Vượt Cao</span>
+                                    <div class="flex items-center justify-between gap-1 pt-0.5">
+                                        <div>
+                                            <strong class="text-xs font-black text-slate-900 block">${matchedDrug.name}</strong>
+                                            <span class="text-[10px] text-slate-600 font-medium">${matchedDrug.dosage}</span>
+                                        </div>
+                                        <button onclick="addLongChauToSchedule('${matchedDrug.name}', '${matchedDrug.dosage}')" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[10px] px-2.5 py-1.5 rounded-xl shadow-2xs transition touch-active shrink-0 flex items-center gap-1">
+                                            <i class="fa-solid fa-plus-circle text-amber-300"></i> Lịch Uống
+                                        </button>
                                     </div>
                                 </div>
 
@@ -1907,6 +2258,137 @@
             }
             openModal('addLabModal');
             showToast(`Đã áp dụng khoảng tham chiếu chuẩn cho ${name}!`);
+        }
+
+        function filter150Cat(cat) {
+            activeCat150Filter = cat;
+            document.querySelectorAll('.cat150-btn').forEach(btn => {
+                btn.className = "cat150-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 touch-active";
+            });
+            const activeBtn = document.getElementById(`cat150Filter-${cat}`);
+            if (activeBtn) activeBtn.className = "cat150-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-xs touch-active";
+            render150IndicatorCatalog();
+        }
+
+        function render150AnalysisTab() {
+            const member = getActiveMember();
+            const labs = member.labTests || [];
+
+            // 1. Render Active Patient Health Warnings
+            const warningContainer = document.getElementById('tab3ActivePatientWarnings');
+            if (warningContainer) {
+                const abnormalLabs = labs.filter(l => l.status === 'Cao' || l.status === 'Thấp' || l.status === 'Bất thường');
+
+                if (abnormalLabs.length === 0) {
+                    warningContainer.innerHTML = `
+                        <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-base text-emerald-600 shrink-0"></i>
+                            <span>Tất cả chỉ số máu đợt khám của bệnh nhân đều nằm trong giới hạn an toàn chuẩn Bộ Y Tế.</span>
+                        </div>
+                    `;
+                } else {
+                    warningContainer.innerHTML = abnormalLabs.map(lab => {
+                        const matchedCat = catalog150IndicatorsDB.find(c => lab.name.toLowerCase().includes(c.name.split(' ')[0].toLowerCase()));
+                        const diseaseText = matchedCat ? (lab.status === 'Cao' ? matchedCat.diseaseHigh : matchedCat.diseaseLow) : "Cảnh báo nguy cơ lệch chỉ số sinh hóa.";
+                        const drugObj = getMatchingMedicationForLab(lab.name, lab.status);
+
+                        return `
+                            <div class="bg-rose-50/80 p-4 rounded-2xl border border-rose-200 space-y-2 text-xs shadow-2xs">
+                                <div class="flex justify-between items-start gap-2">
+                                    <div>
+                                        <span class="text-[9px] font-black uppercase bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md border border-rose-200">
+                                            🔴 Chỉ Số Lệch Chuẩn
+                                        </span>
+                                        <h4 class="font-extrabold text-slate-900 text-sm mt-1">${lab.name} = <strong class="text-rose-700">${lab.value} ${lab.unit}</strong> (${lab.status})</h4>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-md border border-slate-200">📅 ${lab.date}</span>
+                                </div>
+
+                                <div class="bg-white p-2.5 rounded-xl border border-rose-100 text-[11px] font-extrabold text-slate-800 flex items-center justify-between">
+                                    <span class="text-slate-500"><i class="fa-solid fa-scale-balanced text-teal-600 mr-1.5"></i>Khoảng Tham Chiếu Chuẩn:</span>
+                                    <span class="text-teal-800 bg-teal-50 px-2.5 py-0.5 rounded-lg border border-teal-200">${lab.refRange || 'Theo mẫu'} ${lab.unit}</span>
+                                </div>
+
+                                <p class="text-slate-700 font-medium leading-relaxed bg-white p-2.5 rounded-xl border border-rose-100">
+                                    <strong><i class="fa-solid fa-shield-virus text-rose-500 mr-1"></i>Nguy cơ bệnh lý:</strong> ${diseaseText}
+                                </p>
+
+                                <div class="bg-blue-50 p-2.5 rounded-xl border border-blue-200 flex items-center justify-between gap-2">
+                                    <div>
+                                        <span class="text-[9px] font-black uppercase text-blue-800 block"><i class="fa-solid fa-pills text-blue-600 mr-1"></i>Gợi Ý Thuốc Long Châu:</span>
+                                        <strong class="text-xs font-black text-slate-900">${drugObj.name}</strong>
+                                        <span class="text-[10px] text-slate-600 font-medium block">${drugObj.desc}</span>
+                                    </div>
+                                    <button onclick="addLongChauToSchedule('${drugObj.name}', '${drugObj.dosage}')" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-3 py-2 rounded-xl shadow-2xs transition touch-active shrink-0 flex items-center gap-1">
+                                        <i class="fa-solid fa-plus-circle text-amber-300"></i> Lịch Uống
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // 2. Render 150+ Indicator Catalog Dictionary
+            render150IndicatorCatalog();
+        }
+
+        function render150IndicatorCatalog() {
+            const grid = document.getElementById('catalog150GridList');
+            if (!grid) return;
+
+            let items = catalog150IndicatorsDB;
+            if (activeCat150Filter !== 'all') {
+                items = items.filter(i => i.cat === activeCat150Filter);
+            }
+
+            const searchVal = (document.getElementById('search150CatalogInput')?.value || '').toLowerCase().trim();
+            if (searchVal) {
+                items = items.filter(i => 
+                    i.name.toLowerCase().includes(searchVal) ||
+                    i.cat.toLowerCase().includes(searchVal) ||
+                    i.ref.toLowerCase().includes(searchVal) ||
+                    i.diseaseHigh.toLowerCase().includes(searchVal) ||
+                    i.diseaseLow.toLowerCase().includes(searchVal) ||
+                    i.drugMatch.toLowerCase().includes(searchVal)
+                );
+            }
+
+            if (items.length === 0) {
+                grid.innerHTML = `<div class="bg-slate-50 p-6 rounded-2xl text-center text-slate-400 text-xs">Không tìm thấy chỉ số phù hợp với từ khóa.</div>`;
+                return;
+            }
+
+            grid.innerHTML = items.map(item => `
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-2 text-xs">
+                    <div class="flex justify-between items-start gap-2 border-b border-slate-200/60 pb-2">
+                        <div>
+                            <span class="text-[9px] font-black uppercase bg-teal-100 text-teal-800 px-2 py-0.5 rounded-md">${item.cat}</span>
+                            <h4 class="font-extrabold text-slate-900 text-sm mt-1">${item.name}</h4>
+                            <p class="text-[11px] text-slate-500 font-medium">${item.note}</p>
+                        </div>
+                        <span class="font-black text-teal-800 text-xs bg-white px-2.5 py-1 rounded-xl border border-teal-200 shadow-2xs shrink-0">${item.ref}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px]">
+                        <div class="bg-rose-50/70 p-2.5 rounded-xl border border-rose-100 text-slate-800">
+                            <strong class="text-rose-700 block mb-0.5"><i class="fa-solid fa-arrow-up mr-1"></i>Khi Chỉ Số Tăng Cao:</strong>
+                            <span class="font-medium">${item.diseaseHigh}</span>
+                        </div>
+                        <div class="bg-amber-50/70 p-2.5 rounded-xl border border-amber-100 text-slate-800">
+                            <strong class="text-amber-700 block mb-0.5"><i class="fa-solid fa-arrow-down mr-1"></i>Khi Chỉ Số Thấp / Giảm:</strong>
+                            <span class="font-medium">${item.diseaseLow}</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-1 flex items-center justify-between border-t border-slate-200/60 text-[10px]">
+                        <span class="font-bold text-blue-800"><i class="fa-solid fa-pills text-blue-600 mr-1"></i>Nhóm biệt dược gợi ý: <strong>${item.drugMatch}</strong></span>
+                        <button onclick="addLongChauToSchedule('${item.drugMatch}', '1 viên/ngày')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded-lg shadow-2xs touch-active flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Thêm Lịch
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function renderLongChauPharmacy() {
@@ -2255,22 +2737,179 @@
                             <i class="fa-regular fa-clock text-amber-600"></i> Buổi ${slot}
                         </h3>
                         <div class="space-y-2">
-                            ${slotMeds.map(m => `
-                                <div class="flex items-center justify-between p-3 rounded-2xl border transition ${m.taken ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
+                            ${slotMeds.map(m => {
+                                const remaining = m.stockCount !== undefined ? m.stockCount : 30;
+                                const isLowStock = remaining <= 5;
+                                return `
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-2xl border transition gap-2 ${m.taken ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
                                     <div class="flex items-center gap-3">
-                                        <input type="checkbox" ${m.taken ? 'checked' : ''} onchange="toggleMedTaken('${m.id}')" class="w-5 h-5 text-emerald-600 rounded-lg focus:ring-emerald-500 cursor-pointer">
+                                        <input type="checkbox" ${m.taken ? 'checked' : ''} onchange="toggleMedTaken('${m.id}')" class="w-5 h-5 text-emerald-600 rounded-lg focus:ring-emerald-500 cursor-pointer shrink-0">
                                         <div>
-                                            <h4 class="font-extrabold text-xs ${m.taken ? 'line-through text-slate-400' : 'text-slate-900'}">${m.name}</h4>
-                                            <p class="text-[10px] text-slate-500 font-semibold">${m.dosage} • Giờ: ${m.timeHour || '08:00'} ${m.note ? '• ' + m.note : ''}</p>
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <h4 class="font-extrabold text-xs ${m.taken ? 'line-through text-slate-400' : 'text-slate-900'}">${m.name}</h4>
+                                                <span class="text-[9px] font-black px-2 py-0.5 rounded-md ${isLowStock ? 'bg-rose-100 text-rose-800 border border-rose-200 animate-pulse' : 'bg-amber-100 text-amber-900 border border-amber-200'}">
+                                                    📦 Còn lại: ${remaining} viên ${isLowStock ? '⚠️ Sắp hết!' : ''}
+                                                </span>
+                                            </div>
+                                            <p class="text-[10px] text-slate-500 font-semibold mt-0.5">
+                                                <span>Liều: <strong>${m.dosage}</strong></span> • 
+                                                <span>Giờ uống: <strong class="text-amber-900">${m.timeHour || '08:00'}</strong></span>
+                                                ${m.note ? ` • <span class="text-slate-600">${m.note}</span>` : ''}
+                                            </p>
                                         </div>
                                     </div>
-                                    <button onclick="deleteMedication('${m.id}')" class="text-slate-400 hover:text-rose-600 p-1 touch-active"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                    <div class="flex items-center justify-between sm:justify-end gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200/60">
+                                        <span class="text-[10px] text-slate-400 font-bold hidden sm:inline">Khung giờ: ${m.timeSlot}</span>
+                                        <button onclick="deleteMedication('${m.id}')" class="text-slate-400 hover:text-rose-600 p-1 touch-active" title="Xóa lịch thuốc"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                    </div>
                                 </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        function toggleMedTaken(medId) {
+            const member = getActiveMember();
+            const med = (member.medications || []).find(m => m.id === medId);
+            if (med) {
+                med.taken = !med.taken;
+                if (med.stockCount !== undefined) {
+                    if (med.taken) {
+                        med.stockCount = Math.max(0, med.stockCount - 1);
+                    } else {
+                        med.stockCount = med.stockCount + 1;
+                    }
+                }
+                saveAppData();
+                renderAll();
+                showToast(med.taken ? `Đã uống 1 liều ${med.name}! (Còn lại ${med.stockCount || 0} viên)` : "Đã hủy đánh dấu uống thuốc.");
+            }
+        }
+
+        function autoSuggestMedTime() {
+            const nameInput = document.getElementById('inputMedName');
+            const suggestBox = document.getElementById('medTimeSuggestionBox');
+            const suggestText = document.getElementById('medTimeSuggestionText');
+            const slotSelect = document.getElementById('inputMedSlot');
+            const timeInput = document.getElementById('inputMedTime');
+            const noteInput = document.getElementById('inputMedNote');
+
+            if (!nameInput) return;
+            const val = nameInput.value.toLowerCase().trim();
+
+            if (!val) {
+                if (suggestBox) suggestBox.classList.add('hidden');
+                return;
+            }
+
+            let slot = "Sáng";
+            let hour = "07:30";
+            let note = "Uống sau khi ăn 30 phút";
+            let reason = "";
+
+            if (val.includes('crestor') || val.includes('mỡ máu') || val.includes('rosuvastatin') || val.includes('atorvastatin') || val.includes('lipanthyl') || val.includes('simvastatin') || val.includes('cholesterol')) {
+                slot = "Tối";
+                hour = "20:00";
+                note = "Uống sau ăn tối (Gan tổng hợp mỡ nhiều nhất về đêm)";
+                reason = "🌙 <strong>Thuốc Mỡ Máu / Cholesterol</strong>: Nên uống <strong>Buổi Tối (20:00)</strong> vì quá trình tổng hợp mỡ ở gan diễn ra mạnh nhất về đêm.";
+            } else if (val.includes('amlor') || val.includes('huyết áp') || val.includes('amlodipine') || val.includes('losartan') || val.includes('telmisartan') || val.includes('coveram')) {
+                slot = "Sáng";
+                hour = "07:00";
+                note = "Uống sau ăn sáng để ổn định huyết áp cả ngày";
+                reason = "☀️ <strong>Thuốc Huyết Áp</strong>: Khuyên dùng <strong>Buổi Sáng (07:00)</strong> ngay sau ăn để duy trì áp lực máu ổn định suốt ngày làm việc.";
+            } else if (val.includes('glucophage') || val.includes('tiểu đường') || val.includes('metformin') || val.includes('diamicron') || val.includes('janumet')) {
+                slot = "Tối";
+                hour = "19:30";
+                note = "Uống ngay trong hoặc sau bữa ăn tối";
+                reason = "🍽️ <strong>Thuốc Tiểu Đường (Metformin)</strong>: Khuyên dùng <strong>Buổi Tối (19:30)</strong> trong/sau bữa ăn để kiểm soát đường huyết & giảm tác dụng phụ tiêu hóa.";
+            } else if (val.includes('nexium') || val.includes('dạ dày') || val.includes('omeprazole') || val.includes('esomeprazole') || val.includes('pantoprazole') || val.includes('gaviscon')) {
+                slot = "Sáng";
+                hour = "06:30";
+                note = "Uống trước khi ăn sáng 30 phút";
+                reason = "🥛 <strong>Thuốc Dạ Dày / Kháng Axit</strong>: Khuyên dùng <strong>Sáng Sớm (06:30)</strong> trước ăn 30 phút để tối ưu hóa khả năng ức chế tiết axit dạ dày.";
+            } else if (val.includes('feburic') || val.includes('gút') || val.includes('gout') || val.includes('febuxostat') || val.includes('allopurinol')) {
+                slot = "Sáng";
+                hour = "08:00";
+                note = "Uống sau ăn sáng với nhiều nước (200ml+)";
+                reason = "💧 <strong>Thuốc Gút / Acid Uric</strong>: Nên uống <strong>Buổi Sáng (08:00)</strong> sau ăn, uống cùng nhiều nước để hỗ trợ đào thải acid uric qua thận.";
+            } else if (val.includes('ferrovit') || val.includes('sắt') || val.includes('bổ máu') || val.includes('canxi') || val.includes('calcium')) {
+                slot = "Sáng";
+                hour = "08:30";
+                note = "Uống sau ăn sáng 1 tiếng, uống nhiều nước";
+                reason = "💊 <strong>Bổ Máu / Sắt / Canxi</strong>: Khuyên dùng <strong>Buổi Sáng (08:30)</strong>. Không uống buổi tối để tránh lắng đọng sỏi thận.";
+            } else if (val.includes('boganic') || val.includes('gan') || val.includes('fortec') || val.includes('hạ men gan')) {
+                slot = "Trưa";
+                hour = "12:30";
+                note = "Uống sau ăn trưa 15-30 phút";
+                reason = "🌿 <strong>Thuốc Bổ Gan / Giải Độc</strong>: Khuyên dùng <strong>Buổi Trưa (12:30)</strong> hoặc Tối sau bữa ăn để mát gan giải độc.";
+            }
+
+            if (slotSelect) slotSelect.value = slot;
+            if (timeInput) timeInput.value = hour;
+            if (noteInput && (!noteInput.value || noteInput.dataset.autoset === "true")) {
+                noteInput.value = note;
+                noteInput.dataset.autoset = "true";
+            }
+
+            if (reason && suggestBox && suggestText) {
+                suggestText.innerHTML = reason;
+                suggestBox.classList.remove('hidden');
+            } else if (suggestBox) {
+                suggestBox.classList.add('hidden');
+            }
+        }
+
+        function applyMedPreset(name, dosage, stock, type) {
+            const nameInput = document.getElementById('inputMedName');
+            const dosageInput = document.getElementById('inputMedDosage');
+            const stockInput = document.getElementById('inputMedStock');
+
+            if (nameInput) nameInput.value = name;
+            if (dosageInput) dosageInput.value = dosage;
+            if (stockInput) stockInput.value = stock;
+
+            autoSuggestMedTime();
+            showToast(`Đã áp dụng mẫu thuốc ${name}!`);
+        }
+
+        function handleSaveMedication(e) {
+            e.preventDefault();
+            const member = getActiveMember();
+            if (!member.medications) member.medications = [];
+
+            const stockVal = parseInt(document.getElementById('inputMedStock').value) || 30;
+
+            member.medications.push({
+                id: 'med_' + Date.now(),
+                name: document.getElementById('inputMedName').value.trim(),
+                dosage: document.getElementById('inputMedDosage').value.trim(),
+                stockCount: stockVal,
+                timeSlot: document.getElementById('inputMedSlot').value,
+                timeHour: document.getElementById('inputMedTime').value,
+                note: document.getElementById('inputMedNote').value.trim(),
+                taken: false
+            });
+
+            saveAppData();
+            renderAll();
+            closeModal('addMedModal');
+            showToast("Đã lưu lịch uống thuốc & cập nhật số lượng có sẵn!");
+        }
+
+        function addLongChauToSchedule(drugName, dosageStr) {
+            const nameInput = document.getElementById('inputMedName');
+            const dosageInput = document.getElementById('inputMedDosage');
+            const stockInput = document.getElementById('inputMedStock');
+
+            if (nameInput) nameInput.value = drugName;
+            if (dosageInput) dosageInput.value = dosageStr.split('(')[0].trim() || '1 viên';
+            if (stockInput) stockInput.value = 30;
+
+            autoSuggestMedTime();
+            openModal('addMedModal');
         }
 
         function toggleMedTaken(medId) {
@@ -2436,16 +3075,27 @@
                 const isAbnormal = lab.status === 'Cao' || lab.status === 'Thấp' || lab.status === 'Bất thường';
                 if (isAbnormal) {
                     detectedCount++;
-                    const catalogMatch = comprehensiveLabCatalogDB.find(c => lab.name.toLowerCase().includes(c.name.split(' ')[0].toLowerCase()));
+                    const catalogMatch = catalog150IndicatorsDB.find(c => lab.name.toLowerCase().includes(c.name.split(' ')[0].toLowerCase()));
                     const diseaseText = catalogMatch ? (lab.status === 'Cao' ? catalogMatch.diseaseHigh : catalogMatch.diseaseLow) : "Cảnh báo rối loạn chỉ số y khoa.";
+                    const drugObj = getMatchingMedicationForLab(lab.name, lab.status);
 
                     warningsHtml += `
-                        <div class="bg-rose-50 border border-rose-200 p-4 rounded-3xl space-y-1.5 text-xs shadow-2xs">
+                        <div class="bg-rose-50 border border-rose-200 p-4 rounded-3xl space-y-2 text-xs shadow-2xs">
                             <div class="flex justify-between items-center">
                                 <h4 class="font-extrabold text-slate-900">${lab.name} (${lab.value} ${lab.unit}) - ${lab.status}</h4>
                                 <span class="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-md">📅 ${lab.date}</span>
                             </div>
+                            <div class="bg-white p-2 rounded-xl border border-rose-200/80 text-[11px] font-extrabold text-slate-800 flex justify-between items-center">
+                                <span class="text-slate-500"><i class="fa-solid fa-scale-balanced text-teal-600 mr-1"></i>Khoảng tham chiếu chuẩn:</span>
+                                <span class="text-teal-800 bg-teal-50 px-2 py-0.5 rounded-lg border border-teal-200 font-black">${lab.refRange || 'Chưa rõ'} ${lab.unit}</span>
+                            </div>
                             <p class="text-slate-700 font-medium"><strong>Nguy cơ gây bệnh:</strong> ${diseaseText}</p>
+                            <div class="pt-1 flex items-center justify-between border-t border-rose-200/60 text-[10px]">
+                                <span class="font-bold text-blue-900"><i class="fa-solid fa-pills text-blue-600 mr-1"></i>Gợi ý: <strong>${drugObj.name}</strong></span>
+                                <button onclick="addLongChauToSchedule('${drugObj.name}', '${drugObj.dosage}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded-lg shadow-2xs touch-active">
+                                    + Thêm Lịch
+                                </button>
+                            </div>
                         </div>
                     `;
                 }
@@ -2608,7 +3258,8 @@ Mỗi chỉ số bao gồm:
                 updateProgress(75, "Gemini AI đang phân tích & bóc tách chỉ số...");
 
                 const userKey = getSavedApiKey();
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${userKey}`;
+                const apiKey = userKey || "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
                 let response = null;
                 let lastErrorMsg = "";
@@ -2626,17 +3277,16 @@ Mỗi chỉ số bao gồm:
                         } else {
                             let errObj = await response.json().catch(() => ({}));
                             lastErrorMsg = errObj.error?.message || `HTTP ${response.status} ${response.statusText}`;
-                            
-                            // Handle 403 / Missing API key on mobile
-                            if (response.status === 403 || response.status === 400) {
-                                throw new Error("Chưa có API Key hoặc Key không hợp lệ. Vui lòng nhập Gemini API Key ở ô màu vàng trong cửa sổ này!");
+                            if (response.status === 403) {
+                                openApiKeyModal();
+                                throw new Error("API Key không hợp lệ hoặc bị từ chối (Status 403). Vui lòng nhập Gemini Key cá nhân của bạn!");
+                            }
+                            if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+                                break;
                             }
                         }
                     } catch (netErr) {
                         lastErrorMsg = netErr.message || "Lỗi kết nối mạng";
-                        if (netErr.message && netErr.message.includes("API Key")) {
-                            throw netErr;
-                        }
                     }
                     await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
                 }
@@ -2678,7 +3328,7 @@ Mỗi chỉ số bao gồm:
                     startBtn.disabled = false;
                     startBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> Thử Quét Lại`;
                 }
-                showToast("Lỗi quét: " + error.message);
+                showToast("Chưa thể bóc tách: " + error.message);
             }
         }
 
@@ -2884,10 +3534,34 @@ Mỗi chỉ số bao gồm:
             const member = getActiveMember();
             if (!member.labTests) member.labTests = [];
             const labDateValue = document.getElementById('inputLabDate').value;
+            const labNameValue = document.getElementById('inputLabName').value.trim();
+
+            // Prevent adding duplicate indicators for the same date session
+            const existingIndex = member.labTests.findIndex(l => 
+                l.date === labDateValue && 
+                l.name.toLowerCase().trim() === labNameValue.toLowerCase()
+            );
+
+            if (existingIndex !== -1) {
+                // Update existing indicator record instead of duplicating
+                member.labTests[existingIndex].category = document.getElementById('inputLabCategory').value;
+                member.labTests[existingIndex].value = document.getElementById('inputLabValue').value.trim();
+                member.labTests[existingIndex].unit = document.getElementById('inputLabUnit').value.trim();
+                member.labTests[existingIndex].refRange = document.getElementById('inputLabRefRange').value.trim();
+                member.labTests[existingIndex].status = document.getElementById('inputLabStatus').value;
+                member.labTests[existingIndex].facility = document.getElementById('inputLabFacility').value.trim();
+
+                selectedLabDate = labDateValue;
+                saveAppData();
+                renderAll();
+                closeModal('addLabModal');
+                showToast(`Chỉ số '${labNameValue}' đã có trong đợt ${labDateValue} - Đã cập nhật kết quả mới!`);
+                return;
+            }
 
             member.labTests.push({
                 id: 'l_' + Date.now(),
-                name: document.getElementById('inputLabName').value.trim(),
+                name: labNameValue,
                 category: document.getElementById('inputLabCategory').value,
                 value: document.getElementById('inputLabValue').value.trim(),
                 unit: document.getElementById('inputLabUnit').value.trim(),
@@ -2901,40 +3575,70 @@ Mỗi chỉ số bao gồm:
             saveAppData();
             renderAll();
             closeModal('addLabModal');
-            showToast(`Đã lưu chỉ số vào đợt ngày ${labDateValue}!`);
+            showToast(`Đã lưu chỉ số mới vào đợt ngày ${labDateValue}!`);
         }
+        function saveOcrBatchResults() {
+            if (!extractedOcrItems || extractedOcrItems.length === 0) {
+                showToast("Không có kết quả nào để lưu!");
+                return;
+            }
 
-        function deleteLabTest(id) {
             const member = getActiveMember();
-            member.labTests = member.labTests.filter(l => l.id !== id);
+            if (!member.labTests) member.labTests = [];
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            let savedCount = 0;
+            let updatedCount = 0;
+
+            extractedOcrItems.forEach((_, idx) => {
+                const nameInput = document.getElementById(`ocr_name_${idx}`);
+                const catInput = document.getElementById(`ocr_cat_${idx}`);
+                const valInput = document.getElementById(`ocr_val_${idx}`);
+                const unitInput = document.getElementById(`ocr_unit_${idx}`);
+                const refInput = document.getElementById(`ocr_ref_${idx}`);
+                const statusInput = document.getElementById(`ocr_status_${idx}`);
+
+                if (nameInput && valInput && nameInput.value.trim() && valInput.value.trim()) {
+                    const nameVal = nameInput.value.trim();
+                    const existingIndex = member.labTests.findIndex(l => 
+                        l.date === todayStr && 
+                        l.name.toLowerCase().trim() === nameVal.toLowerCase()
+                    );
+
+                    if (existingIndex !== -1) {
+                        // Update existing record instead of adding duplicate row
+                        member.labTests[existingIndex].category = catInput ? catInput.value : 'Sinh hóa máu';
+                        member.labTests[existingIndex].value = valInput.value.trim();
+                        member.labTests[existingIndex].unit = unitInput ? unitInput.value.trim() : 'mmol/L';
+                        member.labTests[existingIndex].refRange = refInput ? refInput.value.trim() : '';
+                        member.labTests[existingIndex].status = statusInput ? statusInput.value : 'Bình thường';
+                        member.labTests[existingIndex].facility = "Quét từ Gemini Vision AI";
+                        updatedCount++;
+                    } else {
+                        member.labTests.push({
+                            id: 'l_' + Date.now() + '_' + idx,
+                            name: nameVal,
+                            category: catInput ? catInput.value : 'Sinh hóa máu',
+                            value: valInput.value.trim(),
+                            unit: unitInput ? unitInput.value.trim() : 'mmol/L',
+                            refRange: refInput ? refInput.value.trim() : '',
+                            status: statusInput ? statusInput.value : 'Bình thường',
+                            date: todayStr,
+                            facility: "Quét từ Gemini Vision AI"
+                        });
+                        savedCount++;
+                    }
+                }
+            });
+
+            selectedLabDate = todayStr;
             saveAppData();
             renderAll();
-            showToast("Đã xóa chỉ số!");
-        }
-
-        function generateDoctorPdfReport() {
-            showToast("Đang chuẩn bị Báo cáo PDF Bác sĩ...");
-            setTimeout(() => { window.print(); }, 300);
-        }
-
-        function applyLabPreset() {
-            const sel = document.getElementById('inputLabPreset');
-            if (!sel || !sel.value) return;
-            const presets = {
-                glucose: { name: "Glucose máu", cat: "Sinh hóa máu", unit: "mmol/L", ref: "3.9 - 6.4" },
-                hba1c: { name: "HbA1c", cat: "Sinh hóa máu", unit: "%", ref: "< 5.7" },
-                cholesterol: { name: "Cholesterol toàn phần", cat: "Sinh hóa máu", unit: "mmol/L", ref: "< 5.2" },
-                triglyceride: { name: "Triglyceride", cat: "Sinh hóa máu", unit: "mmol/L", ref: "< 1.7" },
-                ast: { name: "AST (GOT)", cat: "Sinh hóa máu", unit: "U/L", ref: "< 40" },
-                alt: { name: "ALT (GPT)", cat: "Sinh hóa máu", unit: "U/L", ref: "< 40" },
-                aciduric: { name: "Acid Uric", cat: "Sinh hóa máu", unit: "μmol/L", ref: "210 - 420" }
-            };
-            const p = presets[sel.value];
-            if (p) {
-                document.getElementById('inputLabName').value = p.name;
-                document.getElementById('inputLabCategory').value = p.cat;
-                document.getElementById('inputLabUnit').value = p.unit;
-                document.getElementById('inputLabRefRange').value = p.ref;
+            closeOcrModal();
+            if (updatedCount > 0) {
+                showToast(`Đã lưu ${savedCount} chỉ số mới & cập nhật ${updatedCount} chỉ số trùng trong đợt ${todayStr}!`);
+            } else {
+                showToast(`Đã lưu ${savedCount} chỉ số vào đợt khám ngày ${todayStr}!`);
             }
         }
 
